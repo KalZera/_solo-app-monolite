@@ -1,0 +1,18 @@
+services:
+  claude:
+    build:
+      context: .
+      dockerfile: Dockerfile.claude
+    image: claude-code-solo-leveling
+    container_name: claude-solo-leveling
+    stdin_open: true
+    tty: true
+    volumes:
+      # Sessões, autenticação e memória persistidas do host
+      - /home/karuzo/.claude:/root/.claude
+      # Código do projeto montado no container
+      - /home/karuzo/Documents/psp/solo-leveling:/workspace
+    environment:
+      # Passa ANTHROPIC_API_KEY do host se existir (opcional — OAuth do ~/.claude também funciona)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    working_dir: /workspace

@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Identity ───────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  characters    Character[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// ─── Character ───────────────────────────────────────────────────────────────
+
+model Character {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  name       String
+  level      Int      @default(1)
+  experience Int      @default(0)
+  class      String
+  strength   Int      @default(10)
+  intelligence Int    @default(10)
+  agility    Int      @default(10)
+  vitality   Int      @default(10)
+  luck       Int      @default(10)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user        User          @relation(fields: [userId], references: [id])
+  progression Progression?
+  rewards     Reward[]
+
+  @@map("characters")
+}
+
+// ─── Quest ───────────────────────────────────────────────────────────────────
+
+model Quest {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  type        String
+  status      String    @default("available")
+  rewardXp    Int       @default(0) @map("reward_xp")
+  rewardGold  Int       @default(0) @map("reward_gold")
+  minLevel    Int       @default(1) @map("min_level")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  objectives QuestObjective[]
+
+  @@map("quests")
+}
+
+model QuestObjective {
+  id          String  @id @default(uuid())
+  questId     String  @map("quest_id")
+  description String
+  target      Int
+  current     Int     @default(0)
+  completed   Boolean @default(false)
+
+  quest Quest @relation(fields: [questId], references: [id])
+
+  @@map("quest_objectives")
+}
+
+// ─── Progression ─────────────────────────────────────────────────────────────
+
+model Progression {
+  id               String   @id @default(uuid())
+  characterId      String   @unique @map("character_id")
+  level            Int      @default(1)
+  experience       Int      @default(0)
+  totalExperience  Int      @default(0) @map("total_experience")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  character Character @relation(fields: [characterId], references: [id])
+
+  @@map("progressions")
+}
+
+// ─── Reward ──────────────────────────────────────────────────────────────────
+
+model Reward {
+  id          String    @id @default(uuid())
+  characterId String    @map("character_id")
+  type        String
+  status      String    @default("pending")
+  amount      Int?
+  itemId      String?   @map("item_id")
+  source      String
+  expiresAt   DateTime? @map("expires_at")
+  claimedAt   DateTime? @map("claimed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  character Character @relation(fields: [characterId], references: [id])
+
+  @@map("rewards")
+}
+
+// ─── Notification ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  channel   String   @default("in_app")
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}

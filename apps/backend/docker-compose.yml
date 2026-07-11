@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: solo_app_mvp_postgres
+    user: "1000:1000"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: solo_app_mvp
+      PGDATA: /data/postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./data/pg:/data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
