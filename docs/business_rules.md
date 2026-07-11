@@ -32,10 +32,10 @@
  - [ ] A user should not be able to register with a duplicate email;
  - [ ] A user should not be able to create or edit a character title (MVP).
  - [ ] A user have to choose your character title once, 
- - [ ] An user should not be able to create another character.
+ - [ ] A user should not be able to create another character.
  - [ ] A user can create your own quest (MVP)
 
- - [ ] An quest above 70% is considered done if the quest is a daily quest. 
+ - [ ] A quest above 70% is considered done if the quest is a daily quest. 
  - [ ] A quests have to be at least one category
  - [ ] A Title have to be an description. 
  - [ ] A quest have diferent bonus points and the xp point should be changed in 50 points to incresing or decresing.
@@ -45,10 +45,10 @@
  - [ ] An Quest should not be updated after completed. 
  - [ ] A quest could be classified by ranks, 
     Rank E (easy) - 10 xp
-    Rank D (easy+) - 20
-    Rank C (medium) - 50
-    Rank B (Medium+) - 100
-    Rank A (Hard) - 250 
+    Rank D (easy+) - 20 xp
+    Rank C (medium) - 50 xp
+    Rank B (Medium+) - 100 xp
+    Rank A (Hard) - 250 xp
     Rank S (Impossible) - ?? 
  - [ ] A daily quest could be accepted done if not, on sundays. 
 

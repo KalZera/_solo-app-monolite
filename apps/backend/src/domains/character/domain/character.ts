@@ -6,6 +6,8 @@ export interface Character {
   name: string
   level: number
   experience: number
+  powerScore: number
+  title: string
   class: CharacterClass
   stats: CharacterStats
   createdAt: Date

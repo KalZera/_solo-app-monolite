@@ -31,20 +31,34 @@ model Character {
   name       String
   level      Int      @default(1)
   experience Int      @default(0)
+  powerScore Int      @default(5) @map("power_score")
   class      String
-  strength   Int      @default(10)
-  intelligence Int    @default(10)
-  agility    Int      @default(10)
-  vitality   Int      @default(10)
-  luck       Int      @default(10)
+  title      String   
+  strength   Int      @default(1)
+  intelligence Int    @default(1)
+  agility    Int      @default(1)
+  vitality   Int      @default(1)
+  luck       Int      @default(1)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   user        User          @relation(fields: [userId], references: [id])
   progression Progression?
   rewards     Reward[]
+  history     CharacterHistory[]
 
   @@map("characters")
+}
+
+model CharacterHistory{
+  id           String  @id @default(uuid())
+  characterId  String  @map("character_id")
+  description  String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  character Character @relation(fields: [characterId], references: [id])
+
+    @@map("character_history")
 }
 
 // ─── Quest ───────────────────────────────────────────────────────────────────
