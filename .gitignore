@@ -6,3 +6,8 @@ dist
 .env.*.local
 *.log
 .DS_Store
+claude-entrypoint.sh
+docker-compose.claude.yml
+Dockerfile.claude
+setup-claude-docker.sh
+start-claude.sh
