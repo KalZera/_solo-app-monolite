@@ -2,11 +2,12 @@
 
 ## Functional Requirements
 
- - [ ] It Should be to register an user
- - [ ] It Should be possible to authenticate an user
- - [ ] It Should be possible to create am character
+ - [x] It Should be to register an user
+ - [x] It Should be possible to authenticate an user
+ - [x] It Should be possible to create an character
+ - [ ] It Should be possible add an status for character (healthy and poisoned)
 
- - [ ] It Should be possible to get the character profile of a logged user
+ - [x] It Should be possible to get the character profile of a logged user
  - [ ] The Character should have a power score (sum of attributes)
  - [ ] It should not be possible to change your character name
 
@@ -68,12 +69,12 @@
 
 ## Non-Functional Requirements
  - [ ] All quest have to be save on database 
- - [ ] The application's data must be persisted in a PostgreSQL database.
+ - [x] The application's data must be persisted in a PostgreSQL database.
  - [ ] The application events must to use an event bus to manage the events. (MVP)
  - [ ] The notification have to be sended with external service using whatsapp.
- - [ ] The User must be identified by a JWT token 
+ - [x] The User must be identified by a JWT token 
  - [ ] The timezone of quest have to be calculed in GMT -3(MVP)
- - [ ] All attributes name should be saved on database and use a seed to create then. 
+ <!-- - [ ] All attributes name should be saved on database and use a seed to create then.  -->
 
  
 
