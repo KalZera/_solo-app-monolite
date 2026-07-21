@@ -1,19 +1,23 @@
 import type { FastifyPluginAsync } from 'fastify'
+import { CreateCharacterUseCase } from '../application/create-character.js'
+import { GetCharacterProfileUseCase } from '../application/get-character-profile.js'
+import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository.js'
+import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
-  app.get('/', async () => ({ data: [], total: 0 }))
+  const repository = new PrismaCharacterRepository(app.prisma)
 
-  app.get('/:id', async (req) => {
-    const { id } = req.params as { id: string }
-    return { id }
+  app.get('/me', { preHandler: [app.authenticate] }, async (req) => {
+    const getCharacterProfile = new GetCharacterProfileUseCase(repository)
+    return getCharacterProfile.execute({ userId: req.user.sub })
   })
 
-  app.post('/', async (req, reply) => {
-    return reply.status(201).send({ message: 'character created' })
-  })
-
-  app.patch('/:id', async (req) => {
-    const { id } = req.params as { id: string }
-    return { id, updated: true }
+  app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const createCharacter = new CreateCharacterUseCase(repository)
+    const result = await createCharacter.execute({
+      ...(req.body as Omit<Parameters<typeof createCharacter.execute>[0], 'userId'>),
+      userId: req.user.sub,
+    })
+    return reply.status(201).send(result)
   })
 }

@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
-import type { Character, CharacterRepository } from '../../domain/character.js'
-import type { ID } from '../../../../shared/types/index.js'
+import type { Character, CharacterRepository } from '../domain/character.js'
+import type { ID } from '../../../shared/types/index.js'
 
 const DEFAULT_STATS = {
   strength: 1,

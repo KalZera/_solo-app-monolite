@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { GetCharacterProfileUseCase } from '../application/get-character-profile.js'
 import { NotFoundError } from '../../../shared/errors/app-error.js'
-import { InMemoryCharacterRepository } from './helpers/in-memory-character-repository.js'
+import { InMemoryCharacterRepository } from '../infrastructure/in-memory-character-repository.js'
 
 describe('GetCharacterProfileUseCase', () => {
   let repository: InMemoryCharacterRepository

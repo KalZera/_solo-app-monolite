@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateCharacterUseCase } from '../application/create-character.js'
 import { ConflictError } from '../../../shared/errors/app-error.js'
-import { InMemoryCharacterRepository } from './helpers/in-memory-character-repository.js'
+import { InMemoryCharacterRepository } from '../infrastructure/in-memory-character-repository.js'
 
 describe('CreateCharacterUseCase', () => {
   let repository: InMemoryCharacterRepository

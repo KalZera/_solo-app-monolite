@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import type { PrismaClient } from '@prisma/client'
 import { RegisterUserUseCase } from '../application/register-user.js'
 import { ConflictError } from '../../../shared/errors/app-error.js'
-import { InMemoryPrisma } from './helpers/in-memory-prisma.js'
+import { InMemoryPrisma } from '../infrastructure/in-memory-prisma.js'
 
 describe('RegisterUserUseCase', () => {
   let prisma: InMemoryPrisma
