@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
-import type { User, UserRepository } from '../domain/user.js'
-import type { ID } from '../../../shared/types/index.js'
-import { generateId } from '../../../shared/utils/index.js'
+import type { User, UserRepository } from '../domain/user'
+import type { ID } from '../../../shared/types/index'
+import { generateId } from '../../../shared/utils/index'
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaClient) {}

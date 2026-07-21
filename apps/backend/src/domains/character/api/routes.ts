@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
-import { CreateCharacterUseCase } from '../application/create-character.js'
-import { GetCharacterProfileUseCase } from '../application/get-character-profile.js'
-import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository.js'
+import { CreateCharacterUseCase } from '../application/create-character'
+import { GetCharacterProfileUseCase } from '../application/get-character-profile'
+import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
 import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {

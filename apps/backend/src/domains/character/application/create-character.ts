@@ -1,6 +1,6 @@
-import type { CharacterClass, CharacterRepository } from '../domain/character.js'
-import { calculatePowerScore } from '../domain/character.js'
-import { ConflictError } from '../../../shared/errors/app-error.js'
+import type { CharacterClass, CharacterRepository } from '../domain/character'
+import { calculatePowerScore } from '../domain/character'
+import { ConflictError } from '../../../shared/errors/app-error'
 
 interface CreateCharacterInput {
   userId: string

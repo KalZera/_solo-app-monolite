@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client'
-import { ConflictError } from '../../../shared/errors/app-error.js'
-import { generateId } from '../../../shared/utils/index.js'
+import { ConflictError } from '../../../shared/errors/app-error'
+import { generateId } from '../../../shared/utils/index'
 
 interface RegisterInput {
   email: string

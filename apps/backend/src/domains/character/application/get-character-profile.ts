@@ -1,6 +1,6 @@
-import type { CharacterRepository } from '../domain/character.js'
-import { calculatePowerScore, calculateRank } from '../domain/character.js'
-import { NotFoundError } from '../../../shared/errors/app-error.js'
+import type { CharacterRepository } from '../domain/character'
+import { calculatePowerScore, calculateRank } from '../domain/character'
+import { NotFoundError } from '../../../shared/errors/app-error'
 
 interface GetCharacterProfileInput {
   userId: string

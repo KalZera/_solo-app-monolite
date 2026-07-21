@@ -1,7 +1,7 @@
 import type { PrismaClient, Character as PrismaCharacter } from '@prisma/client'
-import type { Character, CharacterClass, CharacterRepository } from '../domain/character.js'
-import type { ID } from '../../../shared/types/index.js'
-import { generateId } from '../../../shared/utils/index.js'
+import type { Character, CharacterClass, CharacterRepository } from '../domain/character'
+import type { ID } from '../../../shared/types/index'
+import { generateId } from '../../../shared/utils/index'
 
 function toDomain(record: PrismaCharacter): Character {
   return {

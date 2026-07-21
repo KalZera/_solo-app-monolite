@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { PrismaClient } from '@prisma/client'
-import { LoginUserUseCase } from '../application/login-user.js'
-import { UnauthorizedError } from '../../../shared/errors/app-error.js'
-import { InMemoryPrisma } from '../infrastructure/in-memory-prisma.ts'
+import { LoginUserUseCase } from '../application/login-user'
+import { UnauthorizedError } from '../../../shared/errors/app-error'
+import { InMemoryPrisma } from '../infrastructure/in-memory-prisma'
 
 const SEEDED_USER = {
   email: 'jinwoo@solo.com',

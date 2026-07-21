@@ -1,4 +1,4 @@
-import type { ID } from '../../../shared/types/index.js'
+import type { ID } from '../../../shared/types/index'
 
 export interface User {
   id: ID

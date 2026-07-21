@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify'
-import { RegisterUserUseCase } from '../application/register-user.js'
-import { LoginUserUseCase } from '../application/login-user.js'
+import { RegisterUserUseCase } from '../application/register-user'
+import { LoginUserUseCase } from '../application/login-user'
 import '../.././../infrastructure/jwt/types.js'
 
 export const identityRoutes: FastifyPluginAsync = async (app) => {

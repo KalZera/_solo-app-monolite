@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin'
 import fastifyJwt from '@fastify/jwt'
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
-import { UnauthorizedError } from '../../shared/errors/app-error.js'
+import { UnauthorizedError } from '../../shared/errors/app-error'
 
 const plugin: FastifyPluginAsync = async (app) => {
   const secret = process.env.JWT_SECRET

@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
-import { UnauthorizedError } from '../../../shared/errors/app-error.js'
+import { UnauthorizedError } from '../../../shared/errors/app-error'
 
 interface LoginInput {
   email: string
