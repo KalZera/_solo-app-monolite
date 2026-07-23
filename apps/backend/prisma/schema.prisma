@@ -26,47 +26,65 @@ model User {
 // ─── Character ───────────────────────────────────────────────────────────────
 
 model Character {
-  id         String   @id @default(uuid())
-  userId     String   @map("user_id")
-  name       String
-  level      Int      @default(1)
-  experience Int      @default(0)
-  powerScore Int      @default(5) @map("power_score")
-  class      String
-  title      String   
-  strength   Int      @default(1)
-  intelligence Int    @default(1)
-  agility    Int      @default(1)
-  vitality   Int      @default(1)
-  luck       Int      @default(1)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  name         String
+  level        Int      @default(1)
+  experience   Int      @default(0)
+  powerScore   Int      @default(5) @map("power_score")
+  class        String
+  title        String
+  strength     Int      @default(1)
+  intelligence Int      @default(1)
+  agility      Int      @default(1)
+  vitality     Int      @default(1)
+  luck         Int      @default(1)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  user        User          @relation(fields: [userId], references: [id])
+  user        User                 @relation(fields: [userId], references: [id])
   progression Progression?
   rewards     Reward[]
   history     CharacterHistory[]
+  quests      Quest[]
+  restPoints  CharacterRestPoint[]
 
   @@map("characters")
 }
 
-model CharacterHistory{
-  id           String  @id @default(uuid())
-  characterId  String  @map("character_id")
-  description  String
-  createdAt  DateTime @default(now()) @map("created_at")
+// ─── Character Rest Points───────────────────────────────────────────────────────────────
+
+model CharacterRestPoint {
+  id          String   @id @default(uuid())
+  characterId String   @map("character_id")
+  restPoints  Int      @map("rest_points")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   character Character @relation(fields: [characterId], references: [id])
 
-    @@map("character_history")
+  @@map("characters_rest_points")
+}
+
+model CharacterHistory {
+  id          String   @id @default(uuid())
+  characterId String   @map("character_id")
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  character Character @relation(fields: [characterId], references: [id])
+
+  @@map("character_history")
 }
 
 // ─── Quest ───────────────────────────────────────────────────────────────────
 
 model Quest {
   id          String    @id @default(uuid())
+  characterId String    @map("character_id")
   title       String
   description String
+  category    String
   type        String
   status      String    @default("available")
   rewardXp    Int       @default(0) @map("reward_xp")
@@ -76,6 +94,7 @@ model Quest {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
+  character  Character        @relation(fields: [characterId], references: [id])
   objectives QuestObjective[]
 
   @@map("quests")
@@ -97,12 +116,12 @@ model QuestObjective {
 // ─── Progression ─────────────────────────────────────────────────────────────
 
 model Progression {
-  id               String   @id @default(uuid())
-  characterId      String   @unique @map("character_id")
-  level            Int      @default(1)
-  experience       Int      @default(0)
-  totalExperience  Int      @default(0) @map("total_experience")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  characterId     String   @unique @map("character_id")
+  level           Int      @default(1)
+  experience      Int      @default(0)
+  totalExperience Int      @default(0) @map("total_experience")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   character Character @relation(fields: [characterId], references: [id])
 
