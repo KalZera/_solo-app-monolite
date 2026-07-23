@@ -22,7 +22,7 @@ export function LoginScreen() {
         </YStack>
 
         <SystemPanel width="100%" maxWidth={380}>
-          <LoginForm onSuccess={() => router.replace('/character')} />
+          <LoginForm onSuccess={() => router.replace('/home')} />
         </SystemPanel>
       </YStack>
     </ScrollView>

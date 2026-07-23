@@ -1,21 +1,43 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { TamaguiProvider } from 'tamagui'
+import { TamaguiProvider, View } from 'tamagui'
+import { SessionProvider, useSession } from '@/modules/auth/session/SessionProvider'
 import { queryClient } from '@/shared/api/query-client'
 import tamaguiConfig from '@/shared/theme/tamagui.config'
+
+function RootNavigator() {
+  const { isAuthenticated, isLoading } = useSession()
+
+  if (isLoading) {
+    return <View flex={1} backgroundColor="$soloBg" />
+  }
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#05070f' },
+      }}
+    >
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="(app)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="login" />
+      </Stack.Protected>
+    </Stack>
+  )
+}
 
 export default function RootLayout() {
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#05070f' },
-          }}
-        />
+        <SessionProvider>
+          <StatusBar style="light" />
+          <RootNavigator />
+        </SessionProvider>
       </QueryClientProvider>
     </TamaguiProvider>
   )
