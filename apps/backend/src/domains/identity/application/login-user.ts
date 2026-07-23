@@ -1,21 +1,17 @@
 import type { PrismaClient } from '@prisma/client'
 import { UnauthorizedError } from '../../../shared/errors/app-error'
+import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
 
 interface LoginInput {
   email: string
   password: string
 }
 
-interface TokenPayload {
-  sub: string
-  email: string
-  username: string
-}
-
 export class LoginUserUseCase {
   constructor(
     private readonly prisma: PrismaClient,
-    private readonly sign: (payload: TokenPayload) => string,
+    private readonly signAccessToken: (payload: TokenPayload) => string,
+    private readonly signRefreshToken: (payload: TokenPayload) => string,
   ) {}
 
   async execute(input: LoginInput) {
@@ -25,8 +21,11 @@ export class LoginUserUseCase {
       throw new UnauthorizedError('Invalid credentials')
     }
 
-    const token = this.sign({ sub: user.id, email: user.email, username: user.username })
+    const payload: TokenPayload = { sub: user.id, email: user.email, username: user.username }
 
-    return { access_token: token }
+    return {
+      access_token: this.signAccessToken(payload),
+      refresh_token: this.signRefreshToken(payload),
+    }
   }
 }

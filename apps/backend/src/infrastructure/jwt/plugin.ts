@@ -18,6 +18,10 @@ const plugin: FastifyPluginAsync = async (app) => {
     } catch {
       throw new UnauthorizedError('Invalid or expired token')
     }
+
+    if (request.user.type !== 'access') {
+      throw new UnauthorizedError('Invalid or expired token')
+    }
   })
 }
 

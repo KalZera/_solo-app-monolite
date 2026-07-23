@@ -12,32 +12,36 @@ const SEEDED_USER = {
 
 describe('LoginUserUseCase', () => {
   let prisma: InMemoryPrisma
-  let sign: ReturnType<typeof vi.fn>
+  let signAccessToken: ReturnType<typeof vi.fn>
+  let signRefreshToken: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     prisma = new InMemoryPrisma()
-    sign = vi.fn().mockReturnValue('fake-jwt-token')
+    signAccessToken = vi.fn().mockReturnValue('fake-access-token')
+    signRefreshToken = vi.fn().mockReturnValue('fake-refresh-token')
   })
 
-  it('returns access_token for valid credentials', async () => {
+  it('returns access_token and refresh_token for valid credentials', async () => {
     prisma.seed(SEEDED_USER)
-    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, sign)
+    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     const result = await useCase.execute({
       email: SEEDED_USER.email,
       password: SEEDED_USER.passwordHash,
     })
 
-    expect(result).toEqual({ access_token: 'fake-jwt-token' })
-    expect(sign).toHaveBeenCalledWith({
+    expect(result).toEqual({ access_token: 'fake-access-token', refresh_token: 'fake-refresh-token' })
+    const expectedPayload = {
       sub: expect.any(String),
       email: SEEDED_USER.email,
       username: SEEDED_USER.username,
-    })
+    }
+    expect(signAccessToken).toHaveBeenCalledWith(expectedPayload)
+    expect(signRefreshToken).toHaveBeenCalledWith(expectedPayload)
   })
 
   it('throws UnauthorizedError when the user does not exist', async () => {
-    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, sign)
+    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(
       useCase.execute({ email: 'ghost@solo.com', password: 'any-password' }),
@@ -46,17 +50,19 @@ describe('LoginUserUseCase', () => {
 
   it('throws UnauthorizedError when the password is wrong', async () => {
     prisma.seed(SEEDED_USER)
-    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, sign)
+    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(
       useCase.execute({ email: SEEDED_USER.email, password: 'wrong-password' }),
     ).rejects.toThrow(UnauthorizedError)
   })
 
-  it('propagates errors thrown by the sign function', async () => {
+  it('propagates errors thrown by the access token signer', async () => {
     prisma.seed(SEEDED_USER)
-    sign.mockImplementation(() => { throw new Error('jwt signing failed') })
-    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, sign)
+    signAccessToken.mockImplementation(() => {
+      throw new Error('jwt signing failed')
+    })
+    const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(
       useCase.execute({ email: SEEDED_USER.email, password: SEEDED_USER.passwordHash }),

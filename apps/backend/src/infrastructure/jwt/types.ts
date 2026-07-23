@@ -1,16 +1,9 @@
 import '@fastify/jwt'
+import type { TokenPayload } from './token-payload'
 
 declare module '@fastify/jwt' {
   interface FastifyJWT {
-    payload: {
-      sub: string
-      email: string
-      username: string
-    }
-    user: {
-      sub: string
-      email: string
-      username: string
-    }
+    payload: TokenPayload & { type: 'access' | 'refresh' }
+    user: TokenPayload & { type: 'access' | 'refresh' }
   }
 }
