@@ -8,7 +8,7 @@
  - [ ] It Should be possible add an status for character (healthy and poisoned)
 
  - [x] It Should be possible to get the character profile of a logged user
- - [ ] The Character should have a power score (sum of attributes)
+ - [x] The Character should have a power score (sum of attributes)
  - [ ] It should not be possible to change your character name
 
  - [ ] It Should be possible to see the history of quests completed
@@ -20,27 +20,27 @@
  - [ ] It should be warn about daily and week quests
  - [ ] It should be notified each 2 days for week quests 
  - [ ] It Should be possible to splitted a quest in mini quests and calculated by percentage 
- - [ ] It Should be possible to add a period for complete quests.
+ - [x] It Should be possible to add a period for complete quests.
  - [ ] It Should not be possible to remove a quest started 
 
- - [ ] It not should be possible edit or add an attribute. 
+ - [x] It not should be possible edit or add an attribute. 
  - [ ] It should be possible to see attribute points in a header
  - [ ] It should not be possible do a downgrade in an attribute
  
  - [ ] It should be logged to update the quest. 
 
  ## Business Rule 
- - [ ] A user should not be able to register with a duplicate email;
- - [ ] A user should not be able to create or edit a character title (MVP).
+ - [x] A user should not be able to register with a duplicate email;
+ - [x] A user should not be able to create or edit a character title (MVP).
  - [ ] A user have to choose your character title once, 
- - [ ] A user should not be able to create another character.
+ - [x] A user should not be able to create another character.
  - [ ] A user can create your own quest (MVP)
 
  - [ ] A quest above 70% is considered done if the quest is a daily quest. 
- - [ ] A quests have to be at least one category
- - [ ] A Title have to be an description. 
+ - [x] A quest have to be at least one category
+ - [x] A quest have to be an description. 
  - [ ] A quest have diferent bonus points and the xp point should be changed in 50 points to incresing or decresing.
- - [ ] A quest cannot be created as 0 points reward.
+ - [x] A quest cannot be created as 0 points reward.
  - [ ] A quest have to be a period to finish. (???)
  - [ ] A Quest completed after the deadline should not be counted.
  - [ ] An Quest should not be updated after completed. 

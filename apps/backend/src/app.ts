@@ -4,7 +4,7 @@ import helmet from '@fastify/helmet'
 import cookie from '@fastify/cookie'
 import { identityRoutes } from './domains/identity/api/routes'
 import { characterRoutes } from './domains/character/api/routes'
-// import { questRoutes } from './domains/quest/api/routes'
+import { questRoutes } from './domains/quest/api/routes'
 // import { progressionRoutes } from './domains/progression/api/routes'
 // import { rewardRoutes } from './domains/reward/api/routes'
 // import { notificationRoutes } from './domains/notification/api/routes'
@@ -24,7 +24,7 @@ export function buildApp() {
 
   app.register(identityRoutes, { prefix: '/api/v1/identity' })
   app.register(characterRoutes, { prefix: '/api/v1/characters' })
-  // app.register(questRoutes, { prefix: '/api/v1/quests' })
+  app.register(questRoutes, { prefix: '/api/v1/quests' })
   // app.register(progressionRoutes, { prefix: '/api/v1/progression' })
   // app.register(rewardRoutes, { prefix: '/api/v1/rewards' })
   // app.register(notificationRoutes, { prefix: '/api/v1/notifications' })

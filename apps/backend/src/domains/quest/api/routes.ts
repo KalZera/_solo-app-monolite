@@ -1,24 +1,51 @@
 import type { FastifyPluginAsync } from 'fastify'
+import { CreateQuestUseCase } from '../application/create-quest'
+import { ListQuestsUseCase } from '../application/list-quests'
+import { GetQuestUseCase } from '../application/get-quest'
+import { UpdateQuestUseCase } from '../application/update-quest'
+import { DeleteQuestUseCase } from '../application/delete-quest'
+import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository'
+import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
+import '../../../infrastructure/jwt/types.js'
 
 export const questRoutes: FastifyPluginAsync = async (app) => {
-  app.get('/', async () => ({ data: [], total: 0 }))
+  const questRepository = new PrismaQuestRepository(app.prisma)
+  const characterRepository = new PrismaCharacterRepository(app.prisma)
 
-  app.get('/:id', async (req) => {
-    const { id } = req.params as { id: string }
-    return { id }
+  app.get('/', { preHandler: [app.authenticate] }, async (req) => {
+    const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
+    return listQuests.execute({ userId: req.user.sub })
   })
 
-  app.post('/', async (_req, reply) => {
-    return reply.status(201).send({ message: 'quest created' })
+  app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {
+    const { id } = req.params as { id: string }
+    const getQuest = new GetQuestUseCase(questRepository, characterRepository)
+    return getQuest.execute({ userId: req.user.sub, questId: id })
   })
 
-  app.post('/:id/start', async (req) => {
-    const { id } = req.params as { id: string }
-    return { id, status: 'in_progress' }
+  app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
+    const result = await createQuest.execute({
+      ...(req.body as Omit<Parameters<typeof createQuest.execute>[0], 'userId'>),
+      userId: req.user.sub,
+    })
+    return reply.status(201).send(result)
   })
 
-  app.post('/:id/complete', async (req) => {
+  app.patch('/:id', { preHandler: [app.authenticate] }, async (req) => {
     const { id } = req.params as { id: string }
-    return { id, status: 'completed' }
+    const updateQuest = new UpdateQuestUseCase(questRepository, characterRepository)
+    return updateQuest.execute({
+      ...(req.body as Omit<Parameters<typeof updateQuest.execute>[0], 'userId' | 'questId'>),
+      userId: req.user.sub,
+      questId: id,
+    })
+  })
+
+  app.delete('/:id', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const { id } = req.params as { id: string }
+    const deleteQuest = new DeleteQuestUseCase(questRepository, characterRepository)
+    await deleteQuest.execute({ userId: req.user.sub, questId: id })
+    return reply.status(204).send()
   })
 }
