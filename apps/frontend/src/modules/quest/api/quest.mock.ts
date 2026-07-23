@@ -1,0 +1,52 @@
+import type { Quest } from '../types'
+
+export const mockDailyQuests: Quest[] = [
+  {
+    id: 'quest-mock-001',
+    title: 'Complete 3 quests',
+    description: 'Finish any three quests today to earn bonus experience.',
+    type: 'daily',
+    status: 'in_progress',
+    objectives: [
+      { id: 'obj-mock-001', description: 'Complete 3 quests', target: 3, current: 2, completed: false },
+    ],
+    rewardXp: 150,
+    rewardGold: 0,
+    minLevel: 1,
+    expiresAt: null,
+    createdAt: '2026-07-23T00:00:00.000Z',
+    updatedAt: '2026-07-23T00:00:00.000Z',
+  },
+  {
+    id: 'quest-mock-002',
+    title: 'Train for 30 minutes',
+    description: 'Spend 30 minutes training to strengthen your body.',
+    type: 'daily',
+    status: 'in_progress',
+    objectives: [
+      { id: 'obj-mock-002', description: 'Train for 30 minutes', target: 30, current: 15, completed: false },
+    ],
+    rewardXp: 100,
+    rewardGold: 0,
+    minLevel: 1,
+    expiresAt: null,
+    createdAt: '2026-07-23T00:00:00.000Z',
+    updatedAt: '2026-07-23T00:00:00.000Z',
+  },
+  {
+    id: 'quest-mock-003',
+    title: 'Increase an attribute',
+    description: 'Allocate at least one attribute point.',
+    type: 'daily',
+    status: 'completed',
+    objectives: [
+      { id: 'obj-mock-003', description: 'Increase an attribute', target: 1, current: 1, completed: true },
+    ],
+    rewardXp: 50,
+    rewardGold: 0,
+    minLevel: 1,
+    expiresAt: null,
+    createdAt: '2026-07-23T00:00:00.000Z',
+    updatedAt: '2026-07-23T00:00:00.000Z',
+  },
+]

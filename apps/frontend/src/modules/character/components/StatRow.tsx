@@ -1,4 +1,5 @@
 import { Text, XStack, YStack } from 'tamagui'
+import { ProgressBar } from '@/shared/components/ProgressBar'
 
 const STAT_BAR_MAX = 500
 
@@ -8,8 +9,6 @@ interface StatRowProps {
 }
 
 export function StatRow({ label, value }: StatRowProps) {
-  const fillPercent = Math.min(value / STAT_BAR_MAX, 1) * 100
-
   return (
     <YStack gap="$1.5">
       <XStack justifyContent="space-between">
@@ -20,9 +19,7 @@ export function StatRow({ label, value }: StatRowProps) {
           {value}
         </Text>
       </XStack>
-      <YStack height={6} borderRadius="$10" backgroundColor="$soloPanelAlt" overflow="hidden">
-        <YStack height="100%" width={`${fillPercent}%`} backgroundColor="$soloBlue" borderRadius="$10" />
-      </YStack>
+      <ProgressBar value={value} max={STAT_BAR_MAX} color="$soloBlue" />
     </YStack>
   )
 }

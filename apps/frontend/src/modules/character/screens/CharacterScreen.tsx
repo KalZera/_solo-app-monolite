@@ -1,4 +1,5 @@
 import { ScrollView, Text, XStack, YStack } from 'tamagui'
+import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
 import { SystemPanel } from '@/shared/components/SystemPanel'
 import { useCharacterProfile } from '../api/useCharacterProfile'
 import { StatRow } from '../components/StatRow'
@@ -13,11 +14,7 @@ export function CharacterScreen() {
           Status Window
         </Text>
 
-        {isPending && (
-          <Text color="$soloTextMuted" paddingTop="$8">
-            Summoning character data…
-          </Text>
-        )}
+        {isPending && <LoadingIndicator label="Summoning character data…" />}
 
         {isError && (
           <Text color="$soloDanger" paddingTop="$8">

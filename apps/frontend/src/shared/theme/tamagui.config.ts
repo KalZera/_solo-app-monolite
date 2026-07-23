@@ -21,6 +21,9 @@ export const soloColors = {
   soloText: '#eaf2ff',
   soloTextMuted: '#93a1c7',
   soloDanger: '#ff5d7a',
+  soloPurple: '#8b5cf6',
+  soloPurpleGlow: '#c4b5fd',
+  soloPurplePress: '#7c3aed',
 }
 
 const config = createTamagui({
