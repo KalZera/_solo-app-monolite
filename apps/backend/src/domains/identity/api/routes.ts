@@ -2,6 +2,7 @@ import type { FastifyPluginAsync, FastifyReply } from 'fastify'
 import { RegisterUserUseCase } from '../application/register-user'
 import { LoginUserUseCase } from '../application/login-user'
 import { RefreshSessionUseCase } from '../application/refresh-session'
+import { UpdateUserUseCase } from '../application/update-user'
 import {
   ACCESS_TOKEN_TTL,
   REFRESH_TOKEN_COOKIE_NAME,
@@ -66,5 +67,11 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
 
   app.get('/me', { preHandler: [app.authenticate] }, async (req, reply) => {
     return reply.send(req.user)
+  })
+
+  app.patch('/password', async (req, reply) => {
+    const updateUser = new UpdateUserUseCase(app.prisma)
+    const result = await updateUser.execute(req.body as Parameters<typeof updateUser.execute>[0])
+    return reply.send(result)
   })
 }

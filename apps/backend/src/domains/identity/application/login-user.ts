@@ -1,6 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
 import { UnauthorizedError } from '../../../shared/errors/app-error'
 import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
+import { verifyPassword } from '../../../shared/security/password'
 
 interface LoginInput {
   email: string
@@ -17,7 +18,7 @@ export class LoginUserUseCase {
   async execute(input: LoginInput) {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } })
 
-    if (!user || user.passwordHash !== input.password) {
+    if (!user || !(await verifyPassword(input.password, user.passwordHash))) {
       throw new UnauthorizedError('Invalid credentials')
     }
 

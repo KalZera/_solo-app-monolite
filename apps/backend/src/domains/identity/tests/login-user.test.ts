@@ -3,11 +3,14 @@ import type { PrismaClient } from '@prisma/client'
 import { LoginUserUseCase } from '../application/login-user'
 import { UnauthorizedError } from '../../../shared/errors/app-error'
 import { InMemoryPrisma } from '../infrastructure/in-memory-prisma'
+import { hashPassword } from '../../../shared/security/password'
+
+const PLAIN_PASSWORD = 'correct-password'
 
 const SEEDED_USER = {
   email: 'jinwoo@solo.com',
   username: 'jinwoo',
-  passwordHash: 'correct-hash',
+  passwordHash: await hashPassword(PLAIN_PASSWORD),
 }
 
 describe('LoginUserUseCase', () => {
@@ -27,7 +30,7 @@ describe('LoginUserUseCase', () => {
 
     const result = await useCase.execute({
       email: SEEDED_USER.email,
-      password: SEEDED_USER.passwordHash,
+      password: PLAIN_PASSWORD,
     })
 
     expect(result).toEqual({ access_token: 'fake-access-token', refresh_token: 'fake-refresh-token' })
@@ -65,7 +68,7 @@ describe('LoginUserUseCase', () => {
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(
-      useCase.execute({ email: SEEDED_USER.email, password: SEEDED_USER.passwordHash }),
+      useCase.execute({ email: SEEDED_USER.email, password: PLAIN_PASSWORD }),
     ).rejects.toThrow('jwt signing failed')
   })
 })

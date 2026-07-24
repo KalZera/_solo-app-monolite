@@ -3,6 +3,7 @@ import type { PrismaClient } from '@prisma/client'
 import { RegisterUserUseCase } from '../application/register-user'
 import { ConflictError } from '../../../shared/errors/app-error'
 import { InMemoryPrisma } from '../infrastructure/in-memory-prisma'
+import { verifyPassword } from '../../../shared/security/password'
 
 describe('RegisterUserUseCase', () => {
   let prisma: InMemoryPrisma
@@ -25,6 +26,10 @@ describe('RegisterUserUseCase', () => {
     expect(result.username).toBe('jinwoo')
     expect(result.createdAt).toBeInstanceOf(Date)
     expect(result).not.toHaveProperty('passwordHash')
+
+    const storedUser = await prisma.user.findUnique({ where: { email: 'hunter@solo.com' } })
+    expect(storedUser?.passwordHash).not.toBe('strong-password')
+    expect(await verifyPassword('strong-password', storedUser!.passwordHash)).toBe(true)
   })
 
   it('throws ConflictError when email is already taken', async () => {

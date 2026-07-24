@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
+import { hashPassword } from '../src/shared/security/password'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +14,7 @@ async function main() {
       id: randomUUID(),
       email: 'admin@admin.com',
       username: 'admin',
-      passwordHash: 'admin',
+      passwordHash: await hashPassword('admin'),
     },
   })
 

@@ -12,6 +12,11 @@ type UserRow = {
 type WhereUnique = { id?: string; email?: string; username?: string }
 type WhereFirst = { OR?: Array<Partial<UserRow>> }
 type CreateArgs = { data: UserRow; select?: Record<string, boolean> }
+type UpdateArgs = {
+  where: WhereUnique
+  data: Partial<UserRow>
+  select?: Record<string, boolean>
+}
 
 export class InMemoryPrisma {
   private users: UserRow[] = []
@@ -55,6 +60,26 @@ export class InMemoryPrisma {
     create: async ({ data, select }: CreateArgs) => {
       const row: UserRow = { ...data, createdAt: new Date(), updatedAt: new Date() }
       this.users.push(row)
+      if (!select) return row
+      return Object.fromEntries(
+        Object.entries(row).filter(([key]) => select[key]),
+      )
+    },
+
+    update: async ({ where, data, select }: UpdateArgs) => {
+      const index = this.users.findIndex(
+        (u) =>
+          (where.id && u.id === where.id) ||
+          (where.email && u.email === where.email) ||
+          (where.username && u.username === where.username),
+      )
+
+      if (index === -1) {
+        throw new Error('Record to update not found')
+      }
+
+      const row: UserRow = { ...this.users[index], ...data, updatedAt: new Date() }
+      this.users[index] = row
       if (!select) return row
       return Object.fromEntries(
         Object.entries(row).filter(([key]) => select[key]),
