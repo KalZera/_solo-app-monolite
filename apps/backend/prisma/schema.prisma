@@ -17,8 +17,9 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  characters    Character[]
-  notifications Notification[]
+  characters      Character[]
+  notifications   Notification[]
+  questCategories QuestCategory[]
 
   @@map("users")
 }
@@ -75,6 +76,20 @@ model CharacterHistory {
   character Character @relation(fields: [characterId], references: [id])
 
   @@map("character_history")
+}
+
+// ─── Quest Category ──────────────────────────────────────────────────────────
+
+model QuestCategory {
+  id        String   @id @default(uuid())
+  name      String
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  creator User @relation(fields: [createdBy], references: [id])
+
+  @@map("quest_categories")
 }
 
 // ─── Quest ───────────────────────────────────────────────────────────────────

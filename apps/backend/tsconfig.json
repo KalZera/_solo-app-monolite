@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node10",
-    "lib": ["ES2022"],
+    "module": "node16",
+    "moduleResolution": "node16",
+    "lib": [
+      "ES2022"
+    ],
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
@@ -15,11 +17,23 @@
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@domains/*": ["./src/domains/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@infrastructure/*": ["./src/infrastructure/*"]
+      "@domains/*": [
+        "./src/domains/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ],
+      "@infrastructure/*": [
+        "./src/infrastructure/*"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
 }
