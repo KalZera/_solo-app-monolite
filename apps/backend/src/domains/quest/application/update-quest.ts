@@ -41,7 +41,7 @@ export class UpdateQuestUseCase {
       throw new ConflictError('A completed quest cannot be updated')
     }
     
-    if (quest.type !== input.type) {
+    if (input.type !== undefined && quest.type !== input.type) {
       throw new ConflictError('A quest cannot be a type updated')
     }
 

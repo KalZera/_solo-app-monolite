@@ -3,6 +3,8 @@ import type { Quest } from '../types'
 export const mockDailyQuests: Quest[] = [
   {
     id: 'quest-mock-001',
+    characterId: 'char-mock-001',
+    questRank: 'E',
     title: 'Complete 3 quests',
     description: 'Finish any three quests today to earn bonus experience.',
     type: 'daily',
@@ -19,6 +21,8 @@ export const mockDailyQuests: Quest[] = [
   },
   {
     id: 'quest-mock-002',
+    characterId: 'char-mock-001',
+    questRank: 'D',
     title: 'Train for 30 minutes',
     description: 'Spend 30 minutes training to strengthen your body.',
     type: 'daily',
@@ -35,6 +39,8 @@ export const mockDailyQuests: Quest[] = [
   },
   {
     id: 'quest-mock-003',
+    characterId: 'char-mock-001',
+    questRank: 'E',
     title: 'Increase an attribute',
     description: 'Allocate at least one attribute point.',
     type: 'daily',
