@@ -43,7 +43,7 @@ describe('UpdateQuestUseCase', () => {
 
     await expect(
       useCase.execute({ userId: 'user-1', questId: quest.id, type: 'side' }),
-    ).rejects.toThrow(ValidationError)
+    ).rejects.toThrow(ConflictError)
   })
 
   it('rejects dropping the XP reward to 0', async () => {

@@ -55,7 +55,7 @@ export class UpdateQuestUseCase {
       throw new ValidationError('A quest cannot be created with 0 (or less) XP reward')
     }
 
-    return this.questRepository.update(quest.id, {
+    return this.questRepository.save(quest.id, {
       ...(input.title !== undefined && { title: input.title }),
       ...(input.description !== undefined && { description: input.description }),
       ...(input.questRank !== undefined && { questRank: input.questRank }),

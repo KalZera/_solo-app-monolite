@@ -1,4 +1,4 @@
-import type { ID } from '../../../shared/types/index.js'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 
 export type QuestStatus = 'available' | 'in_progress' | 'completed' | 'failed' | 'expired'
 export type QuestType = 'main' | 'side' | 'daily' | 'weekly' | 'event'
@@ -41,11 +41,14 @@ export interface CreateQuestData extends Omit<Quest, 'id' | 'createdAt' | 'updat
   objectives: Array<Omit<QuestObjective, 'id'>>
 }
 
+export type QuestFilter = Partial<Omit<Quest, 'objectives'>>
+
 export interface QuestRepository {
   findById(id: ID): Promise<Quest | null>
   findByCharacterId(characterId: ID): Promise<Quest[]>
+  findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>>
   create(data: CreateQuestData): Promise<Quest>
-  update(id: ID, data: Partial<Quest>): Promise<Quest>
+  save(id: ID, data: Partial<Quest>): Promise<Quest>
   delete(id: ID): Promise<void>
 }
 

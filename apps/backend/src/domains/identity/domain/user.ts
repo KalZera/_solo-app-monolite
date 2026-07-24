@@ -14,5 +14,5 @@ export interface UserRepository {
   findByEmail(email: string): Promise<User | null>
   findByUsername(username: string): Promise<User | null>
   create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User>
-  update(id: ID, data: Partial<User>): Promise<User>
+  save(id: ID, data: Partial<User>): Promise<User>
 }

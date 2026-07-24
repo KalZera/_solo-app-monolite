@@ -1,6 +1,14 @@
 import { randomUUID } from 'crypto'
-import type { CreateQuestData, Quest, QuestRepository } from '../domain/quest'
-import type { ID } from '../../../shared/types/index.js'
+import type { CreateQuestData, Quest, QuestFilter, QuestRepository } from '../domain/quest'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
+import { paginate } from '../../../shared/utils/index.js'
+
+function matchesFilter(quest: Quest, filter: QuestFilter): boolean {
+  return (Object.keys(filter) as Array<keyof QuestFilter>).every((key) => {
+    const value = filter[key]
+    return value === undefined || quest[key] === value
+  })
+}
 
 type SeedInput = Pick<Quest, 'characterId' | 'title'> & Partial<Omit<Quest, 'characterId' | 'title'>>
 
@@ -36,6 +44,11 @@ export class InMemoryQuestRepository implements QuestRepository {
     return this.quests.filter((q) => q.characterId === characterId)
   }
 
+  async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
+    const filtered = this.quests.filter((q) => matchesFilter(q, filter))
+    return paginate(filtered, pagination.page, pagination.pageSize)
+  }
+
   async create(data: CreateQuestData): Promise<Quest> {
     const quest: Quest = {
       ...data,
@@ -48,7 +61,7 @@ export class InMemoryQuestRepository implements QuestRepository {
     return quest
   }
 
-  async update(id: ID, data: Partial<Quest>): Promise<Quest> {
+  async save(id: ID, data: Partial<Quest>): Promise<Quest> {
     const index = this.quests.findIndex((q) => q.id === id)
     if (index === -1) throw new Error(`Quest ${id} not found`)
     this.quests[index] = { ...this.quests[index], ...data, updatedAt: new Date() }

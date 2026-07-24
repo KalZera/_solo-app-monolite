@@ -4,6 +4,7 @@ import { ListQuestsUseCase } from '../application/list-quests'
 import { GetQuestUseCase } from '../application/get-quest'
 import { UpdateQuestUseCase } from '../application/update-quest'
 import { DeleteQuestUseCase } from '../application/delete-quest'
+import { CompleteQuestUseCase } from '../application/complete-quest'
 import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import '../../../infrastructure/jwt/types.js'
@@ -47,5 +48,11 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
     const deleteQuest = new DeleteQuestUseCase(questRepository, characterRepository)
     await deleteQuest.execute({ userId: req.user.sub, questId: id })
     return reply.status(204).send()
+  })
+
+  app.post('/:id/complete', { preHandler: [app.authenticate] }, async (req) => {
+    const { id } = req.params as { id: string }
+    const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository)
+    return completeQuest.execute({ userId: req.user.sub, questId: id })
   })
 }

@@ -7,6 +7,11 @@ export type Paginated<T> = {
   pageSize: number
 }
 
+export type PaginationParams = {
+  page: number
+  pageSize: number
+}
+
 export type Result<T, E = Error> =
   | { data: T }
   | { error: E }

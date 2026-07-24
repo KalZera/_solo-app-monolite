@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client'
-import type { User, UserRepository } from '../domain/user'
-import type { ID } from '../../../shared/types/index'
+import type { User, UserFilter, UserRepository } from '../domain/user'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
 import { generateId } from '../../../shared/utils/index'
 
 export class PrismaUserRepository implements UserRepository {
@@ -22,7 +22,7 @@ export class PrismaUserRepository implements UserRepository {
     return this.prisma.user.create({ data: { id: generateId(), ...data } })
   }
 
-  async update(id: ID, data: Partial<User>): Promise<User> {
+  async save(id: ID, data: Partial<User>): Promise<User> {
     return this.prisma.user.update({ where: { id }, data })
   }
 }

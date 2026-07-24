@@ -23,7 +23,7 @@ export class UpdateCharacterUseCase {
 
     const stats = { ...character.stats, ...input.stats }
 
-    return this.repository.update(character.id, {
+    return this.repository.save(character.id, {
       ...(input.name !== undefined && { name: input.name }),
       ...(input.title !== undefined && { title: input.title }),
       ...(input.class !== undefined && { class: input.class }),

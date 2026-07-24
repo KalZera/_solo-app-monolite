@@ -1,6 +1,6 @@
 import type { PrismaClient, Quest as PrismaQuest, QuestObjective as PrismaQuestObjective } from '@prisma/client'
-import type { CreateQuestData, Quest, QuestRepository, QuestStatus, QuestType } from '../domain/quest'
-import type { ID } from '../../../shared/types/index.js'
+import type { CreateQuestData, Quest, QuestFilter, QuestRepository, QuestStatus, QuestType } from '../domain/quest'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { generateId } from '../../../shared/utils/index.js'
 
 type PrismaQuestWithObjectives = PrismaQuest & { objectives: PrismaQuestObjective[] }
@@ -46,6 +46,34 @@ export class PrismaQuestRepository implements QuestRepository {
     return records.map(toDomain)
   }
 
+  async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
+    const where = {
+      ...(filter.id !== undefined && { id: filter.id }),
+      ...(filter.characterId !== undefined && { characterId: filter.characterId }),
+      ...(filter.title !== undefined && { title: filter.title }),
+      ...(filter.description !== undefined && { description: filter.description }),
+      ...(filter.questRank !== undefined && { questRank: filter.questRank }),
+      ...(filter.type !== undefined && { type: filter.type }),
+      ...(filter.status !== undefined && { status: filter.status }),
+      ...(filter.rewardXp !== undefined && { rewardXp: filter.rewardXp }),
+      ...(filter.rewardGold !== undefined && { rewardGold: filter.rewardGold }),
+      ...(filter.minLevel !== undefined && { minLevel: filter.minLevel }),
+      ...(filter.expiresAt !== undefined && { expiresAt: filter.expiresAt }),
+    }
+
+    const [records, total] = await Promise.all([
+      this.prisma.quest.findMany({
+        where,
+        skip: (pagination.page - 1) * pagination.pageSize,
+        take: pagination.pageSize,
+        include: { objectives: true },
+      }),
+      this.prisma.quest.count({ where }),
+    ])
+
+    return { data: records.map(toDomain), total, page: pagination.page, pageSize: pagination.pageSize }
+  }
+
   async create(data: CreateQuestData): Promise<Quest> {
     const record = await this.prisma.quest.create({
       data: {
@@ -75,7 +103,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return toDomain(record)
   }
 
-  async update(id: ID, data: Partial<Quest>): Promise<Quest> {
+  async save(id: ID, data: Partial<Quest>): Promise<Quest> {
     const record = await this.prisma.quest.update({
       where: { id },
       data: {

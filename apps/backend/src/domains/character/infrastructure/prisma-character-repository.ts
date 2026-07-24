@@ -59,7 +59,7 @@ export class PrismaCharacterRepository implements CharacterRepository {
     return toDomain(record)
   }
 
-  async update(id: ID, data: Partial<Character>): Promise<Character> {
+  async save(id: ID, data: Partial<Character>): Promise<Character> {
     const { stats, ...rest } = data
     const record = await this.prisma.character.update({
       where: { id },

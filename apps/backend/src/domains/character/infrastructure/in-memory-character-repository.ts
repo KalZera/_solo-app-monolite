@@ -52,7 +52,7 @@ export class InMemoryCharacterRepository implements CharacterRepository {
     return character
   }
 
-  async update(id: ID, data: Partial<Character>): Promise<Character> {
+  async save(id: ID, data: Partial<Character>): Promise<Character> {
     const index = this.characters.findIndex((c) => c.id === id)
     if (index === -1) throw new Error(`Character ${id} not found`)
     this.characters[index] = { ...this.characters[index], ...data, updatedAt: new Date() }
