@@ -10,6 +10,7 @@ import { questRoutes } from './domains/quest/api/routes'
 // import { notificationRoutes } from './domains/notification/api/routes'
 import { prismaPlugin } from './infrastructure/prisma/plugin'
 import { jwtPlugin } from './infrastructure/jwt/plugin'
+import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 
 export function buildApp() {
@@ -21,6 +22,7 @@ export function buildApp() {
 
   app.register(prismaPlugin)
   app.register(jwtPlugin)
+  app.register(eventStorePlugin)
 
   app.register(identityRoutes, { prefix: '/api/v1/identity' })
   app.register(characterRoutes, { prefix: '/api/v1/characters' })

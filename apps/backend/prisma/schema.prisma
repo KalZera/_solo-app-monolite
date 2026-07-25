@@ -163,6 +163,17 @@ model Reward {
   @@map("rewards")
 }
 
+// ─── Event Store ──────────────────────────────────────────────────────────────
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  eventName    String   @map("event_name")
+  eventPayload Json     @map("event_payload")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("events")
+}
+
 // ─── Notification ────────────────────────────────────────────────────────────
 
 model Notification {

@@ -52,6 +52,16 @@ export interface QuestRepository {
   delete(id: ID): Promise<void>
 }
 
+// A main quest can only be completed once more than 70% of its objectives are done.
+export const MAIN_QUEST_COMPLETION_THRESHOLD = 0.7
+
+// Ratio of completed objectives, from 0 to 1. A quest with no objectives is treated as unblocked (ratio 1).
+export function calculateObjectivesCompletionRatio(objectives: QuestObjective[]): number {
+  if (objectives.length === 0) return 1
+  const completedCount = objectives.filter((objective) => objective.completed).length
+  return completedCount / objectives.length
+}
+
 // main quests default to a 28-day deadline; daily quests default to the end of the day
 // they were created on ("possible to complete quest any time during the current day").
 export function calculateDefaultDeadline(type: QuestType, now: Date = new Date()): Date | null {

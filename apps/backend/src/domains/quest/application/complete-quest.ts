@@ -6,8 +6,14 @@ import {
   createXPGrantedEvent,
 } from '../../character/domain/events'
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
-import type { QuestRepository, QuestStatus } from '../domain/quest'
-import { ConflictError, NotFoundError } from '../../../shared/errors/app-error'
+import type { Quest, QuestRepository, QuestStatus } from '../domain/quest'
+import {
+  MAIN_QUEST_COMPLETION_THRESHOLD,
+  calculateDefaultDeadline,
+  calculateObjectivesCompletionRatio,
+} from '../domain/quest'
+import { createDailyQuestRenewedEvent, createQuestCompletedEvent } from '../domain/events'
+import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 
 interface CompleteQuestInput {
   userId: string
@@ -41,7 +47,20 @@ export class CompleteQuestUseCase {
       throw new ConflictError(`A quest with status "${quest.status}" cannot be completed`)
     }
 
+    if (quest.type === 'daily' && quest.expiresAt && new Date() > quest.expiresAt) {
+      throw new ConflictError('A daily quest can only be completed before its deadline')
+    }
+
+    if (
+      quest.type === 'main' &&
+      calculateObjectivesCompletionRatio(quest.objectives) <= MAIN_QUEST_COMPLETION_THRESHOLD
+    ) {
+      throw new ValidationError('A main quest requires more than 70% of its objectives to be completed')
+    }
+
     const updatedQuest = await this.questRepository.save(quest.id, { status: 'completed' })
+
+    await this.publishEvent(createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type))
 
     let level = character.level
     let experience = character.experience + quest.rewardXp
@@ -62,6 +81,36 @@ export class CompleteQuestUseCase {
       await this.publishEvent(createAttributePointsGrantedEvent(character.id, ATTRIBUTE_POINTS_PER_LEVEL))
     }
 
-    return { quest: updatedQuest, character: updatedCharacter }
+    const renewedQuest = quest.type === 'daily' ? await this.renewDailyQuest(quest, character.id) : null
+
+    return { quest: updatedQuest, character: updatedCharacter, renewedQuest }
+  }
+
+  private async renewDailyQuest(quest: Quest, characterId: string) {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    const renewedQuest = await this.questRepository.create({
+      characterId: quest.characterId,
+      title: quest.title,
+      description: quest.description,
+      questRank: quest.questRank,
+      type: quest.type,
+      status: 'available',
+      rewardXp: quest.rewardXp,
+      rewardGold: quest.rewardGold,
+      minLevel: quest.minLevel,
+      expiresAt: calculateDefaultDeadline('daily', tomorrow),
+      objectives: quest.objectives.map((objective) => ({
+        description: objective.description,
+        target: objective.target,
+        current: 0,
+        completed: false,
+      })),
+    })
+
+    await this.publishEvent(createDailyQuestRenewedEvent(quest.id, renewedQuest.id, characterId))
+
+    return renewedQuest
   }
 }
