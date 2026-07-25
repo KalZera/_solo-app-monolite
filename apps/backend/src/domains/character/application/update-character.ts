@@ -7,6 +7,7 @@ interface UpdateCharacterInput {
   name?: string
   title?: string
   class?: CharacterClass
+  avatar?: string | null
   stats?: Partial<CharacterStats>
 }
 
@@ -27,6 +28,7 @@ export class UpdateCharacterUseCase {
       ...(input.name !== undefined && { name: input.name }),
       ...(input.title !== undefined && { title: input.title }),
       ...(input.class !== undefined && { class: input.class }),
+      ...(input.avatar !== undefined && { avatar: input.avatar }),
       stats,
       powerScore: calculatePowerScore(stats),
     })

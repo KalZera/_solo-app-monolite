@@ -7,6 +7,7 @@ interface CreateCharacterInput {
   name: string
   class: CharacterClass
   title: string
+  avatar?: string | null
 }
 
 const BASE_STATS = {
@@ -32,6 +33,7 @@ export class CreateCharacterUseCase {
     return this.repository.create({
       userId: input.userId,
       name: input.name,
+      avatar: input.avatar ?? null,
       class: input.class,
       title: input.title,
       level: 1,

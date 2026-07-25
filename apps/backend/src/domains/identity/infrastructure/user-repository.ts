@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client'
-import type { User, UserFilter, UserRepository } from '../domain/user'
-import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
+import type { User, UserRepository } from '../domain/user'
+import type { ID } from '../../../shared/types/index'
 import { generateId } from '../../../shared/utils/index'
 
 export class PrismaUserRepository implements UserRepository {

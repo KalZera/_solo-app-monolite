@@ -30,6 +30,7 @@ model Character {
   id           String   @id @default(uuid())
   userId       String   @map("user_id")
   name         String
+  avatar       String?
   level        Int      @default(1)
   experience   Int      @default(0)
   powerScore   Int      @default(5) @map("power_score")

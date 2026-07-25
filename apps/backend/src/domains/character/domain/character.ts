@@ -1,9 +1,10 @@
-import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
+import type { ID } from '../../../shared/types/index'
 
 export interface Character {
   id: ID
   userId: ID
   name: string
+  avatar: string | null
   level: number
   experience: number
   powerScore: number

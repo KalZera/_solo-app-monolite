@@ -20,6 +20,7 @@ export class InMemoryCharacterRepository implements CharacterRepository {
       id: data.id ?? randomUUID(),
       userId: data.userId,
       name: data.name,
+      avatar: data.avatar ?? null,
       level: data.level ?? 1,
       experience: data.experience ?? 0,
       powerScore: data.powerScore ?? 5,
