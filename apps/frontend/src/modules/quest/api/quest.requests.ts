@@ -1,5 +1,11 @@
 import { httpClient } from '@/shared/api/http-client'
+import type { Character } from '@/modules/character/types'
 import type { CreateQuestInput, Quest } from '../types'
+
+export interface CompleteQuestResult {
+  quest: Quest
+  character: Character
+}
 
 export async function listQuests(): Promise<Quest[]> {
   const { data } = await httpClient.get<Quest[]>('/quests/')
@@ -16,7 +22,7 @@ export async function createQuest(input: CreateQuestInput): Promise<Quest> {
   return data
 }
 
-export async function completeQuest(id: string): Promise<Quest> {
-  const { data } = await httpClient.patch<Quest>(`/quests/${id}`, { status: 'completed' })
+export async function completeQuest(id: string): Promise<CompleteQuestResult> {
+  const { data } = await httpClient.post<CompleteQuestResult>(`/quests/${id}/complete`)
   return data
 }

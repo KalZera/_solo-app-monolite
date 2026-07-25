@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { mockDailyQuests } from './quest.mock'
+import { listQuests } from './quest.requests'
 
 async function fetchDailyQuests() {
-  // TODO: swap for `httpClient.get('/quests/daily')` once the quest domain ships
-  return mockDailyQuests
+  const quests = await listQuests()
+  return quests.filter((quest) => quest.type === 'daily')
 }
 
-export function useDailyQuests() {
+export function useDailyQuests(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['quests', 'daily'],
     queryFn: fetchDailyQuests,
+    enabled: options?.enabled ?? true,
   })
 }

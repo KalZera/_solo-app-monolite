@@ -1,11 +1,11 @@
 import { ScrollView, Text, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
 import { SystemPanel } from '@/shared/components/SystemPanel'
-import { useCharacterProfile } from '../api/useCharacterProfile'
+import { isCharacterNotFound, useCharacterProfile } from '../api/useCharacterProfile'
 import { StatRow } from '../components/StatRow'
 
 export function CharacterScreen() {
-  const { data: character, isPending, isError } = useCharacterProfile()
+  const { data: character, isPending, isError, error } = useCharacterProfile()
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} backgroundColor="$soloBg">
@@ -16,7 +16,13 @@ export function CharacterScreen() {
 
         {isPending && <LoadingIndicator label="Summoning character data…" />}
 
-        {isError && (
+        {isCharacterNotFound(error) && (
+          <Text color="$soloTextMuted" paddingTop="$8" textAlign="center">
+            No Hunter registered yet. Head to the Home tab to register one.
+          </Text>
+        )}
+
+        {isError && !isCharacterNotFound(error) && (
           <Text color="$soloDanger" paddingTop="$8">
             Failed to reach the System. Try again.
           </Text>

@@ -6,9 +6,11 @@ export function useCompleteQuest() {
 
   return useMutation({
     mutationFn: completeQuest,
-    onSuccess: (quest) => {
+    onSuccess: ({ quest }) => {
       queryClient.invalidateQueries({ queryKey: ['quests', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['quests', 'daily'] })
       queryClient.invalidateQueries({ queryKey: ['quests', 'detail', quest.id] })
+      queryClient.invalidateQueries({ queryKey: ['character', 'profile'] })
     },
   })
 }

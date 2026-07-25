@@ -1,14 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
-import { mockCharacterProfile } from './character.mock'
-
-async function fetchCharacterProfile() {
-  // TODO: swap for `httpClient.get('/characters/me')` once wired to a real session
-  return mockCharacterProfile
-}
+import axios from 'axios'
+import { getCharacterProfile } from './character.requests'
 
 export function useCharacterProfile() {
   return useQuery({
     queryKey: ['character', 'profile'],
-    queryFn: fetchCharacterProfile,
+    queryFn: getCharacterProfile,
+    retry: (failureCount, error) => {
+      if (axios.isAxiosError(error) && error.response?.status === 404) return false
+      return failureCount < 1
+    },
   })
+}
+
+export function isCharacterNotFound(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 404
 }

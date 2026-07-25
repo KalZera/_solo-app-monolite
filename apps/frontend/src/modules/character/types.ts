@@ -14,6 +14,7 @@ export interface Character {
   id: string
   userId: string
   name: string
+  avatar: string | null
   level: number
   experience: number
   powerScore: number
@@ -26,4 +27,10 @@ export interface Character {
 
 export interface CharacterProfile extends Character {
   rank: CharacterRank
+}
+
+export interface CreateCharacterInput {
+  name: string
+  class: CharacterClass
+  title: string
 }
