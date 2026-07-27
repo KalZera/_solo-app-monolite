@@ -4,6 +4,8 @@ import { StatusBar } from 'expo-status-bar'
 import { TamaguiProvider, View } from 'tamagui'
 import { SessionProvider, useSession } from '@/modules/auth/session/SessionProvider'
 import { queryClient } from '@/shared/api/query-client'
+import { AppToastProvider } from '@/shared/notifications/ToastProvider'
+import { PushNotificationsProvider } from '@/shared/notifications/PushNotificationsProvider'
 import tamaguiConfig from '@/shared/theme/tamagui.config'
 
 function RootNavigator() {
@@ -35,8 +37,12 @@ export default function RootLayout() {
     <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <StatusBar style="light" />
-          <RootNavigator />
+          <AppToastProvider>
+            <PushNotificationsProvider>
+              <StatusBar style="light" />
+              <RootNavigator />
+            </PushNotificationsProvider>
+          </AppToastProvider>
         </SessionProvider>
       </QueryClientProvider>
     </TamaguiProvider>

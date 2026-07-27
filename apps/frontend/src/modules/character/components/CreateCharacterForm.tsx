@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { Text, XStack, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemInput } from '@/shared/components/SystemInput'
+import { getErrorMessage } from '@/shared/api/get-error-message'
 import { useCreateCharacter } from '../api/useCreateCharacter'
 import type { CharacterClass } from '../types'
 
@@ -80,12 +80,4 @@ export function CreateCharacterForm() {
       </SystemButton>
     </YStack>
   )
-}
-
-function getErrorMessage(error: unknown): string {
-  if (axios.isAxiosError(error)) {
-    const message = (error.response?.data as { message?: string } | undefined)?.message
-    if (message) return message
-  }
-  return 'Unable to reach the System. Try again.'
 }

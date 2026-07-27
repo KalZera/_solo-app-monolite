@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useRouter } from 'expo-router'
-import axios from 'axios'
 import { ChevronLeft } from '@tamagui/lucide-icons-2'
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemInput } from '@/shared/components/SystemInput'
 import { SystemPanel } from '@/shared/components/SystemPanel'
+import { getErrorMessage } from '@/shared/api/get-error-message'
 import { useCreateQuest } from '../api/useCreateQuest'
 import type { CreatableQuestType } from '../types'
 
@@ -127,12 +127,4 @@ export function CreateQuestScreen() {
       </YStack>
     </ScrollView>
   )
-}
-
-function getErrorMessage(error: unknown): string {
-  if (axios.isAxiosError(error)) {
-    const message = (error.response?.data as { message?: string } | undefined)?.message
-    if (message) return message
-  }
-  return 'Unable to reach the System. Try again.'
 }
