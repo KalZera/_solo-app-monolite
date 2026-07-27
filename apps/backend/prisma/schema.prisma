@@ -59,7 +59,7 @@ model Character {
 model CharacterRestPoint {
   id          String   @id @default(uuid())
   characterId String   @map("character_id")
-  restPoints  Int      @map("rest_points")
+  restPoints  Int      @default(0) @map("rest_points")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

@@ -1,5 +1,5 @@
 import type { CharacterClass, CharacterRepository, CharacterStats } from '../domain/character'
-import { calculatePowerScore } from '../domain/character'
+import { calculatePowerScore } from '../../progression/engines/power-score.engine'
 import { NotFoundError } from '../../../shared/errors/app-error'
 
 interface UpdateCharacterInput {

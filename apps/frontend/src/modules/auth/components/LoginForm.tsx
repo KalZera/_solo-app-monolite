@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Text, YStack } from "tamagui";
 import { SystemButton } from "@/shared/components/SystemButton";
-import { SystemInput } from "@/shared/components/SystemInput";
+import { FormField } from "@/shared/components/FormField";
 import { getErrorMessage } from "@/shared/api/get-error-message";
 import { useLogin } from "../api/useLogin";
+import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
 import type { LoginResponse } from "../types";
 
 interface LoginFormProps {
@@ -11,55 +13,35 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const login = useLogin();
+  const { control, handleSubmit } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  const canSubmit =
-    email.trim().length > 0 && password.length > 0 && !login.isPending;
-
-  function handleSubmit() {
-    if (!canSubmit) return;
-    login.mutate({ email: email.trim(), password }, { onSuccess });
+  function onSubmit(values: LoginFormValues) {
+    login.mutate(values, { onSuccess });
   }
 
   return (
     <YStack gap="$4">
-      <YStack gap="$2">
-        <Text
-          color="$soloTextMuted"
-          fontSize="$2"
-          letterSpacing={1}
-          textTransform="uppercase"
-        >
-          Hunter ID
-        </Text>
-        <SystemInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="hunter@association.com"
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-      </YStack>
+      <FormField
+        control={control}
+        name="email"
+        label="Hunter ID"
+        inputProps={{
+          placeholder: "hunter@association.com",
+          autoCapitalize: "none",
+          keyboardType: "email-address",
+        }}
+      />
 
-      <YStack gap="$2">
-        <Text
-          color="$soloTextMuted"
-          fontSize="$2"
-          letterSpacing={1}
-          textTransform="uppercase"
-        >
-          Password
-        </Text>
-        <SystemInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          secureTextEntry
-          type="password"
-        />
-      </YStack>
+      <FormField
+        control={control}
+        name="password"
+        label="Password"
+        inputProps={{ placeholder: "••••••••", secureTextEntry: true }}
+      />
 
       {login.isError && (
         <Text color="$soloDanger" fontSize="$2">
@@ -67,7 +49,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </Text>
       )}
 
-      <SystemButton onPress={handleSubmit} disabled={!canSubmit}>
+      <SystemButton onPress={handleSubmit(onSubmit)} disabled={login.isPending}>
         {login.isPending ? "Authenticating…" : "Enter the System"}
       </SystemButton>
     </YStack>

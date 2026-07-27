@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { CompleteQuestUseCase } from '../application/complete-quest'
-import { calculateXpToNextLevel } from '../../character/domain/character'
+import { calculateXpToNextLevel } from '../../progression/engines/level.engine'
+import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
+import { InMemoryProgressionRepository } from '../../progression/infrastructure/in-memory-progression-repository'
 import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
 import { InMemoryCharacterRepository } from '../../character/infrastructure/in-memory-character-repository'
@@ -18,7 +20,9 @@ describe('CompleteQuestUseCase', () => {
   })
 
   function buildUseCase() {
-    return new CompleteQuestUseCase(questRepository, characterRepository, publishEvent)
+    const progressionRepository = new InMemoryProgressionRepository(characterRepository)
+    const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
+    return new CompleteQuestUseCase(questRepository, characterRepository, grantExperience, publishEvent)
   }
 
   it('grants XP and publishes QuestCompleted + XPGranted without leveling up', async () => {

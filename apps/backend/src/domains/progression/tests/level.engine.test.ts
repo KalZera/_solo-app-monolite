@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateXpToNextLevel } from '../domain/character'
+import { calculateXpToNextLevel } from '../engines/level.engine'
 
 describe('calculateXpToNextLevel', () => {
   it('uses the quadratic curve (500 + 100L + 12.5L²) up to level 20', () => {

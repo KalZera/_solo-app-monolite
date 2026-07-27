@@ -1,5 +1,6 @@
 import type { CharacterClass, CharacterRepository } from '../domain/character'
-import { calculatePowerScore } from '../domain/character'
+import type { CharacterRestPointRepository } from '../domain/character-rest-point'
+import { calculatePowerScore } from '../../progression/engines/power-score.engine'
 import { ConflictError } from '../../../shared/errors/app-error'
 
 interface CreateCharacterInput {
@@ -19,7 +20,10 @@ const BASE_STATS = {
 }
 
 export class CreateCharacterUseCase {
-  constructor(private readonly repository: CharacterRepository) {}
+  constructor(
+    private readonly repository: CharacterRepository,
+    private readonly restPointRepository: CharacterRestPointRepository,
+  ) {}
 
   async execute(input: CreateCharacterInput) {
     const existing = await this.repository.findByUserId(input.userId)
@@ -30,7 +34,7 @@ export class CreateCharacterUseCase {
 
     const stats = { ...BASE_STATS }
 
-    return this.repository.create({
+    const character = await this.repository.create({
       userId: input.userId,
       name: input.name,
       avatar: input.avatar ?? null,
@@ -41,5 +45,9 @@ export class CreateCharacterUseCase {
       powerScore: calculatePowerScore(stats),
       stats,
     })
+
+    await this.restPointRepository.create(character.id)
+
+    return character
   }
 }

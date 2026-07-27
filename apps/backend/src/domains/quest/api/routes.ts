@@ -7,11 +7,14 @@ import { DeleteQuestUseCase } from '../application/delete-quest'
 import { CompleteQuestUseCase } from '../application/complete-quest'
 import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
+import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
+import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
 import '../../../infrastructure/jwt/types.js'
 
 export const questRoutes: FastifyPluginAsync = async (app) => {
   const questRepository = new PrismaQuestRepository(app.prisma)
   const characterRepository = new PrismaCharacterRepository(app.prisma)
+  const progressionRepository = new PrismaProgressionRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
     const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
@@ -52,7 +55,8 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
 
   app.post('/:id/complete', { preHandler: [app.authenticate] }, async (req) => {
     const { id } = req.params as { id: string }
-    const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository)
+    const grantExperience = new GrantExperienceUseCase(progressionRepository)
+    const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository, grantExperience)
     return completeQuest.execute({ userId: req.user.sub, questId: id })
   })
 }

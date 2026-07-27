@@ -1,25 +1,21 @@
-import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller, useForm } from 'react-hook-form'
 import { Text, XStack, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
-import { SystemInput } from '@/shared/components/SystemInput'
+import { FormField } from '@/shared/components/FormField'
 import { getErrorMessage } from '@/shared/api/get-error-message'
 import { useCreateCharacter } from '../api/useCreateCharacter'
-import type { CharacterClass } from '../types'
-
-const CLASS_OPTIONS: CharacterClass[] = ['warrior', 'mage', 'rogue', 'ranger', 'healer']
+import { CLASS_OPTIONS, createCharacterSchema, type CreateCharacterFormValues } from '../schemas/create-character.schema'
 
 export function CreateCharacterForm() {
-  const [name, setName] = useState('')
-  const [title, setTitle] = useState('')
-  const [characterClass, setCharacterClass] = useState<CharacterClass | null>(null)
   const createCharacter = useCreateCharacter()
+  const { control, handleSubmit } = useForm<CreateCharacterFormValues>({
+    resolver: zodResolver(createCharacterSchema),
+    defaultValues: { name: '', title: '', class: undefined },
+  })
 
-  const canSubmit =
-    name.trim().length > 0 && title.trim().length > 0 && characterClass !== null && !createCharacter.isPending
-
-  function handleSubmit() {
-    if (!canSubmit || !characterClass) return
-    createCharacter.mutate({ name: name.trim(), title: title.trim(), class: characterClass })
+  function onSubmit(values: CreateCharacterFormValues) {
+    createCharacter.mutate(values)
   }
 
   return (
@@ -36,38 +32,44 @@ export function CreateCharacterForm() {
         </Text>
       </YStack>
 
-      <YStack gap="$2">
-        <Text color="$soloTextMuted" fontSize="$2" letterSpacing={1} textTransform="uppercase">
-          Name
-        </Text>
-        <SystemInput value={name} onChangeText={setName} placeholder="Sung Jinwoo" autoCapitalize="words" />
-      </YStack>
+      <FormField control={control} name="name" label="Name" inputProps={{ placeholder: 'Sung Jinwoo', autoCapitalize: 'words' }} />
 
-      <YStack gap="$2">
-        <Text color="$soloTextMuted" fontSize="$2" letterSpacing={1} textTransform="uppercase">
-          Title
-        </Text>
-        <SystemInput value={title} onChangeText={setTitle} placeholder="The Weakest Hunter" autoCapitalize="words" />
-      </YStack>
+      <FormField
+        control={control}
+        name="title"
+        label="Title"
+        inputProps={{ placeholder: 'The Weakest Hunter', autoCapitalize: 'words' }}
+      />
 
-      <YStack gap="$2">
-        <Text color="$soloTextMuted" fontSize="$2" letterSpacing={1} textTransform="uppercase">
-          Class
-        </Text>
-        <XStack flexWrap="wrap" gap="$2">
-          {CLASS_OPTIONS.map((option) => (
-            <SystemButton
-              key={option}
-              size="$3"
-              backgroundColor={characterClass === option ? '$soloBlue' : '$soloPanelAlt'}
-              borderColor={characterClass === option ? '$soloCyan' : '$soloBorder'}
-              onPress={() => setCharacterClass(option)}
-            >
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </SystemButton>
-          ))}
-        </XStack>
-      </YStack>
+      <Controller
+        control={control}
+        name="class"
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <YStack gap="$2">
+            <Text color="$soloTextMuted" fontSize="$2" letterSpacing={1} textTransform="uppercase">
+              Class
+            </Text>
+            <XStack flexWrap="wrap" gap="$2">
+              {CLASS_OPTIONS.map((option) => (
+                <SystemButton
+                  key={option}
+                  size="$3"
+                  backgroundColor={value === option ? '$soloBlue' : '$soloPanelAlt'}
+                  borderColor={value === option ? '$soloCyan' : '$soloBorder'}
+                  onPress={() => onChange(option)}
+                >
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </SystemButton>
+              ))}
+            </XStack>
+            {error?.message && (
+              <Text color="$soloDanger" fontSize="$1">
+                {error.message}
+              </Text>
+            )}
+          </YStack>
+        )}
+      />
 
       {createCharacter.isError && (
         <Text color="$soloDanger" fontSize="$2">
@@ -75,7 +77,7 @@ export function CreateCharacterForm() {
         </Text>
       )}
 
-      <SystemButton onPress={handleSubmit} disabled={!canSubmit}>
+      <SystemButton onPress={handleSubmit(onSubmit)} disabled={createCharacter.isPending}>
         {createCharacter.isPending ? 'Registering…' : 'Register Hunter'}
       </SystemButton>
     </YStack>

@@ -1,10 +1,5 @@
-import type { CharacterRepository } from '../../character/domain/character'
-import { ATTRIBUTE_POINTS_PER_LEVEL, calculateXpToNextLevel } from '../../character/domain/character'
-import {
-  createAttributePointsGrantedEvent,
-  createLevelUpEvent,
-  createXPGrantedEvent,
-} from '../../character/domain/events'
+import type { Character, CharacterRepository } from '../../character/domain/character'
+import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { Quest, QuestRepository, QuestStatus } from '../domain/quest'
 import {
@@ -26,6 +21,7 @@ export class CompleteQuestUseCase {
   constructor(
     private readonly questRepository: QuestRepository,
     private readonly characterRepository: CharacterRepository,
+    private readonly grantExperience: GrantExperienceUseCase,
     private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
   ) {}
 
@@ -62,23 +58,16 @@ export class CompleteQuestUseCase {
 
     await this.publishEvent(createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type))
 
-    let level = character.level
-    let experience = character.experience + quest.rewardXp
-    const levelsGained: number[] = []
+    const { progression } = await this.grantExperience.execute({
+      characterId: character.id,
+      amount: quest.rewardXp,
+      source: 'quest',
+    })
 
-    while (experience >= calculateXpToNextLevel(level)) {
-      experience -= calculateXpToNextLevel(level)
-      level += 1
-      levelsGained.push(level)
-    }
-
-    const updatedCharacter = await this.characterRepository.save(character.id, { level, experience })
-
-    await this.publishEvent(createXPGrantedEvent(character.id, quest.rewardXp, 'quest'))
-
-    for (const newLevel of levelsGained) {
-      await this.publishEvent(createLevelUpEvent(character.id, newLevel - 1, newLevel))
-      await this.publishEvent(createAttributePointsGrantedEvent(character.id, ATTRIBUTE_POINTS_PER_LEVEL))
+    const updatedCharacter: Character = {
+      ...character,
+      level: progression.level,
+      experience: progression.experience,
     }
 
     const renewedQuest = quest.type === 'daily' ? await this.renewDailyQuest(quest, character.id) : null

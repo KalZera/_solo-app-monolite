@@ -2,9 +2,9 @@ import { useRouter } from 'expo-router'
 import { ScrollView, Text, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
-import { LoginForm } from '../components/LoginForm'
+import { RegisterForm } from '../components/RegisterForm'
 
-export function LoginScreen() {
+export function RegisterScreen() {
   const router = useRouter()
 
   return (
@@ -15,18 +15,18 @@ export function LoginScreen() {
             The System
           </Text>
           <Text color="$soloText" fontSize={32} fontWeight="800" textAlign="center">
-            Solo Leveling
+            Hunter Registration
           </Text>
           <Text color="$soloTextMuted" fontSize="$4" textAlign="center">
-            Only a Hunter registered with the System may proceed.
+            Awaken as a Hunter and answer the System&apos;s call.
           </Text>
         </YStack>
 
         <SystemPanel width="100%" maxWidth={380} gap="$4">
-          <LoginForm onSuccess={() => router.replace('/home')} />
+          <RegisterForm onSuccess={() => router.replace('/home')} />
 
-          <SystemButton chromeless onPress={() => router.push('/register')}>
-            New Hunter? Register
+          <SystemButton chromeless onPress={() => router.replace('/login')}>
+            Already a Hunter? Log in
           </SystemButton>
         </SystemPanel>
       </YStack>

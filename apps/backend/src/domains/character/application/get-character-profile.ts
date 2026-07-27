@@ -1,5 +1,6 @@
 import type { CharacterRepository } from '../domain/character'
-import { calculatePowerScore, calculateRank } from '../domain/character'
+import { calculatePowerScore } from '../../progression/engines/power-score.engine'
+import { calculateRank } from '../../progression/engines/rank.engine'
 import { NotFoundError } from '../../../shared/errors/app-error'
 
 interface GetCharacterProfileInput {

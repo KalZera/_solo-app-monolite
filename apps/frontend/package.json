@@ -13,6 +13,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.5.7",
     "@tamagui/config": "^2.5.1",
     "@tamagui/lucide-icons-2": "^2.5.1",
     "@tamagui/spinner": "^2.5.1",
@@ -31,12 +32,14 @@
     "expo-system-ui": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-hook-form": "^7.83.0",
     "react-native": "0.86.0",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2",
-    "tamagui": "^2.5.1"
+    "tamagui": "^2.5.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",

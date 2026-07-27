@@ -4,10 +4,12 @@ import { GetCharacterProfileUseCase } from '../application/get-character-profile
 import { UpdateCharacterUseCase } from '../application/update-character'
 import { DeleteCharacterUseCase } from '../application/delete-character'
 import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
+import { PrismaCharacterRestPointRepository } from '../infrastructure/prisma-character-rest-point-repository'
 import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
   const repository = new PrismaCharacterRepository(app.prisma)
+  const restPointRepository = new PrismaCharacterRestPointRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
     const getCharacterProfile = new GetCharacterProfileUseCase(repository)
@@ -15,7 +17,7 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
-    const createCharacter = new CreateCharacterUseCase(repository)
+    const createCharacter = new CreateCharacterUseCase(repository, restPointRepository)
     const result = await createCharacter.execute({
       ...(req.body as Omit<Parameters<typeof createCharacter.execute>[0], 'userId'>),
       userId: req.user.sub,

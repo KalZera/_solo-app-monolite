@@ -4,6 +4,7 @@ export const mockCharacterProfile: CharacterProfile = {
   id: 'char-mock-001',
   userId: 'user-mock-001',
   name: 'Sung Jinwoo',
+  avatar: null,
   title: 'The Weakest Hunter',
   class: 'warrior',
   level: 24,
