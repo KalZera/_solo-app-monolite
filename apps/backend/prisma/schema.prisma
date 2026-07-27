@@ -58,7 +58,7 @@ model Character {
 
 model CharacterRestPoint {
   id          String   @id @default(uuid())
-  characterId String   @map("character_id")
+  characterId String   @unique @map("character_id")
   restPoints  Int      @default(0) @map("rest_points")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -88,7 +88,8 @@ model QuestCategory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  creator User @relation(fields: [createdBy], references: [id])
+  creator User    @relation(fields: [createdBy], references: [id])
+  quests  Quest[]
 
   @@map("quest_categories")
 }
@@ -98,6 +99,7 @@ model QuestCategory {
 model Quest {
   id          String    @id @default(uuid())
   characterId String    @map("character_id")
+  categoryId  String?   @map("category_id")
   title       String
   description String
   questRank   String    @map("quest_rank")
@@ -111,6 +113,7 @@ model Quest {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   character  Character        @relation(fields: [characterId], references: [id])
+  category   QuestCategory?   @relation(fields: [categoryId], references: [id])
   objectives QuestObjective[]
 
   @@map("quests")
