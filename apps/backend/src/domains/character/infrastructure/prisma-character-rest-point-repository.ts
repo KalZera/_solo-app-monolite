@@ -11,4 +11,12 @@ export class PrismaCharacterRestPointRepository implements CharacterRestPointRep
       data: { id: generateId(), characterId, restPoints: 0 },
     })
   }
+
+  async findByCharacterId(characterId: ID): Promise<CharacterRestPoint | null> {
+    return this.prisma.characterRestPoint.findUnique({ where: { characterId } })
+  }
+
+  async save(characterId: ID, restPoints: number): Promise<CharacterRestPoint> {
+    return this.prisma.characterRestPoint.update({ where: { characterId }, data: { restPoints } })
+  }
 }

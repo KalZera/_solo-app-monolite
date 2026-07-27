@@ -3,6 +3,7 @@ import { CreateCharacterUseCase } from '../application/create-character'
 import { GetCharacterProfileUseCase } from '../application/get-character-profile'
 import { UpdateCharacterUseCase } from '../application/update-character'
 import { DeleteCharacterUseCase } from '../application/delete-character'
+import { AllocateAttributePointUseCase } from '../application/allocate-attribute-point'
 import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
 import { PrismaCharacterRestPointRepository } from '../infrastructure/prisma-character-rest-point-repository'
 import '../../../infrastructure/jwt/types.js'
@@ -12,7 +13,7 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   const restPointRepository = new PrismaCharacterRestPointRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
-    const getCharacterProfile = new GetCharacterProfileUseCase(repository)
+    const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository)
     return getCharacterProfile.execute({ userId: req.user.sub })
   })
 
@@ -37,5 +38,13 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
     const deleteCharacter = new DeleteCharacterUseCase(repository)
     await deleteCharacter.execute({ userId: req.user.sub })
     return reply.status(204).send()
+  })
+
+  app.post('/attributes/allocate', { preHandler: [app.authenticate] }, async (req) => {
+    const allocateAttributePoint = new AllocateAttributePointUseCase(repository, restPointRepository)
+    return allocateAttributePoint.execute({
+      ...(req.body as Omit<Parameters<typeof allocateAttributePoint.execute>[0], 'userId'>),
+      userId: req.user.sub,
+    })
   })
 }

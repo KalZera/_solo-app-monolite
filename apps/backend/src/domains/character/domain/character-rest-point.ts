@@ -10,4 +10,6 @@ export interface CharacterRestPoint {
 
 export interface CharacterRestPointRepository {
   create(characterId: ID): Promise<CharacterRestPoint>
+  findByCharacterId(characterId: ID): Promise<CharacterRestPoint | null>
+  save(characterId: ID, restPoints: number): Promise<CharacterRestPoint>
 }

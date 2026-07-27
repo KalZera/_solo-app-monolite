@@ -2,13 +2,20 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { GetCharacterProfileUseCase } from '../application/get-character-profile'
 import { NotFoundError } from '../../../shared/errors/app-error'
 import { InMemoryCharacterRepository } from '../infrastructure/in-memory-character-repository'
+import { InMemoryCharacterRestPointRepository } from '../infrastructure/in-memory-character-rest-point-repository'
 
 describe('GetCharacterProfileUseCase', () => {
   let repository: InMemoryCharacterRepository
+  let restPointRepository: InMemoryCharacterRestPointRepository
 
   beforeEach(() => {
     repository = new InMemoryCharacterRepository()
+    restPointRepository = new InMemoryCharacterRestPointRepository()
   })
+
+  function buildUseCase() {
+    return new GetCharacterProfileUseCase(repository, restPointRepository)
+  }
 
   it('returns the character profile with computed power score and rank', async () => {
     repository.seed({
@@ -16,7 +23,7 @@ describe('GetCharacterProfileUseCase', () => {
       name: 'Sung Jinwoo',
       stats: { strength: 10, intelligence: 10, agility: 10, vitality: 10, luck: 10 },
     })
-    const useCase = new GetCharacterProfileUseCase(repository)
+    const useCase = buildUseCase()
 
     const result = await useCase.execute({ userId: 'user-1' })
 
@@ -25,8 +32,25 @@ describe('GetCharacterProfileUseCase', () => {
     expect(result.rank).toBe('E')
   })
 
+  it('includes the current rest points from the character rest point record', async () => {
+    const character = repository.seed({ userId: 'user-1', name: 'Sung Jinwoo' })
+    await restPointRepository.incrementRestPoints(character.id, 5)
+
+    const result = await buildUseCase().execute({ userId: 'user-1' })
+
+    expect(result.restPoints).toBe(5)
+  })
+
+  it('defaults restPoints to 0 when no rest point record exists yet', async () => {
+    repository.seed({ userId: 'user-1', name: 'Sung Jinwoo' })
+
+    const result = await buildUseCase().execute({ userId: 'user-1' })
+
+    expect(result.restPoints).toBe(0)
+  })
+
   it('throws NotFoundError when user has no character', async () => {
-    const useCase = new GetCharacterProfileUseCase(repository)
+    const useCase = buildUseCase()
 
     await expect(
       useCase.execute({ userId: 'ghost-user' }),
@@ -35,7 +59,7 @@ describe('GetCharacterProfileUseCase', () => {
 
   it('does not return a character from a different user', async () => {
     repository.seed({ userId: 'user-1', name: 'Belongs To User 1' })
-    const useCase = new GetCharacterProfileUseCase(repository)
+    const useCase = buildUseCase()
 
     await expect(
       useCase.execute({ userId: 'user-2' }),
@@ -52,7 +76,7 @@ describe('GetCharacterProfileUseCase', () => {
     [{ strength: 5200, intelligence: 5200, agility: 5200, vitality: 5200, luck: 5200 }, 26000, 'Monarch'],
   ])('assigns rank correctly for power score %i', async (stats, expectedPowerScore, expectedRank) => {
     repository.seed({ userId: 'user-rank', name: 'Rank Tester', stats })
-    const useCase = new GetCharacterProfileUseCase(repository)
+    const useCase = buildUseCase()
 
     const result = await useCase.execute({ userId: 'user-rank' })
 

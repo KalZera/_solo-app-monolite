@@ -55,7 +55,7 @@ describe('CreateCharacterUseCase', () => {
       title: 'The Weakest Hunter',
     })
 
-    const restPoint = restPointRepository.findByCharacterId(result.id)
+    const restPoint = await restPointRepository.findByCharacterId(result.id)
     expect(restPoint).toBeDefined()
     expect(restPoint?.restPoints).toBe(0)
   })
