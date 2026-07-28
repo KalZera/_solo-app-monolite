@@ -4,13 +4,16 @@ import { GetCharacterProfileUseCase } from '../application/get-character-profile
 import { UpdateCharacterUseCase } from '../application/update-character'
 import { DeleteCharacterUseCase } from '../application/delete-character'
 import { AllocateAttributePointUseCase } from '../application/allocate-attribute-point'
+import { GetCharacterHistoryUseCase } from '../application/get-character-history'
 import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
 import { PrismaCharacterRestPointRepository } from '../infrastructure/prisma-character-rest-point-repository'
+import { PrismaCharacterHistoryRepository } from '../infrastructure/prisma-character-history-repository'
 import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
   const repository = new PrismaCharacterRepository(app.prisma)
   const restPointRepository = new PrismaCharacterRestPointRepository(app.prisma)
+  const historyRepository = new PrismaCharacterHistoryRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
     const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository)
@@ -45,6 +48,16 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
     return allocateAttributePoint.execute({
       ...(req.body as Omit<Parameters<typeof allocateAttributePoint.execute>[0], 'userId'>),
       userId: req.user.sub,
+    })
+  })
+
+  app.get('/history', { preHandler: [app.authenticate] }, async (req) => {
+    const { page, pageSize } = req.query as { page?: string; pageSize?: string }
+    const getCharacterHistory = new GetCharacterHistoryUseCase(repository, historyRepository)
+    return getCharacterHistory.execute({
+      userId: req.user.sub,
+      ...(page !== undefined && { page: Number(page) }),
+      ...(pageSize !== undefined && { pageSize: Number(pageSize) }),
     })
   })
 }

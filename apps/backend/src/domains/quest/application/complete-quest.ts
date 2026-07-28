@@ -56,7 +56,9 @@ export class CompleteQuestUseCase {
 
     const updatedQuest = await this.questRepository.save(quest.id, { status: 'completed' })
 
-    await this.publishEvent(createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type))
+    await this.publishEvent(
+      createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type, updatedQuest.title),
+    )
 
     const { progression, levelsGained } = await this.grantExperience.execute({
       characterId: character.id,
@@ -101,7 +103,7 @@ export class CompleteQuestUseCase {
       })),
     })
 
-    await this.publishEvent(createDailyQuestRenewedEvent(quest.id, renewedQuest.id, characterId))
+    await this.publishEvent(createDailyQuestRenewedEvent(quest.id, renewedQuest.id, characterId, quest.title))
 
     return renewedQuest
   }

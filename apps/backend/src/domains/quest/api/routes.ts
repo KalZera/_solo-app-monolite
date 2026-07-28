@@ -5,6 +5,7 @@ import { GetQuestUseCase } from '../application/get-quest'
 import { UpdateQuestUseCase } from '../application/update-quest'
 import { DeleteQuestUseCase } from '../application/delete-quest'
 import { CompleteQuestUseCase } from '../application/complete-quest'
+import { CompleteQuestObjectiveUseCase } from '../application/complete-quest-objective'
 import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
@@ -58,5 +59,11 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
     const grantExperience = new GrantExperienceUseCase(progressionRepository)
     const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository, grantExperience)
     return completeQuest.execute({ userId: req.user.sub, questId: id })
+  })
+
+  app.post('/:id/objectives/:objectiveId/complete', { preHandler: [app.authenticate] }, async (req) => {
+    const { id, objectiveId } = req.params as { id: string; objectiveId: string }
+    const completeQuestObjective = new CompleteQuestObjectiveUseCase(questRepository, characterRepository)
+    return completeQuestObjective.execute({ userId: req.user.sub, questId: id, objectiveId })
   })
 }

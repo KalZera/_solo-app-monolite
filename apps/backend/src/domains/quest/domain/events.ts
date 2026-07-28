@@ -8,6 +8,16 @@ export interface QuestCompletedEvent extends DomainEvent {
   questId: ID
   characterId: ID
   questType: QuestType
+  questTitle: string
+}
+
+export interface QuestObjectiveCompletedEvent extends DomainEvent {
+  eventType: 'QuestObjectiveCompleted'
+  questId: ID
+  objectiveId: ID
+  characterId: ID
+  questTitle: string
+  objectiveDescription: string
 }
 
 export interface DailyQuestRenewedEvent extends DomainEvent {
@@ -15,9 +25,15 @@ export interface DailyQuestRenewedEvent extends DomainEvent {
   previousQuestId: ID
   newQuestId: ID
   characterId: ID
+  questTitle: string
 }
 
-export function createQuestCompletedEvent(questId: ID, characterId: ID, questType: QuestType): QuestCompletedEvent {
+export function createQuestCompletedEvent(
+  questId: ID,
+  characterId: ID,
+  questType: QuestType,
+  questTitle: string,
+): QuestCompletedEvent {
   return {
     eventId: randomUUID(),
     eventType: 'QuestCompleted',
@@ -26,6 +42,27 @@ export function createQuestCompletedEvent(questId: ID, characterId: ID, questTyp
     questId,
     characterId,
     questType,
+    questTitle,
+  }
+}
+
+export function createQuestObjectiveCompletedEvent(
+  questId: ID,
+  objectiveId: ID,
+  characterId: ID,
+  questTitle: string,
+  objectiveDescription: string,
+): QuestObjectiveCompletedEvent {
+  return {
+    eventId: randomUUID(),
+    eventType: 'QuestObjectiveCompleted',
+    occurredAt: new Date(),
+    aggregateId: questId,
+    questId,
+    objectiveId,
+    characterId,
+    questTitle,
+    objectiveDescription,
   }
 }
 
@@ -33,6 +70,7 @@ export function createDailyQuestRenewedEvent(
   previousQuestId: ID,
   newQuestId: ID,
   characterId: ID,
+  questTitle: string,
 ): DailyQuestRenewedEvent {
   return {
     eventId: randomUUID(),
@@ -42,5 +80,6 @@ export function createDailyQuestRenewedEvent(
     previousQuestId,
     newQuestId,
     characterId,
+    questTitle,
   }
 }

@@ -50,6 +50,7 @@ export interface QuestRepository {
   findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>>
   create(data: CreateQuestData): Promise<Quest>
   save(id: ID, data: Partial<Quest>): Promise<Quest>
+  updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest>
   delete(id: ID): Promise<void>
 }
 

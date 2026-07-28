@@ -1,5 +1,13 @@
 import type { PrismaClient, Quest as PrismaQuest, QuestObjective as PrismaQuestObjective } from '@prisma/client'
-import type { CreateQuestData, Quest, QuestFilter, QuestRepository, QuestStatus, QuestType } from '../domain/quest'
+import type {
+  CreateQuestData,
+  Quest,
+  QuestFilter,
+  QuestObjective,
+  QuestRepository,
+  QuestStatus,
+  QuestType,
+} from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { generateId } from '../../../shared/utils/index.js'
 
@@ -121,6 +129,24 @@ export class PrismaQuestRepository implements QuestRepository {
         ...(data.minLevel !== undefined && { minLevel: data.minLevel }),
         ...(data.expiresAt !== undefined && { expiresAt: data.expiresAt }),
       },
+      include: { objectives: true },
+    })
+    return toDomain(record)
+  }
+
+  async updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
+    await this.prisma.questObjective.update({
+      where: { id: objectiveId },
+      data: {
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.target !== undefined && { target: data.target }),
+        ...(data.current !== undefined && { current: data.current }),
+        ...(data.completed !== undefined && { completed: data.completed }),
+      },
+    })
+
+    const record = await this.prisma.quest.findUniqueOrThrow({
+      where: { id: questId },
       include: { objectives: true },
     })
     return toDomain(record)

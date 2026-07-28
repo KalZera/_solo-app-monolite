@@ -2,6 +2,8 @@ import type { CharacterRepository, CharacterStats } from '../domain/character'
 import type { CharacterRestPointRepository } from '../domain/character-rest-point'
 import { calculatePowerScore } from '../../progression/engines/power-score.engine'
 import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
+import { createAttributePointAllocatedEvent } from '../domain/events'
 
 type AllocatableAttribute = keyof CharacterStats
 
@@ -17,6 +19,7 @@ export class AllocateAttributePointUseCase {
   constructor(
     private readonly characterRepository: CharacterRepository,
     private readonly restPointRepository: CharacterRestPointRepository,
+    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
   ) {}
 
   async execute(input: AllocateAttributePointInput) {
@@ -52,6 +55,8 @@ export class AllocateAttributePointUseCase {
     })
 
     const updatedRestPoint = await this.restPointRepository.save(character.id, restPoint.restPoints - input.amount)
+
+    await this.publishEvent(createAttributePointAllocatedEvent(character.id, input.attribute, input.amount))
 
     return { character: updatedCharacter, restPoints: updatedRestPoint.restPoints }
   }

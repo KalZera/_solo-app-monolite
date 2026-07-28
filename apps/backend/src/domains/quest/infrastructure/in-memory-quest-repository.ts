@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import type { CreateQuestData, Quest, QuestFilter, QuestRepository } from '../domain/quest'
+import type { CreateQuestData, Quest, QuestFilter, QuestObjective, QuestRepository } from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { paginate } from '../../../shared/utils/index.js'
 
@@ -66,6 +66,19 @@ export class InMemoryQuestRepository implements QuestRepository {
     const index = this.quests.findIndex((q) => q.id === id)
     if (index === -1) throw new Error(`Quest ${id} not found`)
     this.quests[index] = { ...this.quests[index], ...data, updatedAt: new Date() }
+    return this.quests[index]
+  }
+
+  async updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
+    const index = this.quests.findIndex((q) => q.id === questId)
+    if (index === -1) throw new Error(`Quest ${questId} not found`)
+    const quest = this.quests[index]
+    const objectiveIndex = quest.objectives.findIndex((o) => o.id === objectiveId)
+    if (objectiveIndex === -1) throw new Error(`Objective ${objectiveId} not found on quest ${questId}`)
+
+    const objectives = [...quest.objectives]
+    objectives[objectiveIndex] = { ...objectives[objectiveIndex], ...data }
+    this.quests[index] = { ...quest, objectives, updatedAt: new Date() }
     return this.quests[index]
   }
 
