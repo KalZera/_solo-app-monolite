@@ -8,7 +8,10 @@ import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
 import { LevelUpDialog } from '@/modules/character/components/LevelUpDialog'
 import { useCompleteQuest } from '../api/useCompleteQuest'
+import { useCompleteQuestObjective } from '../api/useCompleteQuestObjective'
 import { useQuest } from '../api/useQuest'
+import { ObjectiveRow } from '../components/ObjectiveRow'
+import { MAIN_QUEST_COMPLETION_THRESHOLD, calculateObjectivesCompletionRatio } from '../objectives'
 
 interface QuestDetailScreenProps {
   questId: string
@@ -27,9 +30,14 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
   const { t } = useTranslation()
   const { data: quest, isPending, isError } = useQuest(questId)
   const completeQuest = useCompleteQuest()
+  const completeObjective = useCompleteQuestObjective()
   const [levelUpInfo, setLevelUpInfo] = useState<LevelUpInfo | null>(null)
 
-  const canComplete = quest ? !INACTIVE_STATUSES.includes(quest.status) : false
+  const isInactiveStatus = quest ? INACTIVE_STATUSES.includes(quest.status) : false
+  const isMainQuest = quest?.type === 'main'
+  const objectivesRatio = quest ? calculateObjectivesCompletionRatio(quest.objectives) : 0
+  const objectivesThresholdMet = !isMainQuest || objectivesRatio > MAIN_QUEST_COMPLETION_THRESHOLD
+  const completedObjectivesCount = quest?.objectives.filter((objective) => objective.completed).length ?? 0
 
   function handleComplete() {
     if (!quest) return
@@ -44,6 +52,11 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
         }
       },
     })
+  }
+
+  function handleCompleteObjective(objectiveId: string) {
+    if (!quest) return
+    completeObjective.mutate({ questId: quest.id, objectiveId })
   }
 
   return (
@@ -122,22 +135,52 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
               </Text>
             )}
 
+            {quest.objectives.length > 0 && (
+              <YStack gap="$2">
+                <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
+                  {t('quest.detail.objectives', {
+                    completed: completedObjectivesCount,
+                    total: quest.objectives.length,
+                  })}
+                </Text>
+
+                {quest.objectives.map((objective) => (
+                  <ObjectiveRow
+                    key={objective.id}
+                    objective={objective}
+                    canComplete={!isInactiveStatus}
+                    isCompleting={
+                      completeObjective.isPending && completeObjective.variables?.objectiveId === objective.id
+                    }
+                    onComplete={() => handleCompleteObjective(objective.id)}
+                  />
+                ))}
+              </YStack>
+            )}
+
             {completeQuest.isError && (
               <Text color="$soloDanger" fontSize="$2">
                 {t('quest.detail.completeError')}
               </Text>
             )}
 
-            {canComplete ? (
-              <SystemButton onPress={handleComplete} disabled={completeQuest.isPending}>
-                {completeQuest.isPending ? t('quest.detail.completing') : t('quest.detail.complete')}
-              </SystemButton>
-            ) : (
+            {isInactiveStatus ? (
               <Text color="$soloTextMuted" textAlign="center" fontSize="$2" textTransform="uppercase">
                 {t('quest.detail.statusLabel', {
                   status: t(`quest.statuses.${quest.status}`, { defaultValue: quest.status }),
                 })}
               </Text>
+            ) : !objectivesThresholdMet ? (
+              <Text color="$soloTextMuted" textAlign="center" fontSize="$2">
+                {t('quest.detail.objectivesThresholdHint', {
+                  completed: completedObjectivesCount,
+                  total: quest.objectives.length,
+                })}
+              </Text>
+            ) : (
+              <SystemButton onPress={handleComplete} disabled={completeQuest.isPending}>
+                {completeQuest.isPending ? t('quest.detail.completing') : t('quest.detail.complete')}
+              </SystemButton>
             )}
           </SystemPanel>
         )}

@@ -12,7 +12,10 @@ import { SystemSelect } from '@/shared/components/SystemSelect'
 import { getErrorMessage } from '@/shared/api/get-error-message'
 import { useCreateQuest } from '../api/useCreateQuest'
 import { useQuestCategories } from '../api/useQuestCategories'
+import { useQuests } from '../api/useQuests'
 import {
+  ACTIVE_QUEST_STATUSES,
+  DEFAULT_MAIN_QUEST_DURATION_DAYS,
   QUEST_RANK_OPTIONS,
   QUEST_TYPE_OPTIONS,
   calculateRewardXpForRank,
@@ -21,14 +24,37 @@ import {
   type CreateQuestFormValues,
 } from '../schemas/create-quest.schema'
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000
+
+function calculateExpiresAt(durationDays: number): string {
+  return new Date(Date.now() + durationDays * DAY_IN_MS).toISOString()
+}
+
 export function CreateQuestScreen() {
   const router = useRouter()
   const { t } = useTranslation()
   const createQuest = useCreateQuest()
   const { data: categories } = useQuestCategories()
-  const questSchema = useMemo(() => createQuestSchema(t), [t])
+  const { data: quests } = useQuests()
 
-  const { control, handleSubmit, setValue } = useForm<CreateQuestFormInput, unknown, CreateQuestFormValues>({
+  const activeMainQuestCategoryIds = useMemo(() => {
+    const categoryIds = (quests ?? [])
+      .filter((quest) => quest.type === 'main' && ACTIVE_QUEST_STATUSES.includes(quest.status) && quest.categoryId)
+      .map((quest) => quest.categoryId as string)
+    return new Set(categoryIds)
+  }, [quests])
+
+  const questSchema = useMemo(
+    () => createQuestSchema(t, { activeMainQuestCategoryIds }),
+    [t, activeMainQuestCategoryIds],
+  )
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateQuestFormInput, unknown, CreateQuestFormValues>({
     resolver: zodResolver(questSchema),
     defaultValues: {
       title: '',
@@ -37,6 +63,7 @@ export function CreateQuestScreen() {
       type: 'daily',
       categoryId: null,
       rewardXp: calculateRewardXpForRank('E'),
+      durationDays: String(DEFAULT_MAIN_QUEST_DURATION_DAYS),
       objectives: [],
     },
   })
@@ -58,7 +85,21 @@ export function CreateQuestScreen() {
   }, [selectedRank, setValue])
 
   function onSubmit(values: CreateQuestFormValues) {
-    createQuest.mutate(values, { onSuccess: () => router.back() })
+    const isMain = values.type === 'main'
+
+    createQuest.mutate(
+      {
+        title: values.title,
+        description: values.description,
+        questRank: values.questRank,
+        type: values.type,
+        categoryId: values.categoryId,
+        rewardXp: values.rewardXp,
+        objectives: isMain ? values.objectives : [],
+        ...(isMain && { expiresAt: calculateExpiresAt(values.durationDays) }),
+      },
+      { onSuccess: () => router.back() },
+    )
   }
 
   const rankSelectOptions = QUEST_RANK_OPTIONS.map((rank) => ({
@@ -71,7 +112,9 @@ export function CreateQuestScreen() {
     value: type,
   }))
 
-  const categoryOptions = (categories ?? []).map((category) => ({ label: category.name, value: category.id }))
+  const categoryOptions = (categories ?? [])
+    .filter((category) => selectedType !== 'main' || !activeMainQuestCategoryIds.has(category.id))
+    .map((category) => ({ label: category.name, value: category.id }))
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} backgroundColor="$soloBg">
@@ -156,6 +199,16 @@ export function CreateQuestScreen() {
                 />
               )}
             />
+            {errors.categoryId?.message && (
+              <Text color="$soloDanger" fontSize="$1">
+                {errors.categoryId.message}
+              </Text>
+            )}
+            {selectedType === 'main' && categoryOptions.length === 0 && (
+              <Text color="$soloTextMuted" fontSize="$1">
+                {t('quest.create.noCategoriesAvailable')}
+              </Text>
+            )}
           </YStack>
 
           <YStack gap="$1">
@@ -166,6 +219,15 @@ export function CreateQuestScreen() {
               {calculateRewardXpForRank(selectedRank)} XP
             </Text>
           </YStack>
+
+          {selectedType === 'main' && (
+            <FormField
+              control={control}
+              name="durationDays"
+              label={t('quest.create.durationDays')}
+              inputProps={{ placeholder: String(DEFAULT_MAIN_QUEST_DURATION_DAYS), keyboardType: 'numeric' }}
+            />
+          )}
 
           {selectedType === 'main' && (
             <YStack gap="$3">
@@ -222,6 +284,12 @@ export function CreateQuestScreen() {
                   />
                 </XStack>
               ))}
+
+              {errors.objectives?.message && (
+                <Text color="$soloDanger" fontSize="$1">
+                  {errors.objectives.message}
+                </Text>
+              )}
             </YStack>
           )}
 

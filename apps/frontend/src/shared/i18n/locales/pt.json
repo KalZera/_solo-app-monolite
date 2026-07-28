@@ -154,7 +154,12 @@
       "completing": "Concluindo…",
       "statusLabel": "Missão {{status}}",
       "toastSuccessTitle": "Missão concluída",
-      "toastErrorTitle": "Falha ao concluir missão"
+      "toastErrorTitle": "Falha ao concluir missão",
+      "objectives": "Objetivos ({{completed}}/{{total}})",
+      "objectiveComplete": "Concluir",
+      "objectiveCompleting": "Concluindo…",
+      "objectiveCompleteErrorTitle": "Falha ao concluir objetivo",
+      "objectivesThresholdHint": "Conclua mais de 70% dos objetivos para poder finalizar esta missão ({{completed}}/{{total}} feitos)."
     },
     "create": {
       "title": "Nova Missão",
@@ -168,7 +173,9 @@
       "typePlaceholder": "Selecione um tipo",
       "category": "Categoria",
       "categoryPlaceholder": "Selecione uma categoria",
+      "noCategoriesAvailable": "Todas as categorias já possuem uma missão principal ativa.",
       "xpReward": "Recompensa de XP",
+      "durationDays": "Duração (dias)",
       "objectives": "Objetivos",
       "add": "Adicionar",
       "objectivesHint": "Uma missão principal é concluída quando mais de 70% dos objetivos forem feitos. Adicione pelo menos um.",
@@ -191,7 +198,9 @@
       "objectiveDescriptionMaxLength": "A descrição do objetivo é muito longa",
       "invalidNumber": "Informe um número válido",
       "mustBeWholeNumber": "Deve ser um número inteiro",
-      "mustBeGreaterThanZero": "Deve ser maior que 0"
+      "mustBeGreaterThanZero": "Deve ser maior que 0",
+      "tooManyObjectives": "Uma missão principal não pode ter mais objetivos do que sua duração em dias ({{max}}).",
+      "categoryHasActiveMainQuest": "Esta categoria já possui uma missão principal ativa."
     }
   },
   "inventory": {

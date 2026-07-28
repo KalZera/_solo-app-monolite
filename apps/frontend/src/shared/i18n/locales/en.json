@@ -154,7 +154,12 @@
       "completing": "Completing…",
       "statusLabel": "Quest {{status}}",
       "toastSuccessTitle": "Quest completed",
-      "toastErrorTitle": "Failed to complete quest"
+      "toastErrorTitle": "Failed to complete quest",
+      "objectives": "Objectives ({{completed}}/{{total}})",
+      "objectiveComplete": "Complete",
+      "objectiveCompleting": "Completing…",
+      "objectiveCompleteErrorTitle": "Failed to complete objective",
+      "objectivesThresholdHint": "Complete more than 70% of the objectives to finish this quest ({{completed}}/{{total}} done)."
     },
     "create": {
       "title": "New Quest",
@@ -168,7 +173,9 @@
       "typePlaceholder": "Select a type",
       "category": "Category",
       "categoryPlaceholder": "Select a category",
+      "noCategoriesAvailable": "All categories already have an active main quest.",
       "xpReward": "XP Reward",
+      "durationDays": "Duration (days)",
       "objectives": "Objectives",
       "add": "Add",
       "objectivesHint": "A main quest is completed once more than 70% of its objectives are done. Add at least one.",
@@ -191,7 +198,9 @@
       "objectiveDescriptionMaxLength": "Objective description is too long",
       "invalidNumber": "Enter a valid number",
       "mustBeWholeNumber": "Must be a whole number",
-      "mustBeGreaterThanZero": "Must be greater than 0"
+      "mustBeGreaterThanZero": "Must be greater than 0",
+      "tooManyObjectives": "A main quest cannot have more objectives than its duration in days ({{max}}).",
+      "categoryHasActiveMainQuest": "This category already has an active main quest."
     }
   },
   "inventory": {

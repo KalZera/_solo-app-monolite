@@ -43,5 +43,6 @@ export interface CreateQuestInput {
   type?: CreatableQuestType
   categoryId?: string | null
   rewardXp: number
+  expiresAt?: string
   objectives?: Array<Pick<QuestObjective, 'description' | 'target'>>
 }

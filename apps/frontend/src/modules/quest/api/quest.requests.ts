@@ -32,3 +32,15 @@ export async function completeQuest(id: string): Promise<CompleteQuestResult> {
   const { data } = await httpClient.post<CompleteQuestResult>(`/quests/${id}/complete`)
   return data
 }
+
+export interface CompleteQuestObjectiveInput {
+  questId: string
+  objectiveId: string
+}
+
+export async function completeQuestObjective(input: CompleteQuestObjectiveInput): Promise<{ quest: Quest }> {
+  const { data } = await httpClient.post<{ quest: Quest }>(
+    `/quests/${input.questId}/objectives/${input.objectiveId}/complete`,
+  )
+  return data
+}
