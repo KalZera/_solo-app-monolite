@@ -1,5 +1,7 @@
+import { useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Text, XStack, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { FormField } from '@/shared/components/FormField'
@@ -8,9 +10,11 @@ import { useCreateCharacter } from '../api/useCreateCharacter'
 import { CLASS_OPTIONS, createCharacterSchema, type CreateCharacterFormValues } from '../schemas/create-character.schema'
 
 export function CreateCharacterForm() {
+  const { t } = useTranslation()
   const createCharacter = useCreateCharacter()
+  const characterSchema = useMemo(() => createCharacterSchema(t), [t])
   const { control, handleSubmit } = useForm<CreateCharacterFormValues>({
-    resolver: zodResolver(createCharacterSchema),
+    resolver: zodResolver(characterSchema),
     defaultValues: { name: '', title: '', class: undefined },
   })
 
@@ -22,23 +26,28 @@ export function CreateCharacterForm() {
     <YStack gap="$4">
       <YStack alignItems="center" gap="$1">
         <Text color="$soloCyan" fontSize="$3" letterSpacing={4} textTransform="uppercase">
-          Registration
+          {t('character.createForm.heading')}
         </Text>
         <Text color="$soloText" fontSize={22} fontWeight="800" textAlign="center">
-          Awaken as a Hunter
+          {t('character.createForm.title')}
         </Text>
         <Text color="$soloTextMuted" fontSize="$3" textAlign="center">
-          The System has no record of you yet. Register your Hunter to proceed.
+          {t('character.createForm.subtitle')}
         </Text>
       </YStack>
 
-      <FormField control={control} name="name" label="Name" inputProps={{ placeholder: 'Sung Jinwoo', autoCapitalize: 'words' }} />
+      <FormField
+        control={control}
+        name="name"
+        label={t('character.createForm.name')}
+        inputProps={{ placeholder: t('character.createForm.namePlaceholder'), autoCapitalize: 'words' }}
+      />
 
       <FormField
         control={control}
         name="title"
-        label="Title"
-        inputProps={{ placeholder: 'The Weakest Hunter', autoCapitalize: 'words' }}
+        label={t('character.createForm.titleField')}
+        inputProps={{ placeholder: t('character.createForm.titlePlaceholder'), autoCapitalize: 'words' }}
       />
 
       <Controller
@@ -47,7 +56,7 @@ export function CreateCharacterForm() {
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <YStack gap="$2">
             <Text color="$soloTextMuted" fontSize="$2" letterSpacing={1} textTransform="uppercase">
-              Class
+              {t('character.createForm.class')}
             </Text>
             <XStack flexWrap="wrap" gap="$2">
               {CLASS_OPTIONS.map((option) => (
@@ -58,7 +67,7 @@ export function CreateCharacterForm() {
                   borderColor={value === option ? '$soloCyan' : '$soloBorder'}
                   onPress={() => onChange(option)}
                 >
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                  {t(`character.classes.${option}`)}
                 </SystemButton>
               ))}
             </XStack>
@@ -78,7 +87,7 @@ export function CreateCharacterForm() {
       )}
 
       <SystemButton onPress={handleSubmit(onSubmit)} disabled={createCharacter.isPending}>
-        {createCharacter.isPending ? 'Registering…' : 'Register Hunter'}
+        {createCharacter.isPending ? t('character.createForm.submitting') : t('character.createForm.submit')}
       </SystemButton>
     </YStack>
   )

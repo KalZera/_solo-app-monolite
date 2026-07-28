@@ -1,11 +1,13 @@
+import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Text, YStack } from "tamagui";
 import { SystemButton } from "@/shared/components/SystemButton";
 import { FormField } from "@/shared/components/FormField";
 import { getErrorMessage } from "@/shared/api/get-error-message";
 import { useLogin } from "../api/useLogin";
-import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
+import { createLoginSchema, type LoginFormValues } from "../schemas/login.schema";
 import type { LoginResponse } from "../types";
 
 interface LoginFormProps {
@@ -13,7 +15,9 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
+  const { t } = useTranslation();
   const login = useLogin();
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
@@ -28,9 +32,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       <FormField
         control={control}
         name="email"
-        label="Hunter ID"
+        label={t("auth.login.hunterId")}
         inputProps={{
-          placeholder: "hunter@association.com",
+          placeholder: t("auth.login.hunterIdPlaceholder"),
           autoCapitalize: "none",
           keyboardType: "email-address",
         }}
@@ -39,7 +43,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       <FormField
         control={control}
         name="password"
-        label="Password"
+        label={t("auth.login.password")}
         inputProps={{ placeholder: "••••••••", secureTextEntry: true }}
       />
 
@@ -50,7 +54,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       )}
 
       <SystemButton onPress={handleSubmit(onSubmit)} disabled={login.isPending}>
-        {login.isPending ? "Authenticating…" : "Enter the System"}
+        {login.isPending ? t("auth.login.submitting") : t("auth.login.submit")}
       </SystemButton>
     </YStack>
   );

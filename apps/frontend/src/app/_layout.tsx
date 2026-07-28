@@ -6,6 +6,8 @@ import { SessionProvider, useSession } from '@/modules/auth/session/SessionProvi
 import { queryClient } from '@/shared/api/query-client'
 import { AppToastProvider } from '@/shared/notifications/ToastProvider'
 import { PushNotificationsProvider } from '@/shared/notifications/PushNotificationsProvider'
+import '@/shared/i18n'
+import { LanguageProvider } from '@/shared/i18n/LanguageProvider'
 import tamaguiConfig from '@/shared/theme/tamagui.config'
 
 function RootNavigator() {
@@ -36,16 +38,18 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-      <QueryClientProvider client={queryClient}>
-        <SessionProvider>
-          <AppToastProvider>
-            <PushNotificationsProvider>
-              <StatusBar style="light" />
-              <RootNavigator />
-            </PushNotificationsProvider>
-          </AppToastProvider>
-        </SessionProvider>
-      </QueryClientProvider>
+      <LanguageProvider>
+        <QueryClientProvider client={queryClient}>
+          <SessionProvider>
+            <AppToastProvider>
+              <PushNotificationsProvider>
+                <StatusBar style="light" />
+                <RootNavigator />
+              </PushNotificationsProvider>
+            </AppToastProvider>
+          </SessionProvider>
+        </QueryClientProvider>
+      </LanguageProvider>
     </TamaguiProvider>
   )
 }

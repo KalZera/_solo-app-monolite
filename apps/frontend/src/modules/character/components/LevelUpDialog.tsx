@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Adapt, Dialog, Sheet, Text, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 
@@ -13,6 +14,7 @@ interface LevelUpDialogProps {
 }
 
 export function LevelUpDialog({ open, onOpenChange, newLevel, powerScore, levelsGained }: LevelUpDialogProps) {
+  const { t } = useTranslation()
   const pointsGranted = levelsGained * REST_POINTS_PER_LEVEL
 
   return (
@@ -46,13 +48,13 @@ export function LevelUpDialog({ open, onOpenChange, newLevel, powerScore, levels
         >
           <YStack alignItems="center" gap="$1">
             <Text color="$soloCyan" fontSize="$3" letterSpacing={4} textTransform="uppercase">
-              Level Up
+              {t('character.levelUp.title')}
             </Text>
             <Text color="$soloText" fontSize={48} fontWeight="900">
               {newLevel}
             </Text>
             <Text color="$soloTextMuted" fontSize="$3">
-              Power Score: {powerScore}
+              {t('character.levelUp.powerScore', { score: powerScore })}
             </Text>
           </YStack>
 
@@ -61,12 +63,12 @@ export function LevelUpDialog({ open, onOpenChange, newLevel, powerScore, levels
               +{pointsGranted}
             </Text>
             <Text color="$soloTextMuted" fontSize="$2" textAlign="center">
-              attribute points gained — distribute them among your stats
+              {t('character.levelUp.pointsDescription')}
             </Text>
           </YStack>
 
           <Dialog.Close asChild>
-            <SystemButton onPress={() => onOpenChange(false)}>Continue</SystemButton>
+            <SystemButton onPress={() => onOpenChange(false)}>{t('character.levelUp.continue')}</SystemButton>
           </Dialog.Close>
         </Dialog.Content>
       </Dialog.Portal>

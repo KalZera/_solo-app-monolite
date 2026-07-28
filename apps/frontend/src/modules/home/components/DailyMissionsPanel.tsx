@@ -1,4 +1,5 @@
 import { Flame, PersonStanding, Sword } from '@tamagui/lucide-icons-2'
+import { useTranslation } from 'react-i18next'
 import { Text, XStack, YStack } from 'tamagui'
 import type { Quest } from '@/modules/quest/types'
 import { MissionRow } from './MissionRow'
@@ -12,6 +13,7 @@ interface DailyMissionsPanelProps {
 }
 
 export function DailyMissionsPanel({ quests }: DailyMissionsPanelProps) {
+  const { t } = useTranslation()
   const completedCount = quests.filter((quest) => quest.status === 'completed').length
 
   return (
@@ -26,10 +28,10 @@ export function DailyMissionsPanel({ quests }: DailyMissionsPanelProps) {
     >
       <XStack justifyContent="space-between" alignItems="center">
         <Text color="$soloTextMuted" fontSize="$2" letterSpacing={2} textTransform="uppercase" fontWeight="700">
-          Daily Missions
+          {t('home.dailyMissions')}
         </Text>
         <Text color="$soloTextMuted" fontSize="$2">
-          {completedCount}/{quests.length} completed
+          {t('home.completedCount', { completed: completedCount, total: quests.length })}
         </Text>
       </XStack>
 

@@ -1,8 +1,11 @@
 import { BarChart3, Backpack, Home, ScrollText, User } from '@tamagui/lucide-icons-2'
 import { Tabs } from 'expo-router/js-tabs'
+import { useTranslation } from 'react-i18next'
 import { soloColors } from '@/shared/theme/tamagui.config'
 
 export default function AppTabsLayout() {
+  const { t } = useTranslation()
+
   return (
     <Tabs
       screenOptions={{
@@ -18,35 +21,35 @@ export default function AppTabsLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: 'Home',
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => <Home color={color as string} size={size} />,
         }}
       />
       <Tabs.Screen
         name="quests"
         options={{
-          title: 'Quests',
+          title: t('tabs.quests'),
           tabBarIcon: ({ color, size }) => <ScrollText color={color as string} size={size} />,
         }}
       />
       <Tabs.Screen
         name="status"
         options={{
-          title: 'Status',
+          title: t('tabs.status'),
           tabBarIcon: ({ color, size }) => <BarChart3 color={color as string} size={size} />,
         }}
       />
       <Tabs.Screen
         name="inventory"
         options={{
-          title: 'Inventory',
+          title: t('tabs.inventory'),
           tabBarIcon: ({ color, size }) => <Backpack color={color as string} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, size }) => <User color={color as string} size={size} />,
         }}
       />

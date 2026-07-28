@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { Plus } from '@tamagui/lucide-icons-2'
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
@@ -8,13 +9,14 @@ import { QuestCard } from '../components/QuestCard'
 
 export function QuestListScreen() {
   const router = useRouter()
+  const { t } = useTranslation()
   const { data: quests, isPending, isError } = useQuests()
 
   return (
     <YStack flex={1} backgroundColor="$soloBg">
       <XStack width="100%" justifyContent="space-between" alignItems="center" padding="$4" paddingTop="$7">
         <Text color="$soloCyan" fontSize="$3" letterSpacing={4} textTransform="uppercase">
-          Quest Log
+          {t('quest.list.title')}
         </Text>
         <Button
           circular
@@ -25,11 +27,11 @@ export function QuestListScreen() {
         />
       </XStack>
 
-      {isPending && <LoadingIndicator label="Loading quests…" />}
+      {isPending && <LoadingIndicator label={t('quest.list.loading')} />}
 
       {isError && (
         <YStack flex={1} alignItems="center" justifyContent="center" padding="$5">
-          <Text color="$soloDanger">Failed to reach the System. Try again.</Text>
+          <Text color="$soloDanger">{t('quest.list.failed')}</Text>
         </YStack>
       )}
 
@@ -39,7 +41,7 @@ export function QuestListScreen() {
             {quests.length === 0 && (
               <SystemPanel>
                 <Text color="$soloTextMuted" textAlign="center">
-                  No quests yet. Tap + to create your first one.
+                  {t('quest.list.empty')}
                 </Text>
               </SystemPanel>
             )}

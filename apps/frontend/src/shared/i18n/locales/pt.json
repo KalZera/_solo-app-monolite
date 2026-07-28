@@ -1,0 +1,202 @@
+{
+  "common": {
+    "loading": "Carregando…",
+    "failedToReachSystem": "Falha ao conectar com o Sistema. Tente novamente.",
+    "continue": "Continuar"
+  },
+  "tabs": {
+    "home": "Início",
+    "quests": "Missões",
+    "status": "Status",
+    "inventory": "Inventário",
+    "profile": "Perfil"
+  },
+  "auth": {
+    "systemLabel": "O Sistema",
+    "login": {
+      "appName": "Solo Leveling",
+      "subtitle": "Somente um Caçador registrado no Sistema pode prosseguir.",
+      "hunterId": "ID de Caçador",
+      "hunterIdPlaceholder": "cacador@associacao.com",
+      "password": "Senha",
+      "submit": "Entrar no Sistema",
+      "submitting": "Autenticando…",
+      "registerLink": "Novo Caçador? Cadastre-se",
+      "toastErrorTitle": "Falha na autenticação"
+    },
+    "register": {
+      "heading": "Cadastro de Caçador",
+      "subtitle": "Desperte como um Caçador e responda ao chamado do Sistema.",
+      "hunterId": "ID de Caçador",
+      "hunterIdPlaceholder": "cacador@associacao.com",
+      "hunterName": "Nome de Caçador",
+      "hunterNamePlaceholder": "jinwoo",
+      "password": "Senha",
+      "submit": "Cadastrar Caçador",
+      "submitting": "Cadastrando…",
+      "loginLink": "Já é um Caçador? Entrar",
+      "toastErrorTitle": "Falha no cadastro"
+    },
+    "validation": {
+      "emailRequired": "O e-mail é obrigatório",
+      "emailInvalid": "Informe um e-mail válido",
+      "passwordRequired": "A senha é obrigatória",
+      "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
+      "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+      "usernameMaxLength": "O nome de usuário deve ter no máximo 20 caracteres",
+      "usernamePattern": "Apenas letras, números e sublinhados são permitidos"
+    }
+  },
+  "character": {
+    "classes": {
+      "warrior": "Guerreiro",
+      "mage": "Mago",
+      "rogue": "Ladino",
+      "ranger": "Patrulheiro",
+      "healer": "Curandeiro"
+    },
+    "createForm": {
+      "heading": "Cadastro",
+      "title": "Desperte como um Caçador",
+      "subtitle": "O Sistema ainda não tem registro seu. Cadastre seu Caçador para prosseguir.",
+      "name": "Nome",
+      "namePlaceholder": "Sung Jinwoo",
+      "titleField": "Título",
+      "titlePlaceholder": "O Caçador Mais Fraco",
+      "class": "Classe",
+      "submit": "Cadastrar Caçador",
+      "submitting": "Cadastrando…",
+      "toastSuccessTitle": "Caçador cadastrado",
+      "toastSuccessMessage": "Bem-vindo ao Sistema.",
+      "toastErrorTitle": "Falha no cadastro"
+    },
+    "validation": {
+      "nameMinLength": "O nome deve ter pelo menos 2 caracteres",
+      "nameMaxLength": "O nome é muito longo",
+      "titleMinLength": "O título deve ter pelo menos 2 caracteres",
+      "titleMaxLength": "O título é muito longo",
+      "chooseClass": "Escolha uma classe"
+    },
+    "levelUp": {
+      "title": "Subiu de Nível",
+      "powerScore": "Pontuação de Poder: {{score}}",
+      "pointsDescription": "pontos de atributo ganhos — distribua entre seus atributos",
+      "continue": "Continuar"
+    },
+    "screen": {
+      "statusWindow": "Janela de Status",
+      "loading": "Invocando dados do personagem…",
+      "noHunter": "Nenhum Caçador registrado ainda. Vá até a aba Início para cadastrar um.",
+      "failed": "Falha ao conectar com o Sistema. Tente novamente.",
+      "level": "Nível",
+      "rank": "Rank",
+      "power": "Poder",
+      "experience": "Experiência",
+      "attributes": "Atributos",
+      "stats": {
+        "strength": "Força",
+        "intelligence": "Inteligência",
+        "agility": "Agilidade",
+        "vitality": "Vitalidade",
+        "luck": "Sorte"
+      }
+    },
+    "allocateAttribute": {
+      "toastErrorTitle": "Não foi possível alocar o ponto"
+    }
+  },
+  "home": {
+    "loadingSystem": "Invocando o Sistema…",
+    "loadingMissions": "Carregando missões…",
+    "failed": "Falha ao conectar com o Sistema. Tente novamente.",
+    "attributes": "Atributos",
+    "pointsAvailable": "Pontos disponíveis",
+    "dailyMissions": "Missões Diárias",
+    "completedCount": "{{completed}}/{{total}} concluídas"
+  },
+  "quest": {
+    "types": {
+      "daily": "Diária",
+      "main": "Principal"
+    },
+    "statuses": {
+      "available": "disponível",
+      "in_progress": "em andamento",
+      "completed": "concluída",
+      "failed": "falhou",
+      "expired": "expirada"
+    },
+    "list": {
+      "title": "Diário de Missões",
+      "loading": "Carregando missões…",
+      "failed": "Falha ao conectar com o Sistema. Tente novamente.",
+      "empty": "Nenhuma missão ainda. Toque em + para criar a primeira."
+    },
+    "detail": {
+      "title": "Detalhes da Missão",
+      "loading": "Carregando missão…",
+      "failed": "Falha ao conectar com o Sistema. Tente novamente.",
+      "rank": "Rank",
+      "type": "Tipo",
+      "status": "Status",
+      "reward": "Recompensa",
+      "deadline": "Prazo: {{date}}",
+      "completeError": "Não foi possível concluir esta missão. Tente novamente.",
+      "complete": "Concluir Missão",
+      "completing": "Concluindo…",
+      "statusLabel": "Missão {{status}}",
+      "toastSuccessTitle": "Missão concluída",
+      "toastErrorTitle": "Falha ao concluir missão"
+    },
+    "create": {
+      "title": "Nova Missão",
+      "titleField": "Título",
+      "titlePlaceholder": "Treinar por 30 minutos",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Passar 30 minutos treinando",
+      "rank": "Rank",
+      "rankPlaceholder": "Selecione um rank",
+      "type": "Tipo",
+      "typePlaceholder": "Selecione um tipo",
+      "category": "Categoria",
+      "categoryPlaceholder": "Selecione uma categoria",
+      "xpReward": "Recompensa de XP",
+      "objectives": "Objetivos",
+      "add": "Adicionar",
+      "objectivesHint": "Uma missão principal é concluída quando mais de 70% dos objetivos forem feitos. Adicione pelo menos um.",
+      "objectiveLabel": "Objetivo {{number}}",
+      "objectivePlaceholder": "Ler 100 páginas",
+      "target": "Meta",
+      "submit": "Criar Missão",
+      "submitting": "Criando…",
+      "toastSuccessTitle": "Missão criada",
+      "toastErrorTitle": "Falha ao criar missão"
+    },
+    "validation": {
+      "titleMinLength": "O título deve ter pelo menos 3 caracteres",
+      "titleMaxLength": "O título é muito longo",
+      "descriptionMinLength": "A descrição deve ter pelo menos 3 caracteres",
+      "descriptionMaxLength": "A descrição é muito longa",
+      "chooseRank": "Escolha um rank",
+      "chooseType": "Escolha um tipo",
+      "objectiveDescriptionMinLength": "A descrição do objetivo é muito curta",
+      "objectiveDescriptionMaxLength": "A descrição do objetivo é muito longa",
+      "invalidNumber": "Informe um número válido",
+      "mustBeWholeNumber": "Deve ser um número inteiro",
+      "mustBeGreaterThanZero": "Deve ser maior que 0"
+    }
+  },
+  "inventory": {
+    "title": "Inventário",
+    "empty": "Seu inventário está vazio. Itens ganhos em missões aparecerão aqui."
+  },
+  "profile": {
+    "title": "Perfil do Caçador",
+    "defaultName": "Caçador",
+    "logOff": "Sair",
+    "loggingOff": "Saindo…",
+    "language": "Idioma",
+    "languageEnglish": "Inglês",
+    "languagePortuguese": "Português"
+  }
+}

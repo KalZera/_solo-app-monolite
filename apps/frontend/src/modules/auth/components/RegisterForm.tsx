@@ -1,12 +1,14 @@
+import { useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Text, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { FormField } from '@/shared/components/FormField'
 import { getErrorMessage } from '@/shared/api/get-error-message'
 import { useLogin } from '../api/useLogin'
 import { useRegister } from '../api/useRegister'
-import { registerSchema, type RegisterFormValues } from '../schemas/register.schema'
+import { createRegisterSchema, type RegisterFormValues } from '../schemas/register.schema'
 import type { LoginResponse } from '../types'
 
 interface RegisterFormProps {
@@ -14,8 +16,10 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
+  const { t } = useTranslation()
   const registerUser = useRegister()
   const login = useLogin()
+  const registerSchema = useMemo(() => createRegisterSchema(t), [t])
 
   const { control, handleSubmit } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -37,21 +41,25 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       <FormField
         control={control}
         name="email"
-        label="Hunter ID"
-        inputProps={{ placeholder: 'hunter@association.com', autoCapitalize: 'none', keyboardType: 'email-address' }}
+        label={t('auth.register.hunterId')}
+        inputProps={{
+          placeholder: t('auth.register.hunterIdPlaceholder'),
+          autoCapitalize: 'none',
+          keyboardType: 'email-address',
+        }}
       />
 
       <FormField
         control={control}
         name="username"
-        label="Hunter Name"
-        inputProps={{ placeholder: 'jinwoo', autoCapitalize: 'none' }}
+        label={t('auth.register.hunterName')}
+        inputProps={{ placeholder: t('auth.register.hunterNamePlaceholder'), autoCapitalize: 'none' }}
       />
 
       <FormField
         control={control}
         name="password"
-        label="Password"
+        label={t('auth.register.password')}
         inputProps={{ placeholder: '••••••••', secureTextEntry: true }}
       />
 
@@ -62,7 +70,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       )}
 
       <SystemButton onPress={handleSubmit(onSubmit)} disabled={isPending}>
-        {isPending ? 'Registering…' : 'Register Hunter'}
+        {isPending ? t('auth.register.submitting') : t('auth.register.submit')}
       </SystemButton>
     </YStack>
   )

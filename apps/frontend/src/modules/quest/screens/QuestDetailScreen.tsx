@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft } from '@tamagui/lucide-icons-2'
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
@@ -23,6 +24,7 @@ const INACTIVE_STATUSES = ['completed', 'failed', 'expired']
 
 export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
   const router = useRouter()
+  const { t } = useTranslation()
   const { data: quest, isPending, isError } = useQuest(questId)
   const completeQuest = useCompleteQuest()
   const [levelUpInfo, setLevelUpInfo] = useState<LevelUpInfo | null>(null)
@@ -56,15 +58,15 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
             onPress={() => router.back()}
           />
           <Text color="$soloCyan" fontSize="$3" letterSpacing={4} textTransform="uppercase">
-            Quest Details
+            {t('quest.detail.title')}
           </Text>
         </XStack>
 
-        {isPending && <LoadingIndicator label="Loading quest…" />}
+        {isPending && <LoadingIndicator label={t('quest.detail.loading')} />}
 
         {isError && (
           <Text color="$soloDanger" textAlign="center">
-            Failed to reach the System. Try again.
+            {t('quest.detail.failed')}
           </Text>
         )}
 
@@ -82,7 +84,7 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
             <XStack flexWrap="wrap" gap="$5">
               <YStack gap="$1">
                 <Text color="$soloTextMuted" fontSize="$1" textTransform="uppercase">
-                  Rank
+                  {t('quest.detail.rank')}
                 </Text>
                 <Text color="$soloPurpleGlow" fontWeight="700">
                   {quest.questRank}
@@ -90,23 +92,23 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
               </YStack>
               <YStack gap="$1">
                 <Text color="$soloTextMuted" fontSize="$1" textTransform="uppercase">
-                  Type
+                  {t('quest.detail.type')}
                 </Text>
                 <Text color="$soloText" fontWeight="700" textTransform="capitalize">
-                  {quest.type}
+                  {t(`quest.types.${quest.type}`, { defaultValue: quest.type })}
                 </Text>
               </YStack>
               <YStack gap="$1">
                 <Text color="$soloTextMuted" fontSize="$1" textTransform="uppercase">
-                  Status
+                  {t('quest.detail.status')}
                 </Text>
                 <Text color="$soloText" fontWeight="700" textTransform="capitalize">
-                  {quest.status.replace('_', ' ')}
+                  {t(`quest.statuses.${quest.status}`, { defaultValue: quest.status })}
                 </Text>
               </YStack>
               <YStack gap="$1">
                 <Text color="$soloTextMuted" fontSize="$1" textTransform="uppercase">
-                  Reward
+                  {t('quest.detail.reward')}
                 </Text>
                 <Text color="$soloCyan" fontWeight="700">
                   {quest.rewardXp} XP
@@ -116,23 +118,25 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
 
             {quest.expiresAt && (
               <Text color="$soloTextMuted" fontSize="$2">
-                Deadline: {new Date(quest.expiresAt).toLocaleString()}
+                {t('quest.detail.deadline', { date: new Date(quest.expiresAt).toLocaleString() })}
               </Text>
             )}
 
             {completeQuest.isError && (
               <Text color="$soloDanger" fontSize="$2">
-                Unable to complete this quest. Try again.
+                {t('quest.detail.completeError')}
               </Text>
             )}
 
             {canComplete ? (
               <SystemButton onPress={handleComplete} disabled={completeQuest.isPending}>
-                {completeQuest.isPending ? 'Completing…' : 'Complete Quest'}
+                {completeQuest.isPending ? t('quest.detail.completing') : t('quest.detail.complete')}
               </SystemButton>
             ) : (
               <Text color="$soloTextMuted" textAlign="center" fontSize="$2" textTransform="uppercase">
-                Quest {quest.status.replace('_', ' ')}
+                {t('quest.detail.statusLabel', {
+                  status: t(`quest.statuses.${quest.status}`, { defaultValue: quest.status }),
+                })}
               </Text>
             )}
           </SystemPanel>

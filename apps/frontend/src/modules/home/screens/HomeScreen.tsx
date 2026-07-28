@@ -1,4 +1,5 @@
 import { Bell } from "@tamagui/lucide-icons-2";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, XStack, YStack } from "tamagui";
 import {
   isCharacterNotFound,
@@ -13,6 +14,7 @@ import { DailyMissionsPanel } from "../components/DailyMissionsPanel";
 import { HeroCard } from "../components/HeroCard";
 
 export function HomeScreen() {
+  const { t } = useTranslation();
   const {
     data: character,
     isPending: isCharacterPending,
@@ -24,7 +26,7 @@ export function HomeScreen() {
   });
 
   if (isCharacterPending) {
-    return <LoadingIndicator label="Summoning the System…" />;
+    return <LoadingIndicator label={t("home.loadingSystem")} />;
   }
 
   if (isCharacterNotFound(error)) {
@@ -57,7 +59,7 @@ export function HomeScreen() {
         padding="$5"
       >
         <Text color="$soloDanger" textAlign="center">
-          Failed to reach the System. Try again.
+          {t("home.failed")}
         </Text>
       </YStack>
     );
@@ -91,7 +93,7 @@ export function HomeScreen() {
             availablePoints={character.restPoints}
           />
         )}
-        {isQuestsPending && <LoadingIndicator label="Loading missions…" />}
+        {isQuestsPending && <LoadingIndicator label={t("home.loadingMissions")} />}
         {quests && <DailyMissionsPanel quests={quests} />}
       </YStack>
     </ScrollView>

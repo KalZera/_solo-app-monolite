@@ -1,7 +1,8 @@
+import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'expo-router'
-import { useEffect } from 'react'
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, Plus, Trash2 } from '@tamagui/lucide-icons-2'
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
 import { SystemButton } from '@/shared/components/SystemButton'
@@ -20,25 +21,15 @@ import {
   type CreateQuestFormValues,
 } from '../schemas/create-quest.schema'
 
-const QUEST_TYPE_LABELS: Record<(typeof QUEST_TYPE_OPTIONS)[number], string> = {
-  daily: 'Daily',
-  main: 'Main',
-}
-
-const RANK_SELECT_OPTIONS = QUEST_RANK_OPTIONS.map((rank) => ({
-  label: `Rank ${rank} (${calculateRewardXpForRank(rank)} XP)`,
-  value: rank,
-}))
-
-const TYPE_SELECT_OPTIONS = QUEST_TYPE_OPTIONS.map((type) => ({ label: QUEST_TYPE_LABELS[type], value: type }))
-
 export function CreateQuestScreen() {
   const router = useRouter()
+  const { t } = useTranslation()
   const createQuest = useCreateQuest()
   const { data: categories } = useQuestCategories()
+  const questSchema = useMemo(() => createQuestSchema(t), [t])
 
   const { control, handleSubmit, setValue } = useForm<CreateQuestFormInput, unknown, CreateQuestFormValues>({
-    resolver: zodResolver(createQuestSchema),
+    resolver: zodResolver(questSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -50,7 +41,11 @@ export function CreateQuestScreen() {
     },
   })
 
-  const { fields: objectiveFields, append: appendObjective, remove: removeObjective } = useFieldArray({
+  const {
+    fields: objectiveFields,
+    append: appendObjective,
+    remove: removeObjective,
+  } = useFieldArray({
     control,
     name: 'objectives',
   })
@@ -66,6 +61,16 @@ export function CreateQuestScreen() {
     createQuest.mutate(values, { onSuccess: () => router.back() })
   }
 
+  const rankSelectOptions = QUEST_RANK_OPTIONS.map((rank) => ({
+    label: `${t('quest.detail.rank')} ${rank} (${calculateRewardXpForRank(rank)} XP)`,
+    value: rank,
+  }))
+
+  const typeSelectOptions = QUEST_TYPE_OPTIONS.map((type) => ({
+    label: t(`quest.types.${type}`),
+    value: type,
+  }))
+
   const categoryOptions = (categories ?? []).map((category) => ({ label: category.name, value: category.id }))
 
   return (
@@ -80,49 +85,64 @@ export function CreateQuestScreen() {
             onPress={() => router.back()}
           />
           <Text color="$soloCyan" fontSize="$3" letterSpacing={4} textTransform="uppercase">
-            New Quest
+            {t('quest.create.title')}
           </Text>
         </XStack>
 
         <SystemPanel gap="$4">
-          <FormField control={control} name="title" label="Title" inputProps={{ placeholder: 'Train for 30 minutes' }} />
+          <FormField
+            control={control}
+            name="title"
+            label={t('quest.create.titleField')}
+            inputProps={{ placeholder: t('quest.create.titlePlaceholder') }}
+          />
 
           <FormField
             control={control}
             name="description"
-            label="Description"
-            inputProps={{ placeholder: 'Spend 30 minutes training' }}
+            label={t('quest.create.description')}
+            inputProps={{ placeholder: t('quest.create.descriptionPlaceholder') }}
           />
 
           <YStack gap="$2">
             <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
-              Rank
+              {t('quest.create.rank')}
             </Text>
             <Controller
               control={control}
               name="questRank"
               render={({ field: { onChange, value } }) => (
-                <SystemSelect value={value} onValueChange={onChange} options={RANK_SELECT_OPTIONS} placeholder="Select a rank" />
+                <SystemSelect
+                  value={value}
+                  onValueChange={onChange}
+                  options={rankSelectOptions}
+                  placeholder={t('quest.create.rankPlaceholder')}
+                />
               )}
             />
           </YStack>
 
           <YStack gap="$2">
             <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
-              Type
+              {t('quest.create.type')}
             </Text>
             <Controller
               control={control}
               name="type"
               render={({ field: { onChange, value } }) => (
-                <SystemSelect value={value} onValueChange={onChange} options={TYPE_SELECT_OPTIONS} placeholder="Select a type" />
+                <SystemSelect
+                  value={value}
+                  onValueChange={onChange}
+                  options={typeSelectOptions}
+                  placeholder={t('quest.create.typePlaceholder')}
+                />
               )}
             />
           </YStack>
 
           <YStack gap="$2">
             <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
-              Category
+              {t('quest.create.category')}
             </Text>
             <Controller
               control={control}
@@ -132,7 +152,7 @@ export function CreateQuestScreen() {
                   value={value ?? undefined}
                   onValueChange={onChange}
                   options={categoryOptions}
-                  placeholder="Select a category"
+                  placeholder={t('quest.create.categoryPlaceholder')}
                 />
               )}
             />
@@ -140,7 +160,7 @@ export function CreateQuestScreen() {
 
           <YStack gap="$1">
             <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
-              XP Reward
+              {t('quest.create.xpReward')}
             </Text>
             <Text color="$soloCyan" fontSize="$6" fontWeight="800">
               {calculateRewardXpForRank(selectedRank)} XP
@@ -151,7 +171,7 @@ export function CreateQuestScreen() {
             <YStack gap="$3">
               <XStack justifyContent="space-between" alignItems="center">
                 <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
-                  Objectives
+                  {t('quest.create.objectives')}
                 </Text>
                 <Button
                   size="$2"
@@ -162,13 +182,13 @@ export function CreateQuestScreen() {
                   icon={<Plus color="$soloCyan" size={14} />}
                   onPress={() => appendObjective({ description: '', target: '' })}
                 >
-                  Add
+                  {t('quest.create.add')}
                 </Button>
               </XStack>
 
               {objectiveFields.length === 0 && (
                 <Text color="$soloTextMuted" fontSize="$2">
-                  A main quest is completed once more than 70% of its objectives are done. Add at least one.
+                  {t('quest.create.objectivesHint')}
                 </Text>
               )}
 
@@ -178,15 +198,15 @@ export function CreateQuestScreen() {
                     <FormField
                       control={control}
                       name={`objectives.${index}.description`}
-                      label={`Objective ${index + 1}`}
-                      inputProps={{ placeholder: 'Read 100 pages' }}
+                      label={t('quest.create.objectiveLabel', { number: index + 1 })}
+                      inputProps={{ placeholder: t('quest.create.objectivePlaceholder') }}
                     />
                   </YStack>
                   <YStack flex={1}>
                     <FormField
                       control={control}
                       name={`objectives.${index}.target`}
-                      label="Target"
+                      label={t('quest.create.target')}
                       inputProps={{ placeholder: '1', keyboardType: 'numeric' }}
                     />
                   </YStack>
@@ -212,7 +232,7 @@ export function CreateQuestScreen() {
           )}
 
           <SystemButton onPress={handleSubmit(onSubmit)} disabled={createQuest.isPending}>
-            {createQuest.isPending ? 'Creating…' : 'Create Quest'}
+            {createQuest.isPending ? t('quest.create.submitting') : t('quest.create.submit')}
           </SystemButton>
         </SystemPanel>
       </YStack>

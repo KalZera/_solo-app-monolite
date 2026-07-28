@@ -1,4 +1,5 @@
 import { User } from '@tamagui/lucide-icons-2'
+import { useTranslation } from 'react-i18next'
 import { Text, XStack, YStack } from 'tamagui'
 import { ProgressBar } from '@/shared/components/ProgressBar'
 import type { CharacterProfile } from '@/modules/character/types'
@@ -11,6 +12,7 @@ interface HeroCardProps {
 }
 
 export function HeroCard({ character }: HeroCardProps) {
+  const { t } = useTranslation()
   const xpIntoLevel = character.experience % XP_PER_LEVEL
 
   return (
@@ -42,11 +44,11 @@ export function HeroCard({ character }: HeroCardProps) {
           {character.name}
         </Text>
         <Text color="$soloPurpleGlow" fontSize="$3" fontWeight="700">
-          Rank {character.rank}
+          {t('character.screen.rank')} {character.rank}
         </Text>
         <XStack justifyContent="space-between" alignItems="center">
           <Text color="$soloText" fontSize="$3">
-            Level {character.level}
+            {t('character.screen.level')} {character.level}
           </Text>
           <Text color="$soloTextMuted" fontSize="$2">
             {xpIntoLevel} / {XP_PER_LEVEL} XP
