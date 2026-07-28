@@ -11,6 +11,7 @@ export const mockCharacterProfile: CharacterProfile = {
   experience: 4200,
   powerScore: 1600,
   rank: 'C',
+  restPoints: 5,
   stats: {
     strength: 420,
     intelligence: 260,

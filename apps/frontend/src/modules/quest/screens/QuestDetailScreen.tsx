@@ -1,14 +1,22 @@
+import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { ChevronLeft } from '@tamagui/lucide-icons-2'
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
+import { LevelUpDialog } from '@/modules/character/components/LevelUpDialog'
 import { useCompleteQuest } from '../api/useCompleteQuest'
 import { useQuest } from '../api/useQuest'
 
 interface QuestDetailScreenProps {
   questId: string
+}
+
+interface LevelUpInfo {
+  newLevel: number
+  powerScore: number
+  levelsGained: number
 }
 
 const INACTIVE_STATUSES = ['completed', 'failed', 'expired']
@@ -17,8 +25,24 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
   const router = useRouter()
   const { data: quest, isPending, isError } = useQuest(questId)
   const completeQuest = useCompleteQuest()
+  const [levelUpInfo, setLevelUpInfo] = useState<LevelUpInfo | null>(null)
 
   const canComplete = quest ? !INACTIVE_STATUSES.includes(quest.status) : false
+
+  function handleComplete() {
+    if (!quest) return
+    completeQuest.mutate(quest.id, {
+      onSuccess: (result) => {
+        if (result.levelsGained.length > 0) {
+          setLevelUpInfo({
+            newLevel: result.character.level,
+            powerScore: result.character.powerScore,
+            levelsGained: result.levelsGained.length,
+          })
+        }
+      },
+    })
+  }
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} backgroundColor="$soloBg">
@@ -103,7 +127,7 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
             )}
 
             {canComplete ? (
-              <SystemButton onPress={() => completeQuest.mutate(quest.id)} disabled={completeQuest.isPending}>
+              <SystemButton onPress={handleComplete} disabled={completeQuest.isPending}>
                 {completeQuest.isPending ? 'Completing…' : 'Complete Quest'}
               </SystemButton>
             ) : (
@@ -114,6 +138,18 @@ export function QuestDetailScreen({ questId }: QuestDetailScreenProps) {
           </SystemPanel>
         )}
       </YStack>
+
+      {levelUpInfo && (
+        <LevelUpDialog
+          open={levelUpInfo !== null}
+          onOpenChange={(open) => {
+            if (!open) setLevelUpInfo(null)
+          }}
+          newLevel={levelUpInfo.newLevel}
+          powerScore={levelUpInfo.powerScore}
+          levelsGained={levelUpInfo.levelsGained}
+        />
+      )}
     </ScrollView>
   )
 }

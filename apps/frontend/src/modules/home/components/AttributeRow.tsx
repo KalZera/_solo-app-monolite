@@ -8,9 +8,19 @@ interface AttributeRowProps {
   icon: React.ComponentType<{ color?: string; size?: number }>
   label: string
   value: number
+  canAllocate?: boolean
+  isAllocating?: boolean
+  onAllocate?: () => void
 }
 
-export function AttributeRow({ icon: Icon, label, value }: AttributeRowProps) {
+export function AttributeRow({
+  icon: Icon,
+  label,
+  value,
+  canAllocate = false,
+  isAllocating = false,
+  onAllocate,
+}: AttributeRowProps) {
   return (
     <XStack alignItems="center" gap="$3">
       <YStack
@@ -40,9 +50,12 @@ export function AttributeRow({ icon: Icon, label, value }: AttributeRowProps) {
         circular
         chromeless
         borderWidth={1}
-        borderColor="$soloBorderStrong"
+        borderColor={canAllocate ? '$soloCyan' : '$soloBorderStrong'}
         backgroundColor="$soloPanelAlt"
+        opacity={canAllocate ? 1 : 0.4}
+        disabled={!canAllocate || isAllocating}
         icon={<Plus color="$soloPurpleGlow" size={14} />}
+        onPress={onAllocate}
       />
     </XStack>
   )

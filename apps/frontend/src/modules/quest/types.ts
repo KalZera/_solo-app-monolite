@@ -13,6 +13,7 @@ export interface QuestObjective {
 export interface Quest {
   id: string
   characterId: string
+  categoryId: string | null
   title: string
   description: string
   questRank: string
@@ -27,10 +28,20 @@ export interface Quest {
   updatedAt: string
 }
 
+export interface QuestCategory {
+  id: string
+  name: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface CreateQuestInput {
   title: string
   description: string
   questRank: string
   type?: CreatableQuestType
+  categoryId?: string | null
   rewardXp: number
+  objectives?: Array<Pick<QuestObjective, 'description' | 'target'>>
 }

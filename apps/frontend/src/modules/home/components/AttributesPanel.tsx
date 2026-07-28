@@ -1,6 +1,7 @@
 import { Brain, Clover, Dumbbell, Footprints, Heart } from '@tamagui/lucide-icons-2'
 import { Text, XStack, YStack } from 'tamagui'
-import type { CharacterStats } from '@/modules/character/types'
+import type { AllocatableAttribute, CharacterStats } from '@/modules/character/types'
+import { useAllocateAttributePoint } from '@/modules/character/api/useAllocateAttributePoint'
 import { AttributeRow } from './AttributeRow'
 
 interface AttributesPanelProps {
@@ -8,7 +9,17 @@ interface AttributesPanelProps {
   availablePoints?: number
 }
 
+const ATTRIBUTE_ROWS: { key: AllocatableAttribute; icon: typeof Dumbbell; label: string }[] = [
+  { key: 'strength', icon: Dumbbell, label: 'Strength' },
+  { key: 'agility', icon: Footprints, label: 'Agility' },
+  { key: 'vitality', icon: Heart, label: 'Vitality' },
+  { key: 'intelligence', icon: Brain, label: 'Intelligence' },
+  { key: 'luck', icon: Clover, label: 'Luck' },
+]
+
 export function AttributesPanel({ stats, availablePoints = 0 }: AttributesPanelProps) {
+  const allocateAttributePoint = useAllocateAttributePoint()
+
   return (
     <YStack
       width="100%"
@@ -45,11 +56,17 @@ export function AttributesPanel({ stats, availablePoints = 0 }: AttributesPanelP
       </XStack>
 
       <YStack gap="$3">
-        <AttributeRow icon={Dumbbell} label="Strength" value={stats.strength} />
-        <AttributeRow icon={Footprints} label="Agility" value={stats.agility} />
-        <AttributeRow icon={Heart} label="Vitality" value={stats.vitality} />
-        <AttributeRow icon={Brain} label="Intelligence" value={stats.intelligence} />
-        <AttributeRow icon={Clover} label="Luck" value={stats.luck} />
+        {ATTRIBUTE_ROWS.map((row) => (
+          <AttributeRow
+            key={row.key}
+            icon={row.icon}
+            label={row.label}
+            value={stats[row.key]}
+            canAllocate={availablePoints > 0}
+            isAllocating={allocateAttributePoint.isPending}
+            onAllocate={() => allocateAttributePoint.mutate({ attribute: row.key, amount: 1 })}
+          />
+        ))}
       </YStack>
     </YStack>
   )

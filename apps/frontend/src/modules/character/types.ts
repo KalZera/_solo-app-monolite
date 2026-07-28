@@ -27,6 +27,19 @@ export interface Character {
 
 export interface CharacterProfile extends Character {
   rank: CharacterRank
+  restPoints: number
+}
+
+export type AllocatableAttribute = keyof CharacterStats
+
+export interface AllocateAttributePointInput {
+  attribute: AllocatableAttribute
+  amount: number
+}
+
+export interface AllocateAttributePointResult {
+  character: Character
+  restPoints: number
 }
 
 export interface CreateCharacterInput {
