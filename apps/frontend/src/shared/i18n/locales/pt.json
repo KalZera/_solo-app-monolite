@@ -99,6 +99,14 @@
         "agility": "Agilidade",
         "vitality": "Vitalidade",
         "luck": "Sorte"
+      },
+      "history": {
+        "title": "Histórico",
+        "loading": "Carregando histórico…",
+        "failed": "Falha ao carregar o histórico. Tente novamente.",
+        "empty": "Nenhum histórico ainda.",
+        "loadMore": "Carregar mais",
+        "loadingMore": "Carregando mais…"
       }
     },
     "allocateAttribute": {

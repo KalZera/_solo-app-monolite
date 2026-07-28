@@ -1,13 +1,25 @@
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
+import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
 import { isCharacterNotFound, useCharacterProfile } from '../api/useCharacterProfile'
+import { useCharacterHistory } from '../api/useCharacterHistory'
 import { StatRow } from '../components/StatRow'
+import { HistoryEntryRow } from '../components/HistoryEntryRow'
 
 export function CharacterScreen() {
   const { t } = useTranslation()
   const { data: character, isPending, isError, error } = useCharacterProfile()
+  const {
+    data: historyPages,
+    isPending: isHistoryPending,
+    isError: isHistoryError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useCharacterHistory(Boolean(character))
+  const historyEntries = historyPages?.pages.flatMap((page) => page.data) ?? []
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} backgroundColor="$soloBg">
@@ -90,6 +102,42 @@ export function CharacterScreen() {
               <StatRow label={t('character.screen.stats.agility')} value={character.stats.agility} />
               <StatRow label={t('character.screen.stats.vitality')} value={character.stats.vitality} />
               <StatRow label={t('character.screen.stats.luck')} value={character.stats.luck} />
+            </SystemPanel>
+
+            <SystemPanel width="100%" maxWidth={420} gap="$4">
+              <Text color="$soloText" fontSize="$5" fontWeight="700">
+                {t('character.screen.history.title')}
+              </Text>
+
+              {isHistoryPending && <LoadingIndicator label={t('character.screen.history.loading')} />}
+
+              {isHistoryError && (
+                <Text color="$soloDanger" fontSize="$2" textAlign="center">
+                  {t('character.screen.history.failed')}
+                </Text>
+              )}
+
+              {!isHistoryPending && !isHistoryError && historyEntries.length === 0 && (
+                <Text color="$soloTextMuted" fontSize="$2" textAlign="center">
+                  {t('character.screen.history.empty')}
+                </Text>
+              )}
+
+              {historyEntries.length > 0 && (
+                <YStack gap="$2">
+                  {historyEntries.map((entry) => (
+                    <HistoryEntryRow key={entry.id} entry={entry} />
+                  ))}
+                </YStack>
+              )}
+
+              {hasNextPage && (
+                <SystemButton onPress={() => fetchNextPage()} disabled={isFetchingNextPage}>
+                  {isFetchingNextPage
+                    ? t('character.screen.history.loadingMore')
+                    : t('character.screen.history.loadMore')}
+                </SystemButton>
+              )}
             </SystemPanel>
           </>
         )}

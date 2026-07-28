@@ -3,8 +3,10 @@ import type {
   AllocateAttributePointInput,
   AllocateAttributePointResult,
   Character,
+  CharacterHistoryEntry,
   CharacterProfile,
   CreateCharacterInput,
+  Paginated,
 } from '../types'
 
 export async function getCharacterProfile(): Promise<CharacterProfile> {
@@ -21,5 +23,17 @@ export async function allocateAttributePoint(
   input: AllocateAttributePointInput,
 ): Promise<AllocateAttributePointResult> {
   const { data } = await httpClient.post<AllocateAttributePointResult>('/characters/attributes/allocate', input)
+  return data
+}
+
+interface GetCharacterHistoryParams {
+  page: number
+  pageSize: number
+}
+
+export async function getCharacterHistory(
+  params: GetCharacterHistoryParams,
+): Promise<Paginated<CharacterHistoryEntry>> {
+  const { data } = await httpClient.get<Paginated<CharacterHistoryEntry>>('/characters/history', { params })
   return data
 }

@@ -99,6 +99,14 @@
         "agility": "Agility",
         "vitality": "Vitality",
         "luck": "Luck"
+      },
+      "history": {
+        "title": "History",
+        "loading": "Loading history…",
+        "failed": "Failed to load history. Try again.",
+        "empty": "No history yet.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading more…"
       }
     },
     "allocateAttribute": {

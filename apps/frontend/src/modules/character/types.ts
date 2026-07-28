@@ -47,3 +47,17 @@ export interface CreateCharacterInput {
   class: CharacterClass
   title: string
 }
+
+export interface CharacterHistoryEntry {
+  id: string
+  characterId: string
+  description: string
+  createdAt: string
+}
+
+export interface Paginated<T> {
+  data: T[]
+  total: number
+  page: number
+  pageSize: number
+}
