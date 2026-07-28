@@ -32,4 +32,20 @@ describe('ListQuestsUseCase', () => {
 
     await expect(useCase.execute({ userId: 'ghost-user' })).rejects.toThrow(NotFoundError)
   })
+
+  it('lists active quests before completed/failed/expired ones', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    questRepository.seed({ characterId: character.id, title: 'Completed', status: 'completed' })
+    questRepository.seed({ characterId: character.id, title: 'Available', status: 'available' })
+    questRepository.seed({ characterId: character.id, title: 'Expired', status: 'expired' })
+    questRepository.seed({ characterId: character.id, title: 'In Progress', status: 'in_progress' })
+    questRepository.seed({ characterId: character.id, title: 'Failed', status: 'failed' })
+
+    const useCase = new ListQuestsUseCase(questRepository, characterRepository)
+    const result = await useCase.execute({ userId: 'user-1' })
+
+    const statuses = result.map((q) => q.status)
+    expect(statuses.slice(0, 2).sort()).toEqual(['available', 'in_progress'])
+    expect(statuses.slice(2).sort()).toEqual(['completed', 'expired', 'failed'])
+  })
 })

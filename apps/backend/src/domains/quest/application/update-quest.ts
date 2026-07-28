@@ -10,6 +10,7 @@ interface UpdateQuestInput {
   description?: string
   questRank?: string
   type?: QuestType
+  categoryId?: string | null
   status?: QuestStatus
   rewardXp?: number
   rewardGold?: number
@@ -60,6 +61,7 @@ export class UpdateQuestUseCase {
       ...(input.description !== undefined && { description: input.description }),
       ...(input.questRank !== undefined && { questRank: input.questRank }),
       ...(input.type !== undefined && { type: input.type }),
+      ...(input.categoryId !== undefined && { categoryId: input.categoryId }),
       ...(input.status !== undefined && { status: input.status }),
       ...(input.rewardXp !== undefined && { rewardXp: input.rewardXp }),
       ...(input.rewardGold !== undefined && { rewardGold: input.rewardGold }),

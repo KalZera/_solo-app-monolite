@@ -14,6 +14,7 @@ interface CreateQuestInput {
   description: string
   questRank: string
   type?: QuestType
+  categoryId?: string | null
   rewardXp: number
   rewardGold?: number
   minLevel?: number
@@ -46,8 +47,9 @@ export class CreateQuestUseCase {
       )
     }
 
+    const existingQuests = await this.questRepository.findByCharacterId(character.id)
+
     if (input.type === 'daily') {
-      const existingQuests = await this.questRepository.findByCharacterId(character.id)
       const activeDailyQuestCount = existingQuests.filter(
         (quest) => quest.type === 'daily' && ACTIVE_QUEST_STATUSES.includes(quest.status),
       ).length
@@ -56,6 +58,17 @@ export class CreateQuestUseCase {
         throw new ConflictError(
           `A character cannot have more than ${MAX_ACTIVE_DAILY_QUESTS} active daily quests`,
         )
+      }
+    }
+
+    if (input.type === 'main' && input.categoryId) {
+      const hasActiveMainQuestInCategory = existingQuests.some(
+        (quest) =>
+          quest.type === 'main' && quest.categoryId === input.categoryId && ACTIVE_QUEST_STATUSES.includes(quest.status),
+      )
+
+      if (hasActiveMainQuestInCategory) {
+        throw new ConflictError('A character cannot have more than one active main quest per category')
       }
     }
 
@@ -71,6 +84,7 @@ export class CreateQuestUseCase {
 
     return this.questRepository.create({
       characterId: character.id,
+      categoryId: input.categoryId ?? null,
       title: input.title,
       description: input.description,
       questRank: input.questRank,

@@ -3,7 +3,8 @@ import type { ID } from '../../../shared/types/index'
 import { NotFoundError } from '../../../shared/errors/app-error'
 import type { ProgressionRepository } from '../repositories/progression-repository'
 import { applyExperienceGain } from '../engines/progression.engine'
-import { ATTRIBUTE_POINTS_PER_LEVEL } from '../engines/attribute.engine'
+import { ATTRIBUTE_POINTS_PER_LEVEL, applyAutoAttributeGains } from '../engines/attribute.engine'
+import { calculatePowerScore } from '../engines/power-score.engine'
 import { createXPGrantedEvent } from '../events/xp-granted.event'
 import { createLevelUpEvent } from '../events/level-up.event'
 import { createAttributePointsGrantedEvent } from '../events/attribute-points-granted.event'
@@ -28,11 +29,22 @@ export class GrantExperienceUseCase {
     }
 
     const result = applyExperienceGain(progression.level, progression.experience, input.amount)
+    const levelsGainedCount = result.levelsGained.length
+
+    const stats =
+      levelsGainedCount > 0 ? applyAutoAttributeGains(progression.stats, levelsGainedCount) : progression.stats
+    const powerScore = levelsGainedCount > 0 ? calculatePowerScore(stats) : progression.powerScore
 
     const updated = await this.progressionRepository.save(input.characterId, {
       level: result.level,
       experience: result.experience,
+      stats,
+      powerScore,
     })
+
+    if (levelsGainedCount > 0) {
+      await this.progressionRepository.addRestPoints(input.characterId, levelsGainedCount * ATTRIBUTE_POINTS_PER_LEVEL)
+    }
 
     await this.publishEvent(createXPGrantedEvent(input.characterId, input.amount, input.source))
 

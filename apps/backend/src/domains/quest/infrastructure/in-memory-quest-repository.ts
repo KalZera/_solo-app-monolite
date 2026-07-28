@@ -19,6 +19,7 @@ export class InMemoryQuestRepository implements QuestRepository {
     const quest: Quest = {
       id: data.id ?? randomUUID(),
       characterId: data.characterId,
+      categoryId: data.categoryId ?? null,
       title: data.title,
       description: data.description ?? 'Mock quest description',
       questRank: data.questRank ?? 'E',

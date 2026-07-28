@@ -5,6 +5,7 @@ export interface ProgressionRepository {
   findByCharacterId(characterId: ID): Promise<CharacterProgression | null>
   save(
     characterId: ID,
-    data: Partial<Pick<CharacterProgression, 'level' | 'experience'>>,
+    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>,
   ): Promise<CharacterProgression>
+  addRestPoints(characterId: ID, amount: number): Promise<void>
 }

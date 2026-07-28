@@ -39,6 +39,31 @@ describe('CreateQuestUseCase', () => {
     expect(result.expiresAt!.getMinutes()).toBe(59)
   })
 
+  it('persists the provided categoryId, defaulting to null when omitted', async () => {
+    seedCharacter()
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    const withoutCategory = await useCase.execute({
+      userId: 'user-1',
+      title: 'Quest without category',
+      description: 'Description',
+      questRank: 'E',
+      rewardXp: 10,
+    })
+    expect(withoutCategory.categoryId).toBeNull()
+
+    const withCategory = await useCase.execute({
+      userId: 'user-1',
+      title: 'Quest with category',
+      description: 'Description',
+      questRank: 'E',
+      type: 'main',
+      categoryId: 'category-1',
+      rewardXp: 10,
+    })
+    expect(withCategory.categoryId).toBe('category-1')
+  })
+
   it('creates a main quest defaulting the deadline to 28 days from now', async () => {
     seedCharacter()
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
@@ -200,6 +225,95 @@ describe('CreateQuestUseCase', () => {
     })
 
     expect(result.title).toBe('Main quest')
+  })
+
+  it('rejects creating a second active main quest in the same category', async () => {
+    const character = seedCharacter()
+    questRepository.seed({
+      characterId: character.id,
+      title: 'Existing main quest',
+      type: 'main',
+      status: 'available',
+      categoryId: 'category-1',
+    })
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    await expect(
+      useCase.execute({
+        userId: 'user-1',
+        title: 'Another main quest',
+        description: 'Same category',
+        questRank: 'General',
+        type: 'main',
+        categoryId: 'category-1',
+        rewardXp: 50,
+      }),
+    ).rejects.toThrow(ConflictError)
+  })
+
+  it('does not count completed, failed or expired main quests toward the per-category limit', async () => {
+    const character = seedCharacter()
+    questRepository.seed({
+      characterId: character.id,
+      title: 'Done main quest',
+      type: 'main',
+      status: 'completed',
+      categoryId: 'category-1',
+    })
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    const result = await useCase.execute({
+      userId: 'user-1',
+      title: 'New main quest',
+      description: 'Same category, but the old one is done',
+      questRank: 'General',
+      type: 'main',
+      categoryId: 'category-1',
+      rewardXp: 50,
+    })
+
+    expect(result.title).toBe('New main quest')
+  })
+
+  it('allows a second active main quest in a different category', async () => {
+    const character = seedCharacter()
+    questRepository.seed({
+      characterId: character.id,
+      title: 'Existing main quest',
+      type: 'main',
+      status: 'available',
+      categoryId: 'category-1',
+    })
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    const result = await useCase.execute({
+      userId: 'user-1',
+      title: 'Another main quest',
+      description: 'Different category',
+      questRank: 'General',
+      type: 'main',
+      categoryId: 'category-2',
+      rewardXp: 50,
+    })
+
+    expect(result.title).toBe('Another main quest')
+  })
+
+  it('allows main quests without a category regardless of other main quests', async () => {
+    const character = seedCharacter()
+    questRepository.seed({ characterId: character.id, title: 'Existing main quest', type: 'main', status: 'available' })
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    const result = await useCase.execute({
+      userId: 'user-1',
+      title: 'Another main quest',
+      description: 'No category on either quest',
+      questRank: 'General',
+      type: 'main',
+      rewardXp: 50,
+    })
+
+    expect(result.title).toBe('Another main quest')
   })
 
   it('throws NotFoundError when the user has no character', async () => {

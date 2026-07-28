@@ -9,6 +9,7 @@ function toDomain(record: PrismaQuestWithObjectives): Quest {
   return {
     id: record.id,
     characterId: record.characterId,
+    categoryId: record.categoryId,
     title: record.title,
     description: record.description,
     questRank: record.questRank,
@@ -50,6 +51,7 @@ export class PrismaQuestRepository implements QuestRepository {
     const where = {
       ...(filter.id !== undefined && { id: filter.id }),
       ...(filter.characterId !== undefined && { characterId: filter.characterId }),
+      ...(filter.categoryId !== undefined && { categoryId: filter.categoryId }),
       ...(filter.title !== undefined && { title: filter.title }),
       ...(filter.description !== undefined && { description: filter.description }),
       ...(filter.questRank !== undefined && { questRank: filter.questRank }),
@@ -79,6 +81,7 @@ export class PrismaQuestRepository implements QuestRepository {
       data: {
         id: generateId(),
         characterId: data.characterId,
+        categoryId: data.categoryId,
         title: data.title,
         description: data.description,
         questRank: data.questRank,
@@ -107,6 +110,7 @@ export class PrismaQuestRepository implements QuestRepository {
     const record = await this.prisma.quest.update({
       where: { id },
       data: {
+        ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
         ...(data.title !== undefined && { title: data.title }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.questRank !== undefined && { questRank: data.questRank }),

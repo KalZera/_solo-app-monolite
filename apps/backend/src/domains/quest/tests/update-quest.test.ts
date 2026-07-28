@@ -24,6 +24,16 @@ describe('UpdateQuestUseCase', () => {
     expect(result.rewardXp).toBe(20)
   })
 
+  it('updates the categoryId on a quest owned by the caller', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', categoryId: null })
+
+    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
+    const result = await useCase.execute({ userId: 'user-1', questId: quest.id, categoryId: 'category-1' })
+
+    expect(result.categoryId).toBe('category-1')
+  })
+
   it('rejects updates to a quest that is already completed', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
     const quest = questRepository.seed({ characterId: character.id, title: 'Done quest', status: 'completed' })

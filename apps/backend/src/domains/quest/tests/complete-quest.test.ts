@@ -6,21 +6,24 @@ import { InMemoryProgressionRepository } from '../../progression/infrastructure/
 import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
 import { InMemoryCharacterRepository } from '../../character/infrastructure/in-memory-character-repository'
+import { InMemoryCharacterRestPointRepository } from '../../character/infrastructure/in-memory-character-rest-point-repository'
 import type { DomainEvent } from '../../../shared/events/domain-event'
 
 describe('CompleteQuestUseCase', () => {
   let questRepository: InMemoryQuestRepository
   let characterRepository: InMemoryCharacterRepository
+  let restPointRepository: InMemoryCharacterRestPointRepository
   let publishEvent: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     questRepository = new InMemoryQuestRepository()
     characterRepository = new InMemoryCharacterRepository()
+    restPointRepository = new InMemoryCharacterRestPointRepository()
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
   function buildUseCase() {
-    const progressionRepository = new InMemoryProgressionRepository(characterRepository)
+    const progressionRepository = new InMemoryProgressionRepository(characterRepository, restPointRepository)
     const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
     return new CompleteQuestUseCase(questRepository, characterRepository, grantExperience, publishEvent)
   }

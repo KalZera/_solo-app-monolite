@@ -58,7 +58,7 @@ export class CompleteQuestUseCase {
 
     await this.publishEvent(createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type))
 
-    const { progression } = await this.grantExperience.execute({
+    const { progression, levelsGained } = await this.grantExperience.execute({
       characterId: character.id,
       amount: quest.rewardXp,
       source: 'quest',
@@ -68,11 +68,13 @@ export class CompleteQuestUseCase {
       ...character,
       level: progression.level,
       experience: progression.experience,
+      stats: progression.stats,
+      powerScore: progression.powerScore,
     }
 
     const renewedQuest = quest.type === 'daily' ? await this.renewDailyQuest(quest, character.id) : null
 
-    return { quest: updatedQuest, character: updatedCharacter, renewedQuest }
+    return { quest: updatedQuest, character: updatedCharacter, renewedQuest, levelsGained }
   }
 
   private async renewDailyQuest(quest: Quest, characterId: string) {
@@ -81,6 +83,7 @@ export class CompleteQuestUseCase {
 
     const renewedQuest = await this.questRepository.create({
       characterId: quest.characterId,
+      categoryId: quest.categoryId,
       title: quest.title,
       description: quest.description,
       questRank: quest.questRank,

@@ -23,6 +23,7 @@ export interface QuestObjective {
 export interface Quest {
   id: ID
   characterId: ID
+  categoryId: ID | null
   title: string
   description: string
   questRank: string
