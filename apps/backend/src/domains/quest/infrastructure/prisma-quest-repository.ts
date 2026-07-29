@@ -10,6 +10,7 @@ import type {
 } from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { generateId } from '../../../shared/utils/index.js'
+import { getDateFilter } from '@shared/utils/date-filter'
 
 type PrismaQuestWithObjectives = PrismaQuest & { objectives: PrismaQuestObjective[] }
 
@@ -56,6 +57,10 @@ export class PrismaQuestRepository implements QuestRepository {
   }
 
   async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
+
+    const dateInterval = getDateFilter(filter.expiresAt ?? new Date())
+    const expiresAtDate = filter.expiresAt ? { gte: dateInterval.start, lte: dateInterval.end } : undefined
+
     const where = {
       ...(filter.id !== undefined && { id: filter.id }),
       ...(filter.characterId !== undefined && { characterId: filter.characterId }),
@@ -68,7 +73,7 @@ export class PrismaQuestRepository implements QuestRepository {
       ...(filter.rewardXp !== undefined && { rewardXp: filter.rewardXp }),
       ...(filter.rewardGold !== undefined && { rewardGold: filter.rewardGold }),
       ...(filter.minLevel !== undefined && { minLevel: filter.minLevel }),
-      ...(filter.expiresAt !== undefined && { expiresAt: filter.expiresAt }),
+      ...(filter.expiresAt !== undefined && { expiresAt: expiresAtDate }),
     }
 
     const [records, total] = await Promise.all([
