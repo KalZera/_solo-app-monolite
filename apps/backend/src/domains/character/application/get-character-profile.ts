@@ -9,12 +9,12 @@ interface GetCharacterProfileInput {
 }
 
 export class GetCharacterProfileUseCase {
-  constructor(
+  constructor (
     private readonly repository: CharacterRepository,
-    private readonly restPointRepository: CharacterRestPointRepository,
+    private readonly restPointRepository: CharacterRestPointRepository
   ) {}
 
-  async execute(input: GetCharacterProfileInput) {
+  async execute (input: GetCharacterProfileInput) {
     const characters = await this.repository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

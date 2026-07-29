@@ -4,15 +4,15 @@ import type { ID, Paginated, PaginationParams } from '../../../shared/types/inde
 import { generateId } from '../../../shared/utils/index'
 
 export class PrismaCharacterHistoryRepository implements CharacterHistoryRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async create(characterId: ID, description: string): Promise<CharacterHistory> {
+  async create (characterId: ID, description: string): Promise<CharacterHistory> {
     return this.prisma.characterHistory.create({
       data: { id: generateId(), characterId, description },
     })
   }
 
-  async findByCharacterId(characterId: ID, pagination: PaginationParams): Promise<Paginated<CharacterHistory>> {
+  async findByCharacterId (characterId: ID, pagination: PaginationParams): Promise<Paginated<CharacterHistory>> {
     const where = { characterId }
 
     const [data, total] = await Promise.all([

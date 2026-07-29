@@ -7,10 +7,10 @@ export interface ExperienceGainResult {
 }
 
 // Applies an XP gain to a character's current level/experience, resolving every level-up along the way.
-export function applyExperienceGain(
+export function applyExperienceGain (
   currentLevel: number,
   currentExperience: number,
-  xpGained: number,
+  xpGained: number
 ): ExperienceGainResult {
   let level = currentLevel
   let experience = currentExperience + xpGained

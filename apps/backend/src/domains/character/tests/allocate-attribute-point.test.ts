@@ -16,7 +16,7 @@ describe('AllocateAttributePointUseCase', () => {
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new AllocateAttributePointUseCase(characterRepository, restPointRepository, publishEvent)
   }
 
@@ -45,7 +45,7 @@ describe('AllocateAttributePointUseCase', () => {
     await restPointRepository.incrementRestPoints(character.id, 2)
 
     await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 3 })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
   })
 
@@ -53,7 +53,7 @@ describe('AllocateAttributePointUseCase', () => {
     characterRepository.seed({ userId: 'user-1', name: 'Hero' })
 
     await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 1 })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
   })
 
@@ -62,7 +62,7 @@ describe('AllocateAttributePointUseCase', () => {
     await restPointRepository.incrementRestPoints(character.id, 5)
 
     await expect(
-      buildUseCase().execute({ userId: 'user-1', attribute: 'charisma' as never, amount: 1 }),
+      buildUseCase().execute({ userId: 'user-1', attribute: 'charisma' as never, amount: 1 })
     ).rejects.toThrow(ValidationError)
   })
 
@@ -71,13 +71,13 @@ describe('AllocateAttributePointUseCase', () => {
     await restPointRepository.incrementRestPoints(character.id, 5)
 
     await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 0 })).rejects.toThrow(
-      ValidationError,
+      ValidationError
     )
   })
 
   it('throws NotFoundError when the user has no character', async () => {
     await expect(buildUseCase().execute({ userId: 'ghost-user', attribute: 'strength', amount: 1 })).rejects.toThrow(
-      NotFoundError,
+      NotFoundError
     )
   })
 })

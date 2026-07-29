@@ -8,12 +8,12 @@ interface DeleteQuestInput {
 }
 
 export class DeleteQuestUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
-    private readonly characterRepository: CharacterRepository,
+    private readonly characterRepository: CharacterRepository
   ) {}
 
-  async execute(input: DeleteQuestInput): Promise<void> {
+  async execute (input: DeleteQuestInput): Promise<void> {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

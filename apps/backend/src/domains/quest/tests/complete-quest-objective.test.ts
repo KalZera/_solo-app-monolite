@@ -16,7 +16,7 @@ describe('CompleteQuestObjectiveUseCase', () => {
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new CompleteQuestObjectiveUseCase(questRepository, characterRepository, publishEvent)
   }
 
@@ -55,7 +55,7 @@ describe('CompleteQuestObjectiveUseCase', () => {
     const quest = questRepository.seed({ characterId: character.id, title: 'Quest' })
 
     await expect(
-      buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'missing' }),
+      buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'missing' })
     ).rejects.toThrow(NotFoundError)
     expect(publishEvent).not.toHaveBeenCalled()
   })
@@ -69,7 +69,7 @@ describe('CompleteQuestObjectiveUseCase', () => {
     })
 
     await expect(buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
     expect(publishEvent).not.toHaveBeenCalled()
   })
@@ -84,7 +84,7 @@ describe('CompleteQuestObjectiveUseCase', () => {
     })
 
     await expect(buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
     expect(publishEvent).not.toHaveBeenCalled()
   })
@@ -99,7 +99,7 @@ describe('CompleteQuestObjectiveUseCase', () => {
     })
 
     await expect(buildUseCase().execute({ userId: 'user-2', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
-      NotFoundError,
+      NotFoundError
     )
   })
 })

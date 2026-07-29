@@ -6,7 +6,7 @@ type SeedInput = Pick<QuestCategory, 'name' | 'createdBy'> & Partial<Omit<QuestC
 export class InMemoryQuestCategoryRepository implements QuestCategoryRepository {
   private categories: QuestCategory[] = []
 
-  seed(data: SeedInput): QuestCategory {
+  seed (data: SeedInput): QuestCategory {
     const category: QuestCategory = {
       id: data.id ?? randomUUID(),
       name: data.name,
@@ -18,7 +18,7 @@ export class InMemoryQuestCategoryRepository implements QuestCategoryRepository 
     return category
   }
 
-  async findAll(): Promise<QuestCategory[]> {
+  async findAll (): Promise<QuestCategory[]> {
     return [...this.categories]
   }
 }

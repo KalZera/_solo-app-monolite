@@ -13,13 +13,13 @@ interface CompleteQuestObjectiveInput {
 const NON_MODIFIABLE_STATUSES: QuestStatus[] = ['completed', 'failed', 'expired']
 
 export class CompleteQuestObjectiveUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
     private readonly characterRepository: CharacterRepository,
-    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
+    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute(input: CompleteQuestObjectiveInput) {
+  async execute (input: CompleteQuestObjectiveInput) {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 
@@ -53,7 +53,7 @@ export class CompleteQuestObjectiveUseCase {
     })
 
     await this.publishEvent(
-      createQuestObjectiveCompletedEvent(quest.id, objective.id, character.id, quest.title, objective.description),
+      createQuestObjectiveCompletedEvent(quest.id, objective.id, character.id, quest.title, objective.description)
     )
 
     return { quest: updatedQuest }

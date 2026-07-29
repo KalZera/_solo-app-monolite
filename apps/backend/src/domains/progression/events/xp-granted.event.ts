@@ -9,7 +9,7 @@ export interface XPGrantedEvent extends DomainEvent {
   source: string
 }
 
-export function createXPGrantedEvent(characterId: ID, amount: number, source: string): XPGrantedEvent {
+export function createXPGrantedEvent (characterId: ID, amount: number, source: string): XPGrantedEvent {
   return {
     eventId: randomUUID(),
     eventType: 'XPGranted',

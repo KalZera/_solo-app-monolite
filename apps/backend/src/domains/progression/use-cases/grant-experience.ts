@@ -16,12 +16,12 @@ interface GrantExperienceInput {
 }
 
 export class GrantExperienceUseCase {
-  constructor(
+  constructor (
     private readonly progressionRepository: ProgressionRepository,
-    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
+    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute(input: GrantExperienceInput) {
+  async execute (input: GrantExperienceInput) {
     const progression = await this.progressionRepository.findByCharacterId(input.characterId)
 
     if (!progression) {

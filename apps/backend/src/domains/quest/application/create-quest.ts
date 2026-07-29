@@ -23,12 +23,12 @@ interface CreateQuestInput {
 }
 
 export class CreateQuestUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
-    private readonly characterRepository: CharacterRepository,
+    private readonly characterRepository: CharacterRepository
   ) {}
 
-  async execute(input: CreateQuestInput) {
+  async execute (input: CreateQuestInput) {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 
@@ -36,7 +36,7 @@ export class CreateQuestUseCase {
       throw new NotFoundError('Character', input.userId)
     }
 
-    //for MVP
+    // for MVP
     if (!input.type) {
       input.type = 'daily'
     }
@@ -49,7 +49,7 @@ export class CreateQuestUseCase {
 
     if (input.type === 'daily') {
       const activeDailyQuestCount = existingQuests.filter(
-        (quest) => quest.type === 'daily' && ACTIVE_QUEST_STATUSES.includes(quest.status),
+        (quest) => quest.type === 'daily' && ACTIVE_QUEST_STATUSES.includes(quest.status)
       ).length
 
       if (activeDailyQuestCount >= MAX_ACTIVE_DAILY_QUESTS) {
@@ -62,7 +62,7 @@ export class CreateQuestUseCase {
         (quest) =>
           quest.type === 'main' &&
           quest.categoryId === input.categoryId &&
-          ACTIVE_QUEST_STATUSES.includes(quest.status),
+          ACTIVE_QUEST_STATUSES.includes(quest.status)
       )
 
       if (hasActiveMainQuestInCategory) {
@@ -77,7 +77,7 @@ export class CreateQuestUseCase {
     if (!input.rewardXp || input.rewardXp <= 0) {
       throw new ValidationError('A quest cannot be created with 0 (or less) XP reward')
     }
-    //for MVP, we will allow quests with only 28 days of duration.
+    // for MVP, we will allow quests with only 28 days of duration.
     const expiresAt = input.expiresAt ?? calculateDefaultDeadline(input.type)
 
     return this.questRepository.create({

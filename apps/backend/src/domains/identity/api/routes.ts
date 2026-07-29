@@ -12,7 +12,7 @@ import {
 import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
 import '../.././../infrastructure/jwt/types.js'
 
-function setRefreshCookie(reply: FastifyReply, token: string) {
+function setRefreshCookie (reply: FastifyReply, token: string) {
   const isProduction = process.env.NODE_ENV === 'production'
 
   reply.setCookie(REFRESH_TOKEN_COOKIE_NAME, token, {
@@ -49,7 +49,7 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
       app.prisma,
       (token) => app.jwt.verify<TokenPayload & { type: string }>(token),
       signAccessToken,
-      signRefreshToken,
+      signRefreshToken
     )
     const { access_token, refresh_token } = await refreshSession.execute(req.cookies[REFRESH_TOKEN_COOKIE_NAME])
     setRefreshCookie(reply, refresh_token)

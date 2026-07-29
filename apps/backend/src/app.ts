@@ -15,7 +15,7 @@ import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { characterHistoryPlugin } from './infrastructure/events/character-history-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 
-export function buildApp() {
+export function buildApp () {
   const app = Fastify({ logger: loggerConfig })
 
   app.register(helmet)

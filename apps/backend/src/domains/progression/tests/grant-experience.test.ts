@@ -21,7 +21,7 @@ describe('GrantExperienceUseCase', () => {
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new GrantExperienceUseCase(progressionRepository, publishEvent)
   }
 
@@ -78,7 +78,7 @@ describe('GrantExperienceUseCase', () => {
 
   it('throws NotFoundError when the character does not exist', async () => {
     await expect(
-      buildUseCase().execute({ characterId: 'ghost-character', amount: 10, source: 'quest' }),
+      buildUseCase().execute({ characterId: 'ghost-character', amount: 10, source: 'quest' })
     ).rejects.toThrow(NotFoundError)
   })
 

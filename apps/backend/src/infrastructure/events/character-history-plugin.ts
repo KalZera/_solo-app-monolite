@@ -34,7 +34,7 @@ const characterHistoryPlugin: FastifyPluginAsync = fp(async (app) => {
   eventBus.subscribe<QuestObjectiveCompletedEvent>('QuestObjectiveCompleted', async (event) => {
     await recordHistory(
       event.characterId,
-      `Objetivo "${event.objectiveDescription}" da quest "${event.questTitle}" foi completado.`,
+      `Objetivo "${event.objectiveDescription}" da quest "${event.questTitle}" foi completado.`
     )
   })
 
@@ -54,7 +54,7 @@ const characterHistoryPlugin: FastifyPluginAsync = fp(async (app) => {
     const pointWord = event.amount === 1 ? 'ponto' : 'pontos'
     await recordHistory(
       event.characterId,
-      `Você adicionou ${event.amount} ${pointWord} em ${ATTRIBUTE_LABELS[event.attribute]}.`,
+      `Você adicionou ${event.amount} ${pointWord} em ${ATTRIBUTE_LABELS[event.attribute]}.`
     )
   })
 })

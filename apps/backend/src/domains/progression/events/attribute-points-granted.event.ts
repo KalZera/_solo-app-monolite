@@ -8,7 +8,7 @@ export interface AttributePointsGrantedEvent extends DomainEvent {
   points: number
 }
 
-export function createAttributePointsGrantedEvent(characterId: ID, points: number): AttributePointsGrantedEvent {
+export function createAttributePointsGrantedEvent (characterId: ID, points: number): AttributePointsGrantedEvent {
   return {
     eventId: randomUUID(),
     eventType: 'AttributePointsGranted',

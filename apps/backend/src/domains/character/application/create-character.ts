@@ -20,12 +20,12 @@ const BASE_STATS = {
 }
 
 export class CreateCharacterUseCase {
-  constructor(
+  constructor (
     private readonly repository: CharacterRepository,
-    private readonly restPointRepository: CharacterRestPointRepository,
+    private readonly restPointRepository: CharacterRestPointRepository
   ) {}
 
-  async execute(input: CreateCharacterInput) {
+  async execute (input: CreateCharacterInput) {
     const existing = await this.repository.findByUserId(input.userId)
 
     if (existing.length > 0) {

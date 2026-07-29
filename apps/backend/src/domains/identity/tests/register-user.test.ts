@@ -37,7 +37,7 @@ describe('RegisterUserUseCase', () => {
     const useCase = new RegisterUserUseCase(prisma as unknown as PrismaClient)
 
     await expect(
-      useCase.execute({ email: 'taken@solo.com', username: 'newuser', password: 'password' }),
+      useCase.execute({ email: 'taken@solo.com', username: 'newuser', password: 'password' })
     ).rejects.toThrow(ConflictError)
   })
 
@@ -46,7 +46,7 @@ describe('RegisterUserUseCase', () => {
     const useCase = new RegisterUserUseCase(prisma as unknown as PrismaClient)
 
     await expect(useCase.execute({ email: 'new@solo.com', username: 'taken', password: 'password' })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
   })
 })

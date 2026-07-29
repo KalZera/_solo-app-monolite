@@ -8,12 +8,12 @@ interface GetQuestInput {
 }
 
 export class GetQuestUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
-    private readonly characterRepository: CharacterRepository,
+    private readonly characterRepository: CharacterRepository
   ) {}
 
-  async execute(input: GetQuestInput) {
+  async execute (input: GetQuestInput) {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

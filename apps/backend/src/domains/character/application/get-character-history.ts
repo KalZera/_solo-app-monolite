@@ -12,12 +12,12 @@ const DEFAULT_PAGE_SIZE = 10
 const MAX_PAGE_SIZE = 50
 
 export class GetCharacterHistoryUseCase {
-  constructor(
+  constructor (
     private readonly characterRepository: CharacterRepository,
-    private readonly characterHistoryRepository: CharacterHistoryRepository,
+    private readonly characterHistoryRepository: CharacterHistoryRepository
   ) {}
 
-  async execute(input: GetCharacterHistoryInput) {
+  async execute (input: GetCharacterHistoryInput) {
     const page = input.page ?? 1
     const pageSize = input.pageSize ?? DEFAULT_PAGE_SIZE
 

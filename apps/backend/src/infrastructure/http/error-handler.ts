@@ -1,7 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
 import { AppError } from '../../shared/errors/app-error'
 
-export function errorHandler(error: FastifyError, _req: FastifyRequest, reply: FastifyReply) {
+export function errorHandler (error: FastifyError, _req: FastifyRequest, reply: FastifyReply) {
   if (error instanceof AppError) {
     return reply.status(error.statusCode).send({ error: error.code, message: error.message })
   }

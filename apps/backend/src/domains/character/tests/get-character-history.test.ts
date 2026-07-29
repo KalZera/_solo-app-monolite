@@ -13,7 +13,7 @@ describe('GetCharacterHistoryUseCase', () => {
     historyRepository = new InMemoryCharacterHistoryRepository()
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new GetCharacterHistoryUseCase(characterRepository, historyRepository)
   }
 

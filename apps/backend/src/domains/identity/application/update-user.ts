@@ -8,9 +8,9 @@ interface UpdateUserInput {
 }
 
 export class UpdateUserUseCase {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async execute(input: UpdateUserInput) {
+  async execute (input: UpdateUserInput) {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } })
 
     if (!user) {

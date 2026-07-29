@@ -17,11 +17,11 @@ class EventBus {
   }
 
   // Fires for every event regardless of type — used for cross-cutting concerns like event persistence.
-  subscribeToAll(handler: EventHandler<DomainEvent>): void {
+  subscribeToAll (handler: EventHandler<DomainEvent>): void {
     this.globalHandlers.push(handler)
   }
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publish (event: DomainEvent): Promise<void> {
     const handlers = this.handlers.get(event.eventType) ?? []
     await Promise.all([...handlers, ...this.globalHandlers].map((h) => h(event)))
   }

@@ -3,7 +3,7 @@ import type { CreateQuestData, Quest, QuestFilter, QuestObjective, QuestReposito
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { paginate } from '../../../shared/utils/index.js'
 
-function matchesFilter(quest: Quest, filter: QuestFilter): boolean {
+function matchesFilter (quest: Quest, filter: QuestFilter): boolean {
   return (Object.keys(filter) as Array<keyof QuestFilter>).every((key) => {
     const value = filter[key]
     return value === undefined || quest[key] === value
@@ -15,7 +15,7 @@ type SeedInput = Pick<Quest, 'characterId' | 'title'> & Partial<Omit<Quest, 'cha
 export class InMemoryQuestRepository implements QuestRepository {
   private quests: Quest[] = []
 
-  seed(data: SeedInput): Quest {
+  seed (data: SeedInput): Quest {
     const quest: Quest = {
       id: data.id ?? randomUUID(),
       characterId: data.characterId,
@@ -37,20 +37,20 @@ export class InMemoryQuestRepository implements QuestRepository {
     return quest
   }
 
-  async findById(id: ID): Promise<Quest | null> {
+  async findById (id: ID): Promise<Quest | null> {
     return this.quests.find((q) => q.id === id) ?? null
   }
 
-  async findByCharacterId(characterId: ID): Promise<Quest[]> {
+  async findByCharacterId (characterId: ID): Promise<Quest[]> {
     return this.quests.filter((q) => q.characterId === characterId)
   }
 
-  async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
+  async findByData (filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
     const filtered = this.quests.filter((q) => matchesFilter(q, filter))
     return paginate(filtered, pagination.page, pagination.pageSize)
   }
 
-  async create(data: CreateQuestData): Promise<Quest> {
+  async create (data: CreateQuestData): Promise<Quest> {
     const quest: Quest = {
       ...data,
       id: randomUUID(),
@@ -62,14 +62,14 @@ export class InMemoryQuestRepository implements QuestRepository {
     return quest
   }
 
-  async save(id: ID, data: Partial<Quest>): Promise<Quest> {
+  async save (id: ID, data: Partial<Quest>): Promise<Quest> {
     const index = this.quests.findIndex((q) => q.id === id)
     if (index === -1) throw new Error(`Quest ${id} not found`)
     this.quests[index] = { ...this.quests[index], ...data, updatedAt: new Date() }
     return this.quests[index]
   }
 
-  async updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
+  async updateObjective (questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
     const index = this.quests.findIndex((q) => q.id === questId)
     if (index === -1) throw new Error(`Quest ${questId} not found`)
     const quest = this.quests[index]
@@ -82,7 +82,7 @@ export class InMemoryQuestRepository implements QuestRepository {
     return this.quests[index]
   }
 
-  async delete(id: ID): Promise<void> {
+  async delete (id: ID): Promise<void> {
     this.quests = this.quests.filter((q) => q.id !== id)
   }
 }

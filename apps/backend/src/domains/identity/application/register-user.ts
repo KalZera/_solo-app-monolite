@@ -10,9 +10,9 @@ interface RegisterInput {
 }
 
 export class RegisterUserUseCase {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async execute(input: RegisterInput) {
+  async execute (input: RegisterInput) {
     const existing = await this.prisma.user.findFirst({
       where: { OR: [{ email: input.email }, { username: input.username }] },
     })

@@ -9,13 +9,13 @@ interface LoginInput {
 }
 
 export class LoginUserUseCase {
-  constructor(
+  constructor (
     private readonly prisma: PrismaClient,
     private readonly signAccessToken: (payload: TokenPayload) => string,
-    private readonly signRefreshToken: (payload: TokenPayload) => string,
+    private readonly signRefreshToken: (payload: TokenPayload) => string
   ) {}
 
-  async execute(input: LoginInput) {
+  async execute (input: LoginInput) {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } })
 
     if (!user || !(await verifyPassword(input.password, user.passwordHash))) {

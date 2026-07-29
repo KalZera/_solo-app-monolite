@@ -22,7 +22,7 @@ describe('CompleteQuestUseCase', () => {
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     const progressionRepository = new InMemoryProgressionRepository(characterRepository, restPointRepository)
     const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
     return new CompleteQuestUseCase(questRepository, characterRepository, grantExperience, publishEvent)

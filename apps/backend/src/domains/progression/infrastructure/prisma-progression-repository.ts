@@ -27,7 +27,7 @@ type ProgressionRecord = {
   luck: number
 }
 
-function toDomain(record: ProgressionRecord): CharacterProgression {
+function toDomain (record: ProgressionRecord): CharacterProgression {
   return {
     characterId: record.id,
     level: record.level,
@@ -44,9 +44,9 @@ function toDomain(record: ProgressionRecord): CharacterProgression {
 }
 
 export class PrismaProgressionRepository implements ProgressionRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async findByCharacterId(characterId: ID): Promise<CharacterProgression | null> {
+  async findByCharacterId (characterId: ID): Promise<CharacterProgression | null> {
     const record = await this.prisma.character.findUnique({
       where: { id: characterId },
       select: PROGRESSION_SELECT,
@@ -57,9 +57,9 @@ export class PrismaProgressionRepository implements ProgressionRepository {
     return toDomain(record)
   }
 
-  async save(
+  async save (
     characterId: ID,
-    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>,
+    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>
   ): Promise<CharacterProgression> {
     const { stats, ...rest } = data
 
@@ -81,7 +81,7 @@ export class PrismaProgressionRepository implements ProgressionRepository {
     return toDomain(record)
   }
 
-  async addRestPoints(characterId: ID, amount: number): Promise<void> {
+  async addRestPoints (characterId: ID, amount: number): Promise<void> {
     await this.prisma.characterRestPoint.update({
       where: { characterId },
       data: { restPoints: { increment: amount } },

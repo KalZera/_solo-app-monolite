@@ -5,14 +5,14 @@ import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
 type RefreshTokenPayload = TokenPayload & { type: string }
 
 export class RefreshSessionUseCase {
-  constructor(
+  constructor (
     private readonly prisma: PrismaClient,
     private readonly verifyRefreshToken: (token: string) => RefreshTokenPayload,
     private readonly signAccessToken: (payload: TokenPayload) => string,
-    private readonly signRefreshToken: (payload: TokenPayload) => string,
+    private readonly signRefreshToken: (payload: TokenPayload) => string
   ) {}
 
-  async execute(refreshToken: string | undefined) {
+  async execute (refreshToken: string | undefined) {
     if (!refreshToken) {
       throw new UnauthorizedError('Missing refresh token')
     }

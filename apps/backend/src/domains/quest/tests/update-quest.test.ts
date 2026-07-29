@@ -41,7 +41,7 @@ describe('UpdateQuestUseCase', () => {
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
     await expect(useCase.execute({ userId: 'user-1', questId: quest.id, title: 'Try to edit' })).rejects.toThrow(
-      ConflictError,
+      ConflictError
     )
   })
 
@@ -71,7 +71,7 @@ describe('UpdateQuestUseCase', () => {
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
     await expect(useCase.execute({ userId: 'user-2', questId: quest.id, title: 'Hijacked' })).rejects.toThrow(
-      NotFoundError,
+      NotFoundError
     )
   })
 })

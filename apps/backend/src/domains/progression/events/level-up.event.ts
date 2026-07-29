@@ -9,7 +9,7 @@ export interface LevelUpEvent extends DomainEvent {
   newLevel: number
 }
 
-export function createLevelUpEvent(characterId: ID, previousLevel: number, newLevel: number): LevelUpEvent {
+export function createLevelUpEvent (characterId: ID, previousLevel: number, newLevel: number): LevelUpEvent {
   return {
     eventId: randomUUID(),
     eventType: 'LevelUp',

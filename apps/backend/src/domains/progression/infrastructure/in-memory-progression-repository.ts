@@ -8,12 +8,12 @@ import type { InMemoryCharacterRestPointRepository } from '../../character/infra
 // CharacterRestPointRepository, mirroring how the Prisma implementation shares
 // the `characters` and `characters_rest_points` tables.
 export class InMemoryProgressionRepository implements ProgressionRepository {
-  constructor(
+  constructor (
     private readonly characterRepository: InMemoryCharacterRepository,
-    private readonly restPointRepository: InMemoryCharacterRestPointRepository,
+    private readonly restPointRepository: InMemoryCharacterRestPointRepository
   ) {}
 
-  async findByCharacterId(characterId: ID): Promise<CharacterProgression | null> {
+  async findByCharacterId (characterId: ID): Promise<CharacterProgression | null> {
     const character = await this.characterRepository.findById(characterId)
     if (!character) return null
     return {
@@ -25,9 +25,9 @@ export class InMemoryProgressionRepository implements ProgressionRepository {
     }
   }
 
-  async save(
+  async save (
     characterId: ID,
-    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>,
+    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>
   ): Promise<CharacterProgression> {
     const character = await this.characterRepository.save(characterId, data)
     return {
@@ -39,7 +39,7 @@ export class InMemoryProgressionRepository implements ProgressionRepository {
     }
   }
 
-  async addRestPoints(characterId: ID, amount: number): Promise<void> {
+  async addRestPoints (characterId: ID, amount: number): Promise<void> {
     await this.restPointRepository.incrementRestPoints(characterId, amount)
   }
 }

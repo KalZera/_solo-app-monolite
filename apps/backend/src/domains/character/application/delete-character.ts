@@ -6,9 +6,9 @@ interface DeleteCharacterInput {
 }
 
 export class DeleteCharacterUseCase {
-  constructor(private readonly repository: CharacterRepository) {}
+  constructor (private readonly repository: CharacterRepository) {}
 
-  async execute(input: DeleteCharacterInput): Promise<void> {
+  async execute (input: DeleteCharacterInput): Promise<void> {
     const characters = await this.repository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

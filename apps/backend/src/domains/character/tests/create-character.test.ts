@@ -13,7 +13,7 @@ describe('CreateCharacterUseCase', () => {
     restPointRepository = new InMemoryCharacterRestPointRepository()
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new CreateCharacterUseCase(repository, restPointRepository)
   }
 
@@ -70,7 +70,7 @@ describe('CreateCharacterUseCase', () => {
         name: 'Second Hero',
         class: 'mage',
         title: 'Arcane Master',
-      }),
+      })
     ).rejects.toThrow(ConflictError)
   })
 

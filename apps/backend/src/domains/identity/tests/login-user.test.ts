@@ -47,7 +47,7 @@ describe('LoginUserUseCase', () => {
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(useCase.execute({ email: 'ghost@solo.com', password: 'any-password' })).rejects.toThrow(
-      UnauthorizedError,
+      UnauthorizedError
     )
   })
 
@@ -56,7 +56,7 @@ describe('LoginUserUseCase', () => {
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(useCase.execute({ email: SEEDED_USER.email, password: 'wrong-password' })).rejects.toThrow(
-      UnauthorizedError,
+      UnauthorizedError
     )
   })
 
@@ -68,7 +68,7 @@ describe('LoginUserUseCase', () => {
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
     await expect(useCase.execute({ email: SEEDED_USER.email, password: PLAIN_PASSWORD })).rejects.toThrow(
-      'jwt signing failed',
+      'jwt signing failed'
     )
   })
 })

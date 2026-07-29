@@ -10,10 +10,10 @@ export interface AttributePointAllocatedEvent extends DomainEvent {
   amount: number
 }
 
-export function createAttributePointAllocatedEvent(
+export function createAttributePointAllocatedEvent (
   characterId: ID,
   attribute: keyof CharacterStats,
-  amount: number,
+  amount: number
 ): AttributePointAllocatedEvent {
   return {
     eventId: randomUUID(),

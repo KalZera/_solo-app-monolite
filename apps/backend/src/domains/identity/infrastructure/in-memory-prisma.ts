@@ -21,8 +21,8 @@ type UpdateArgs = {
 export class InMemoryPrisma {
   private users: UserRow[] = []
 
-  seed(
-    partial: Omit<UserRow, 'id' | 'createdAt' | 'updatedAt'> & Partial<Pick<UserRow, 'id' | 'createdAt' | 'updatedAt'>>,
+  seed (
+    partial: Omit<UserRow, 'id' | 'createdAt' | 'updatedAt'> & Partial<Pick<UserRow, 'id' | 'createdAt' | 'updatedAt'>>
   ) {
     this.users.push({
       id: partial.id ?? randomUUID(),
@@ -41,7 +41,7 @@ export class InMemoryPrisma {
           (u) =>
             (where.email && u.email === where.email) ||
             (where.id && u.id === where.id) ||
-            (where.username && u.username === where.username),
+            (where.username && u.username === where.username)
         ) ?? null
       )
     },
@@ -50,7 +50,7 @@ export class InMemoryPrisma {
       const conditions = where.OR ?? []
       return (
         this.users.find((u) =>
-          conditions.some((c) => (c.email && u.email === c.email) || (c.username && u.username === c.username)),
+          conditions.some((c) => (c.email && u.email === c.email) || (c.username && u.username === c.username))
         ) ?? null
       )
     },
@@ -67,7 +67,7 @@ export class InMemoryPrisma {
         (u) =>
           (where.id && u.id === where.id) ||
           (where.email && u.email === where.email) ||
-          (where.username && u.username === where.username),
+          (where.username && u.username === where.username)
       )
 
       if (index === -1) {

@@ -28,11 +28,11 @@ export interface DailyQuestRenewedEvent extends DomainEvent {
   questTitle: string
 }
 
-export function createQuestCompletedEvent(
+export function createQuestCompletedEvent (
   questId: ID,
   characterId: ID,
   questType: QuestType,
-  questTitle: string,
+  questTitle: string
 ): QuestCompletedEvent {
   return {
     eventId: randomUUID(),
@@ -46,12 +46,12 @@ export function createQuestCompletedEvent(
   }
 }
 
-export function createQuestObjectiveCompletedEvent(
+export function createQuestObjectiveCompletedEvent (
   questId: ID,
   objectiveId: ID,
   characterId: ID,
   questTitle: string,
-  objectiveDescription: string,
+  objectiveDescription: string
 ): QuestObjectiveCompletedEvent {
   return {
     eventId: randomUUID(),
@@ -66,11 +66,11 @@ export function createQuestObjectiveCompletedEvent(
   }
 }
 
-export function createDailyQuestRenewedEvent(
+export function createDailyQuestRenewedEvent (
   previousQuestId: ID,
   newQuestId: ID,
   characterId: ID,
-  questTitle: string,
+  questTitle: string
 ): DailyQuestRenewedEvent {
   return {
     eventId: randomUUID(),

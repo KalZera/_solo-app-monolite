@@ -18,14 +18,14 @@ interface CompleteQuestInput {
 const NON_COMPLETABLE_STATUSES: QuestStatus[] = ['completed', 'failed', 'expired']
 
 export class CompleteQuestUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
     private readonly characterRepository: CharacterRepository,
     private readonly grantExperience: GrantExperienceUseCase,
-    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
+    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute(input: CompleteQuestInput) {
+  async execute (input: CompleteQuestInput) {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 
@@ -57,7 +57,7 @@ export class CompleteQuestUseCase {
     const updatedQuest = await this.questRepository.save(quest.id, { status: 'completed' })
 
     await this.publishEvent(
-      createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type, updatedQuest.title),
+      createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type, updatedQuest.title)
     )
 
     const { progression, levelsGained } = await this.grantExperience.execute({
@@ -79,7 +79,7 @@ export class CompleteQuestUseCase {
     return { quest: updatedQuest, character: updatedCharacter, renewedQuest, levelsGained }
   }
 
-  private async renewDailyQuest(quest: Quest, characterId: string) {
+  private async renewDailyQuest (quest: Quest, characterId: string) {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
 

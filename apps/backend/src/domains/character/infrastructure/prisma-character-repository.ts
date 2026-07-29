@@ -3,7 +3,7 @@ import type { Character, CharacterClass, CharacterRepository } from '../domain/c
 import type { ID } from '../../../shared/types/index'
 import { generateId } from '../../../shared/utils/index'
 
-function toDomain(record: PrismaCharacter): Character {
+function toDomain (record: PrismaCharacter): Character {
   return {
     id: record.id,
     userId: record.userId,
@@ -27,19 +27,19 @@ function toDomain(record: PrismaCharacter): Character {
 }
 
 export class PrismaCharacterRepository implements CharacterRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async findById(id: ID): Promise<Character | null> {
+  async findById (id: ID): Promise<Character | null> {
     const record = await this.prisma.character.findUnique({ where: { id } })
     return record ? toDomain(record) : null
   }
 
-  async findByUserId(userId: ID): Promise<Character[]> {
+  async findByUserId (userId: ID): Promise<Character[]> {
     const records = await this.prisma.character.findMany({ where: { userId } })
     return records.map(toDomain)
   }
 
-  async create(data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
+  async create (data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
     const record = await this.prisma.character.create({
       data: {
         id: generateId(),
@@ -61,7 +61,7 @@ export class PrismaCharacterRepository implements CharacterRepository {
     return toDomain(record)
   }
 
-  async save(id: ID, data: Partial<Character>): Promise<Character> {
+  async save (id: ID, data: Partial<Character>): Promise<Character> {
     const { stats, ...rest } = data
     const record = await this.prisma.character.update({
       where: { id },
@@ -79,7 +79,7 @@ export class PrismaCharacterRepository implements CharacterRepository {
     return toDomain(record)
   }
 
-  async delete(id: ID): Promise<void> {
+  async delete (id: ID): Promise<void> {
     await this.prisma.character.delete({ where: { id } })
   }
 }

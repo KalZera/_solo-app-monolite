@@ -27,12 +27,12 @@ describe('RefreshSessionUseCase', () => {
     signRefreshToken = vi.fn().mockReturnValue('fake-rotated-refresh-token')
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new RefreshSessionUseCase(
       prisma as unknown as PrismaClient,
       verifyRefreshToken,
       signAccessToken,
-      signRefreshToken,
+      signRefreshToken
     )
   }
 

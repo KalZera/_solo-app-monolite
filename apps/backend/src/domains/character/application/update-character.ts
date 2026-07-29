@@ -12,9 +12,9 @@ interface UpdateCharacterInput {
 }
 
 export class UpdateCharacterUseCase {
-  constructor(private readonly repository: CharacterRepository) {}
+  constructor (private readonly repository: CharacterRepository) {}
 
-  async execute(input: UpdateCharacterInput) {
+  async execute (input: UpdateCharacterInput) {
     const characters = await this.repository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

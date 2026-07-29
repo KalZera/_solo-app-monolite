@@ -13,7 +13,7 @@ describe('CreateQuestUseCase', () => {
     characterRepository = new InMemoryCharacterRepository()
   })
 
-  function seedCharacter(userId = 'user-1') {
+  function seedCharacter (userId = 'user-1') {
     return characterRepository.seed({ userId, name: 'Sung Jinwoo' })
   }
 
@@ -113,7 +113,7 @@ describe('CreateQuestUseCase', () => {
         questRank: 'General',
         type,
         rewardXp: 10,
-      }),
+      })
     ).rejects.toThrow(ValidationError)
   })
 
@@ -129,7 +129,7 @@ describe('CreateQuestUseCase', () => {
         questRank: 'General',
         type: 'daily',
         rewardXp: 0,
-      }),
+      })
     ).rejects.toThrow(ValidationError)
   })
 
@@ -145,7 +145,7 @@ describe('CreateQuestUseCase', () => {
         questRank: 'General',
         type: 'daily',
         rewardXp: 10,
-      }),
+      })
     ).rejects.toThrow(ValidationError)
   })
 
@@ -182,7 +182,7 @@ describe('CreateQuestUseCase', () => {
         questRank: 'General',
         type: 'daily',
         rewardXp: 10,
-      }),
+      })
     ).rejects.toThrow(ConflictError)
   })
 
@@ -244,7 +244,7 @@ describe('CreateQuestUseCase', () => {
         type: 'main',
         categoryId: 'category-1',
         rewardXp: 50,
-      }),
+      })
     ).rejects.toThrow(ConflictError)
   })
 
@@ -324,7 +324,7 @@ describe('CreateQuestUseCase', () => {
         questRank: 'General',
         type: 'daily',
         rewardXp: 10,
-      }),
+      })
     ).rejects.toThrow(NotFoundError)
   })
 })

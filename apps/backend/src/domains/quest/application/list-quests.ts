@@ -9,12 +9,12 @@ interface ListQuestsInput {
 }
 
 export class ListQuestsUseCase {
-  constructor(
+  constructor (
     private readonly questRepository: QuestRepository,
-    private readonly characterRepository: CharacterRepository,
+    private readonly characterRepository: CharacterRepository
   ) {}
 
-  async execute(input: ListQuestsInput) {
+  async execute (input: ListQuestsInput) {
     const characters = await this.characterRepository.findByUserId(input.userId)
     const character = characters[0] ?? null
 

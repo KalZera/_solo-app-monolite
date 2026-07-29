@@ -24,7 +24,7 @@ export class InMemoryCache implements Cache {
     })
   }
 
-  async del(key: string): Promise<void> {
+  async del (key: string): Promise<void> {
     this.store.delete(key)
   }
 }

@@ -13,7 +13,7 @@ describe('GetCharacterProfileUseCase', () => {
     restPointRepository = new InMemoryCharacterRestPointRepository()
   })
 
-  function buildUseCase() {
+  function buildUseCase () {
     return new GetCharacterProfileUseCase(repository, restPointRepository)
   }
 

@@ -14,7 +14,7 @@ import { generateId } from '../../../shared/utils/index.js'
 
 type PrismaQuestWithObjectives = PrismaQuest & { objectives: PrismaQuestObjective[] }
 
-function toDomain(record: PrismaQuestWithObjectives): Quest {
+function toDomain (record: PrismaQuestWithObjectives): Quest {
   return {
     id: record.id,
     characterId: record.characterId,
@@ -41,14 +41,14 @@ function toDomain(record: PrismaQuestWithObjectives): Quest {
 }
 
 export class PrismaQuestRepository implements QuestRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor (private readonly prisma: PrismaClient) {}
 
-  async findById(id: ID): Promise<Quest | null> {
+  async findById (id: ID): Promise<Quest | null> {
     const record = await this.prisma.quest.findUnique({ where: { id }, include: { objectives: true } })
     return record ? toDomain(record) : null
   }
 
-  async findByCharacterId(characterId: ID): Promise<Quest[]> {
+  async findByCharacterId (characterId: ID): Promise<Quest[]> {
     const records = await this.prisma.quest.findMany({
       where: { characterId },
       include: { objectives: true },
@@ -56,7 +56,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return records.map(toDomain)
   }
 
-  async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
+  async findByData (filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
     const dateInterval = getDateFilter(filter.expiresAt ?? new Date())
     const expiresAtDate = filter.expiresAt ? { gte: dateInterval.start, lte: dateInterval.end } : undefined
 
@@ -88,7 +88,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return { data: records.map(toDomain), total, page: pagination.page, pageSize: pagination.pageSize }
   }
 
-  async create(data: CreateQuestData): Promise<Quest> {
+  async create (data: CreateQuestData): Promise<Quest> {
     const record = await this.prisma.quest.create({
       data: {
         id: generateId(),
@@ -118,7 +118,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return toDomain(record)
   }
 
-  async save(id: ID, data: Partial<Quest>): Promise<Quest> {
+  async save (id: ID, data: Partial<Quest>): Promise<Quest> {
     const record = await this.prisma.quest.update({
       where: { id },
       data: {
@@ -138,7 +138,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return toDomain(record)
   }
 
-  async updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
+  async updateObjective (questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest> {
     await this.prisma.questObjective.update({
       where: { id: objectiveId },
       data: {
@@ -156,7 +156,7 @@ export class PrismaQuestRepository implements QuestRepository {
     return toDomain(record)
   }
 
-  async delete(id: ID): Promise<void> {
+  async delete (id: ID): Promise<void> {
     await this.prisma.quest.delete({ where: { id } })
   }
 }

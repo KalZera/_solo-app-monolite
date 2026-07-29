@@ -1,6 +1,6 @@
 export type CharacterRank = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'SS' | 'Monarch'
 
-export function calculateRank(powerScore: number): CharacterRank {
+export function calculateRank (powerScore: number): CharacterRank {
   if (powerScore < 500) return 'E'
   if (powerScore < 1500) return 'D'
   if (powerScore < 3500) return 'C'

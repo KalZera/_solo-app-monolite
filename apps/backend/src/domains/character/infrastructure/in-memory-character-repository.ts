@@ -15,7 +15,7 @@ type SeedInput = Pick<Character, 'userId' | 'name'> & Partial<Omit<Character, 'u
 export class InMemoryCharacterRepository implements CharacterRepository {
   private characters: Character[] = []
 
-  seed(data: SeedInput): Character {
+  seed (data: SeedInput): Character {
     const character: Character = {
       id: data.id ?? randomUUID(),
       userId: data.userId,
@@ -34,15 +34,15 @@ export class InMemoryCharacterRepository implements CharacterRepository {
     return character
   }
 
-  async findById(id: ID): Promise<Character | null> {
+  async findById (id: ID): Promise<Character | null> {
     return this.characters.find((c) => c.id === id) ?? null
   }
 
-  async findByUserId(userId: ID): Promise<Character[]> {
+  async findByUserId (userId: ID): Promise<Character[]> {
     return this.characters.filter((c) => c.userId === userId)
   }
 
-  async create(data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
+  async create (data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
     const character: Character = {
       ...data,
       id: randomUUID(),
@@ -53,14 +53,14 @@ export class InMemoryCharacterRepository implements CharacterRepository {
     return character
   }
 
-  async save(id: ID, data: Partial<Character>): Promise<Character> {
+  async save (id: ID, data: Partial<Character>): Promise<Character> {
     const index = this.characters.findIndex((c) => c.id === id)
     if (index === -1) throw new Error(`Character ${id} not found`)
     this.characters[index] = { ...this.characters[index], ...data, updatedAt: new Date() }
     return this.characters[index]
   }
 
-  async delete(id: ID): Promise<void> {
+  async delete (id: ID): Promise<void> {
     this.characters = this.characters.filter((c) => c.id !== id)
   }
 }

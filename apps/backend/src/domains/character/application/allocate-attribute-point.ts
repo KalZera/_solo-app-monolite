@@ -16,13 +16,13 @@ interface AllocateAttributePointInput {
 }
 
 export class AllocateAttributePointUseCase {
-  constructor(
+  constructor (
     private readonly characterRepository: CharacterRepository,
     private readonly restPointRepository: CharacterRestPointRepository,
-    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event),
+    private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute(input: AllocateAttributePointInput) {
+  async execute (input: AllocateAttributePointInput) {
     if (!ALLOCATABLE_ATTRIBUTES.includes(input.attribute)) {
       throw new ValidationError(`Attribute must be one of: ${ALLOCATABLE_ATTRIBUTES.join(', ')}`)
     }
