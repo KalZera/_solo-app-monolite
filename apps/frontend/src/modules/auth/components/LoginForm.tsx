@@ -7,7 +7,10 @@ import { SystemButton } from "@/shared/components/SystemButton";
 import { FormField } from "@/shared/components/FormField";
 import { getErrorMessage } from "@/shared/api/get-error-message";
 import { useLogin } from "../api/useLogin";
-import { createLoginSchema, type LoginFormValues } from "../schemas/login.schema";
+import {
+  createLoginSchema,
+  type LoginFormValues,
+} from "../schemas/login.schema";
 import type { LoginResponse } from "../types";
 
 interface LoginFormProps {
@@ -44,7 +47,11 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         control={control}
         name="password"
         label={t("auth.login.password")}
-        inputProps={{ placeholder: "••••••••", secureTextEntry: true }}
+        inputProps={{
+          placeholder: "••••••••",
+          secureTextEntry: true,
+          type: "password",
+        }}
       />
 
       {login.isError && (

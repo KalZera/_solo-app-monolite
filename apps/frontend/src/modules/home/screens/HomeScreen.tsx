@@ -6,11 +6,9 @@ import {
   useCharacterProfile,
 } from "@/modules/character/api/useCharacterProfile";
 import { CreateCharacterForm } from "@/modules/character/components/CreateCharacterForm";
-import { useDailyQuests } from "@/modules/quest/api/useDailyQuests";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
 import { SystemPanel } from "@/shared/components/SystemPanel";
 import { AttributesPanel } from "../components/AttributesPanel";
-import { DailyMissionsPanel } from "../components/DailyMissionsPanel";
 import { HeroCard } from "../components/HeroCard";
 
 export function HomeScreen() {
@@ -21,9 +19,6 @@ export function HomeScreen() {
     isError,
     error,
   } = useCharacterProfile();
-  const { data: quests, isPending: isQuestsPending } = useDailyQuests({
-    enabled: Boolean(character),
-  });
 
   if (isCharacterPending) {
     return <LoadingIndicator label={t("home.loadingSystem")} />;
@@ -93,8 +88,6 @@ export function HomeScreen() {
             availablePoints={character.restPoints}
           />
         )}
-        {isQuestsPending && <LoadingIndicator label={t("home.loadingMissions")} />}
-        {quests && <DailyMissionsPanel quests={quests} />}
       </YStack>
     </ScrollView>
   );
