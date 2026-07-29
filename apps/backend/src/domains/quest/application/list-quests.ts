@@ -1,10 +1,11 @@
 import type { CharacterRepository } from '../../character/domain/character'
-import type { QuestRepository } from '../domain/quest'
+import type { QuestRepository, QuestFilter } from '../domain/quest'
 import { ACTIVE_QUEST_STATUSES } from '../domain/quest'
 import { NotFoundError } from '../../../shared/errors/app-error'
 
 interface ListQuestsInput {
   userId: string
+  filter?: QuestFilter
 }
 
 export class ListQuestsUseCase {
@@ -21,7 +22,12 @@ export class ListQuestsUseCase {
       throw new NotFoundError('Character', input.userId)
     }
 
-    const quests = await this.questRepository.findByCharacterId(character.id)
+    console.log({ filter: input.filter })
+
+    const quests =
+      input.filter !== undefined
+        ? (await this.questRepository.findByData({ ...input.filter }, { page: 1, pageSize: 10 })).data
+        : await this.questRepository.findByCharacterId(character.id)
 
     // Active quests (available/in_progress) surface before completed/failed/expired ones.
     return quests.sort((a, b) => {

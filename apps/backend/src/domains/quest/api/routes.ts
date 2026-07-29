@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify'
+import type { QuestFilter } from '../domain/quest'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { ListQuestsUseCase } from '../application/list-quests'
 import { GetQuestUseCase } from '../application/get-quest'
@@ -18,8 +19,9 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   const progressionRepository = new PrismaProgressionRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
+    const filter = req.query as QuestFilter | undefined
     const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
-    return listQuests.execute({ userId: req.user.sub })
+    return listQuests.execute({ userId: req.user.sub, filter: { ...filter } })
   })
 
   app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {

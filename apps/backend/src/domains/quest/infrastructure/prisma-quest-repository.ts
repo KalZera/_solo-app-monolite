@@ -1,4 +1,5 @@
 import type { PrismaClient, Quest as PrismaQuest, QuestObjective as PrismaQuestObjective } from '@prisma/client'
+import { getDateFilter } from '@shared/utils/date-filter'
 import type {
   CreateQuestData,
   Quest,
@@ -10,7 +11,6 @@ import type {
 } from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { generateId } from '../../../shared/utils/index.js'
-import { getDateFilter } from '@shared/utils/date-filter'
 
 type PrismaQuestWithObjectives = PrismaQuest & { objectives: PrismaQuestObjective[] }
 
@@ -57,7 +57,6 @@ export class PrismaQuestRepository implements QuestRepository {
   }
 
   async findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>> {
-
     const dateInterval = getDateFilter(filter.expiresAt ?? new Date())
     const expiresAtDate = filter.expiresAt ? { gte: dateInterval.start, lte: dateInterval.end } : undefined
 

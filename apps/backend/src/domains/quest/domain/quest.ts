@@ -1,6 +1,7 @@
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 
 export type QuestStatus = 'available' | 'in_progress' | 'completed' | 'failed' | 'expired'
+export const QUEST_STATUSES: QuestStatus[] = ['available', 'in_progress', 'completed', 'failed', 'expired']
 export type QuestType = 'main' | 'side' | 'daily' | 'weekly' | 'event'
 
 // business_rules.md: "the quest for now will be register only if is a daily quest or main quest"
