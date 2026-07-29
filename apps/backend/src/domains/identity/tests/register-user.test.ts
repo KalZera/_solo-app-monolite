@@ -45,8 +45,8 @@ describe('RegisterUserUseCase', () => {
     prisma.seed({ email: 'other@solo.com', username: 'taken', passwordHash: 'hash' })
     const useCase = new RegisterUserUseCase(prisma as unknown as PrismaClient)
 
-    await expect(
-      useCase.execute({ email: 'new@solo.com', username: 'taken', password: 'password' }),
-    ).rejects.toThrow(ConflictError)
+    await expect(useCase.execute({ email: 'new@solo.com', username: 'taken', password: 'password' })).rejects.toThrow(
+      ConflictError,
+    )
   })
 })

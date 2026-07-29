@@ -37,8 +37,6 @@ describe('GetQuestUseCase', () => {
     characterRepository.seed({ userId: 'user-1', name: 'Hero' })
     const useCase = new GetQuestUseCase(questRepository, characterRepository)
 
-    await expect(
-      useCase.execute({ userId: 'user-1', questId: 'ghost-quest' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(useCase.execute({ userId: 'user-1', questId: 'ghost-quest' })).rejects.toThrow(NotFoundError)
   })
 })

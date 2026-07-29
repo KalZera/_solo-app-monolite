@@ -52,18 +52,14 @@ describe('GetCharacterProfileUseCase', () => {
   it('throws NotFoundError when user has no character', async () => {
     const useCase = buildUseCase()
 
-    await expect(
-      useCase.execute({ userId: 'ghost-user' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(useCase.execute({ userId: 'ghost-user' })).rejects.toThrow(NotFoundError)
   })
 
   it('does not return a character from a different user', async () => {
     repository.seed({ userId: 'user-1', name: 'Belongs To User 1' })
     const useCase = buildUseCase()
 
-    await expect(
-      useCase.execute({ userId: 'user-2' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(useCase.execute({ userId: 'user-2' })).rejects.toThrow(NotFoundError)
   })
 
   it.each([

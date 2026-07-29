@@ -21,7 +21,9 @@ type UpdateArgs = {
 export class InMemoryPrisma {
   private users: UserRow[] = []
 
-  seed(partial: Omit<UserRow, 'id' | 'createdAt' | 'updatedAt'> & Partial<Pick<UserRow, 'id' | 'createdAt' | 'updatedAt'>>) {
+  seed(
+    partial: Omit<UserRow, 'id' | 'createdAt' | 'updatedAt'> & Partial<Pick<UserRow, 'id' | 'createdAt' | 'updatedAt'>>,
+  ) {
     this.users.push({
       id: partial.id ?? randomUUID(),
       email: partial.email,
@@ -48,11 +50,7 @@ export class InMemoryPrisma {
       const conditions = where.OR ?? []
       return (
         this.users.find((u) =>
-          conditions.some(
-            (c) =>
-              (c.email && u.email === c.email) ||
-              (c.username && u.username === c.username),
-          ),
+          conditions.some((c) => (c.email && u.email === c.email) || (c.username && u.username === c.username)),
         ) ?? null
       )
     },
@@ -61,9 +59,7 @@ export class InMemoryPrisma {
       const row: UserRow = { ...data, createdAt: new Date(), updatedAt: new Date() }
       this.users.push(row)
       if (!select) return row
-      return Object.fromEntries(
-        Object.entries(row).filter(([key]) => select[key]),
-      )
+      return Object.fromEntries(Object.entries(row).filter(([key]) => select[key]))
     },
 
     update: async ({ where, data, select }: UpdateArgs) => {
@@ -81,9 +77,7 @@ export class InMemoryPrisma {
       const row: UserRow = { ...this.users[index], ...data, updatedAt: new Date() }
       this.users[index] = row
       if (!select) return row
-      return Object.fromEntries(
-        Object.entries(row).filter(([key]) => select[key]),
-      )
+      return Object.fromEntries(Object.entries(row).filter(([key]) => select[key]))
     },
   }
 }

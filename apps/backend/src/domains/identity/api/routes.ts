@@ -39,9 +39,7 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
 
   app.post('/login', async (req, reply) => {
     const loginUser = new LoginUserUseCase(app.prisma, signAccessToken, signRefreshToken)
-    const { access_token, refresh_token } = await loginUser.execute(
-      req.body as Parameters<typeof loginUser.execute>[0],
-    )
+    const { access_token, refresh_token } = await loginUser.execute(req.body as Parameters<typeof loginUser.execute>[0])
     setRefreshCookie(reply, refresh_token)
     return reply.send({ access_token })
   })
@@ -53,9 +51,7 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
       signAccessToken,
       signRefreshToken,
     )
-    const { access_token, refresh_token } = await refreshSession.execute(
-      req.cookies[REFRESH_TOKEN_COOKIE_NAME],
-    )
+    const { access_token, refresh_token } = await refreshSession.execute(req.cookies[REFRESH_TOKEN_COOKIE_NAME])
     setRefreshCookie(reply, refresh_token)
     return reply.send({ access_token })
   })

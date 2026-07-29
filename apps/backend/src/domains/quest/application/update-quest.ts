@@ -41,15 +41,13 @@ export class UpdateQuestUseCase {
     if (quest.status === 'completed') {
       throw new ConflictError('A completed quest cannot be updated')
     }
-    
+
     if (input.type !== undefined && quest.type !== input.type) {
       throw new ConflictError('A quest cannot be a type updated')
     }
 
     if (input.type !== undefined && !CREATABLE_QUEST_TYPES.includes(input.type)) {
-      throw new ValidationError(
-        `A quest can only be registered as one of: ${CREATABLE_QUEST_TYPES.join(', ')}`,
-      )
+      throw new ValidationError(`A quest can only be registered as one of: ${CREATABLE_QUEST_TYPES.join(', ')}`)
     }
 
     if (input.rewardXp !== undefined && input.rewardXp <= 0) {

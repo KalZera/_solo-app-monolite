@@ -12,9 +12,7 @@ export type PaginationParams = {
   pageSize: number
 }
 
-export type Result<T, E = Error> =
-  | { data: T }
-  | { error: E }
+export type Result<T, E = Error> = { data: T } | { error: E }
 
 export type Nullable<T> = T | null
 

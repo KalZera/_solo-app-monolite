@@ -36,15 +36,13 @@ export class CreateQuestUseCase {
       throw new NotFoundError('Character', input.userId)
     }
 
-    //for MVP 
+    //for MVP
     if (!input.type) {
       input.type = 'daily'
     }
 
     if (!CREATABLE_QUEST_TYPES.includes(input.type)) {
-      throw new ValidationError(
-        `A quest can only be registered as one of: ${CREATABLE_QUEST_TYPES.join(', ')}`,
-      )
+      throw new ValidationError(`A quest can only be registered as one of: ${CREATABLE_QUEST_TYPES.join(', ')}`)
     }
 
     const existingQuests = await this.questRepository.findByCharacterId(character.id)
@@ -55,16 +53,16 @@ export class CreateQuestUseCase {
       ).length
 
       if (activeDailyQuestCount >= MAX_ACTIVE_DAILY_QUESTS) {
-        throw new ConflictError(
-          `A character cannot have more than ${MAX_ACTIVE_DAILY_QUESTS} active daily quests`,
-        )
+        throw new ConflictError(`A character cannot have more than ${MAX_ACTIVE_DAILY_QUESTS} active daily quests`)
       }
     }
 
     if (input.type === 'main' && input.categoryId) {
       const hasActiveMainQuestInCategory = existingQuests.some(
         (quest) =>
-          quest.type === 'main' && quest.categoryId === input.categoryId && ACTIVE_QUEST_STATUSES.includes(quest.status),
+          quest.type === 'main' &&
+          quest.categoryId === input.categoryId &&
+          ACTIVE_QUEST_STATUSES.includes(quest.status),
       )
 
       if (hasActiveMainQuestInCategory) {

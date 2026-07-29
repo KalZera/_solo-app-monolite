@@ -3,7 +3,6 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
   extends: [
-    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
   ],
@@ -17,8 +16,12 @@ module.exports = {
     },
   },
   rules: {
-    quotes: ['error', 'single', { 'allowTemplateLiterals': true }],
-    'comma-dangle': ['error', 'always-multiline'],
-    'import/extensions': ['error', 'ignorePackages', { js: 'never', ts: 'never', jsx: 'never', tsx: 'never' }],
+    camelcase: 'off',
+    '@stylistic/max-len': ['off', {
+      code: 80,
+      tabWidth: 2,
+      ignoreUrls: true,
+      ignoreComments: false,
+    }],
   },
 };

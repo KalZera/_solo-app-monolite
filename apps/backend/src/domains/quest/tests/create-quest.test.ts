@@ -101,24 +101,21 @@ describe('CreateQuestUseCase', () => {
     expect(result.expiresAt).toEqual(customDeadline)
   })
 
-  it.each(['side', 'weekly', 'event'] as const)(
-    'rejects registering a "%s" quest for now',
-    async (type) => {
-      seedCharacter()
-      const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+  it.each(['side', 'weekly', 'event'] as const)('rejects registering a "%s" quest for now', async (type) => {
+    seedCharacter()
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
-      await expect(
-        useCase.execute({
-          userId: 'user-1',
-          title: 'Unsupported type',
-          description: 'Should be rejected',
-          questRank: 'General',
-          type,
-          rewardXp: 10,
-        }),
-      ).rejects.toThrow(ValidationError)
-    },
-  )
+    await expect(
+      useCase.execute({
+        userId: 'user-1',
+        title: 'Unsupported type',
+        description: 'Should be rejected',
+        questRank: 'General',
+        type,
+        rewardXp: 10,
+      }),
+    ).rejects.toThrow(ValidationError)
+  })
 
   it('rejects a quest created with 0 XP reward', async () => {
     seedCharacter()

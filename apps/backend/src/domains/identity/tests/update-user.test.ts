@@ -43,8 +43,8 @@ describe('UpdateUserUseCase', () => {
   it('throws NotFoundError when no user matches the email', async () => {
     const useCase = new UpdateUserUseCase(prisma as unknown as PrismaClient)
 
-    await expect(
-      useCase.execute({ email: 'ghost@solo.com', newPassword: 'new-password' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(useCase.execute({ email: 'ghost@solo.com', newPassword: 'new-password' })).rejects.toThrow(
+      NotFoundError,
+    )
   })
 })

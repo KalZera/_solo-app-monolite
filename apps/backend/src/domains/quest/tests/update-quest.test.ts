@@ -40,9 +40,9 @@ describe('UpdateQuestUseCase', () => {
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
-    await expect(
-      useCase.execute({ userId: 'user-1', questId: quest.id, title: 'Try to edit' }),
-    ).rejects.toThrow(ConflictError)
+    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, title: 'Try to edit' })).rejects.toThrow(
+      ConflictError,
+    )
   })
 
   it('rejects changing the type to one that cannot be registered', async () => {
@@ -51,9 +51,7 @@ describe('UpdateQuestUseCase', () => {
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
-    await expect(
-      useCase.execute({ userId: 'user-1', questId: quest.id, type: 'side' }),
-    ).rejects.toThrow(ConflictError)
+    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, type: 'side' })).rejects.toThrow(ConflictError)
   })
 
   it('rejects dropping the XP reward to 0', async () => {
@@ -62,9 +60,7 @@ describe('UpdateQuestUseCase', () => {
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
-    await expect(
-      useCase.execute({ userId: 'user-1', questId: quest.id, rewardXp: 0 }),
-    ).rejects.toThrow(ValidationError)
+    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, rewardXp: 0 })).rejects.toThrow(ValidationError)
   })
 
   it('throws NotFoundError when updating a quest owned by a different character', async () => {
@@ -74,8 +70,8 @@ describe('UpdateQuestUseCase', () => {
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
-    await expect(
-      useCase.execute({ userId: 'user-2', questId: quest.id, title: 'Hijacked' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(useCase.execute({ userId: 'user-2', questId: quest.id, title: 'Hijacked' })).rejects.toThrow(
+      NotFoundError,
+    )
   })
 })

@@ -46,18 +46,18 @@ describe('LoginUserUseCase', () => {
   it('throws UnauthorizedError when the user does not exist', async () => {
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
-    await expect(
-      useCase.execute({ email: 'ghost@solo.com', password: 'any-password' }),
-    ).rejects.toThrow(UnauthorizedError)
+    await expect(useCase.execute({ email: 'ghost@solo.com', password: 'any-password' })).rejects.toThrow(
+      UnauthorizedError,
+    )
   })
 
   it('throws UnauthorizedError when the password is wrong', async () => {
     prisma.seed(SEEDED_USER)
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
-    await expect(
-      useCase.execute({ email: SEEDED_USER.email, password: 'wrong-password' }),
-    ).rejects.toThrow(UnauthorizedError)
+    await expect(useCase.execute({ email: SEEDED_USER.email, password: 'wrong-password' })).rejects.toThrow(
+      UnauthorizedError,
+    )
   })
 
   it('propagates errors thrown by the access token signer', async () => {
@@ -67,8 +67,8 @@ describe('LoginUserUseCase', () => {
     })
     const useCase = new LoginUserUseCase(prisma as unknown as PrismaClient, signAccessToken, signRefreshToken)
 
-    await expect(
-      useCase.execute({ email: SEEDED_USER.email, password: PLAIN_PASSWORD }),
-    ).rejects.toThrow('jwt signing failed')
+    await expect(useCase.execute({ email: SEEDED_USER.email, password: PLAIN_PASSWORD })).rejects.toThrow(
+      'jwt signing failed',
+    )
   })
 })

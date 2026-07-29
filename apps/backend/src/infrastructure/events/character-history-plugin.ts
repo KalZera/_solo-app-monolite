@@ -4,7 +4,11 @@ import { eventBus } from '../../shared/events/domain-event'
 import { PrismaCharacterHistoryRepository } from '../../domains/character/infrastructure/prisma-character-history-repository'
 import type { CharacterStats } from '../../domains/character/domain/character'
 import type { AttributePointAllocatedEvent } from '../../domains/character/domain/events'
-import type { QuestCompletedEvent, QuestObjectiveCompletedEvent, DailyQuestRenewedEvent } from '../../domains/quest/domain/events'
+import type {
+  QuestCompletedEvent,
+  QuestObjectiveCompletedEvent,
+  DailyQuestRenewedEvent,
+} from '../../domains/quest/domain/events'
 import type { LevelUpEvent } from '../../domains/progression/events/level-up.event'
 import type { AttributePointsGrantedEvent } from '../../domains/progression/events/attribute-points-granted.event'
 

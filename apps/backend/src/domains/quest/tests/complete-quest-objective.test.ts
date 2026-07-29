@@ -68,9 +68,9 @@ describe('CompleteQuestObjectiveUseCase', () => {
       objectives: [{ id: 'obj-1', description: 'Do it', target: 1, current: 1, completed: true }],
     })
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' }),
-    ).rejects.toThrow(ConflictError)
+    await expect(buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
+      ConflictError,
+    )
     expect(publishEvent).not.toHaveBeenCalled()
   })
 
@@ -83,9 +83,9 @@ describe('CompleteQuestObjectiveUseCase', () => {
       objectives: [{ id: 'obj-1', description: 'Do it', target: 1, current: 0, completed: false }],
     })
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' }),
-    ).rejects.toThrow(ConflictError)
+    await expect(buildUseCase().execute({ userId: 'user-1', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
+      ConflictError,
+    )
     expect(publishEvent).not.toHaveBeenCalled()
   })
 
@@ -98,8 +98,8 @@ describe('CompleteQuestObjectiveUseCase', () => {
       objectives: [{ id: 'obj-1', description: 'Do it', target: 1, current: 0, completed: false }],
     })
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-2', questId: quest.id, objectiveId: 'obj-1' }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(buildUseCase().execute({ userId: 'user-2', questId: quest.id, objectiveId: 'obj-1' })).rejects.toThrow(
+      NotFoundError,
+    )
   })
 })

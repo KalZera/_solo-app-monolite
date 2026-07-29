@@ -44,17 +44,17 @@ describe('AllocateAttributePointUseCase', () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
     await restPointRepository.incrementRestPoints(character.id, 2)
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 3 }),
-    ).rejects.toThrow(ConflictError)
+    await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 3 })).rejects.toThrow(
+      ConflictError,
+    )
   })
 
   it('throws ConflictError when the character has no rest points record yet', async () => {
     characterRepository.seed({ userId: 'user-1', name: 'Hero' })
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 1 }),
-    ).rejects.toThrow(ConflictError)
+    await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 1 })).rejects.toThrow(
+      ConflictError,
+    )
   })
 
   it('throws ValidationError for an unknown attribute', async () => {
@@ -70,14 +70,14 @@ describe('AllocateAttributePointUseCase', () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
     await restPointRepository.incrementRestPoints(character.id, 5)
 
-    await expect(
-      buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 0 }),
-    ).rejects.toThrow(ValidationError)
+    await expect(buildUseCase().execute({ userId: 'user-1', attribute: 'strength', amount: 0 })).rejects.toThrow(
+      ValidationError,
+    )
   })
 
   it('throws NotFoundError when the user has no character', async () => {
-    await expect(
-      buildUseCase().execute({ userId: 'ghost-user', attribute: 'strength', amount: 1 }),
-    ).rejects.toThrow(NotFoundError)
+    await expect(buildUseCase().execute({ userId: 'ghost-user', attribute: 'strength', amount: 1 })).rejects.toThrow(
+      NotFoundError,
+    )
   })
 })
