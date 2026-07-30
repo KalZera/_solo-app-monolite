@@ -138,7 +138,12 @@
       "title": "Diário de Missões",
       "loading": "Carregando missões…",
       "failed": "Falha ao conectar com o Sistema. Tente novamente.",
-      "empty": "Nenhuma missão ainda. Toque em + para criar a primeira."
+      "empty": "Nenhuma missão ainda. Toque em + para criar a primeira.",
+      "emptyCompletedOrExpired": "Nenhuma missão concluída ou expirada nos últimos 7 dias.",
+      "tabs": {
+        "available": "Disponíveis",
+        "completed_or_expired": "Concluídas/Expiradas"
+      }
     },
     "detail": {
       "title": "Detalhes da Missão",

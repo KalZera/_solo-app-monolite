@@ -1,6 +1,6 @@
 import { httpClient } from '@/shared/api/http-client'
 import type { Character } from '@/modules/character/types'
-import type { CreateQuestInput, Quest, QuestCategory } from '../types'
+import type { CreateQuestInput, Quest, QuestCategory, QuestView } from '../types'
 
 export interface CompleteQuestResult {
   quest: Quest
@@ -8,8 +8,8 @@ export interface CompleteQuestResult {
   levelsGained: number[]
 }
 
-export async function listQuests(): Promise<Quest[]> {
-  const { data } = await httpClient.get<Quest[]>('/quests/')
+export async function listQuests(view?: QuestView): Promise<Quest[]> {
+  const { data } = await httpClient.get<Quest[]>('/quests/', { params: view ? { view } : undefined })
   return data
 }
 

@@ -138,7 +138,12 @@
       "title": "Quest Log",
       "loading": "Loading quests…",
       "failed": "Failed to reach the System. Try again.",
-      "empty": "No quests yet. Tap + to create your first one."
+      "empty": "No quests yet. Tap + to create your first one.",
+      "emptyCompletedOrExpired": "No quest completed or expired in the last 7 days.",
+      "tabs": {
+        "available": "Available",
+        "completed_or_expired": "Completed/Expired"
+      }
     },
     "detail": {
       "title": "Quest Details",

@@ -1,6 +1,7 @@
 export type QuestStatus = 'available' | 'in_progress' | 'completed' | 'failed' | 'expired'
 export type QuestType = 'main' | 'side' | 'daily' | 'weekly' | 'event'
 export type CreatableQuestType = Extract<QuestType, 'daily' | 'main'>
+export type QuestView = 'available' | 'completed_or_expired'
 
 export interface QuestObjective {
   id: string
@@ -24,6 +25,7 @@ export interface Quest {
   rewardGold: number
   minLevel: number
   expiresAt: string | null
+  completedAt: string | null
   createdAt: string
   updatedAt: string
 }
