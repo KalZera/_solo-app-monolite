@@ -36,3 +36,35 @@ describe('InMemoryQuestRepository.findByData', () => {
     expect(result.total).toBe(0)
   })
 })
+
+describe('InMemoryQuestRepository.findExpiredActiveQuests', () => {
+  let repository: InMemoryQuestRepository
+  const now = new Date('2026-07-30T12:00:00.000Z')
+  const past = new Date('2026-07-29T00:00:00.000Z')
+  const future = new Date('2026-08-01T00:00:00.000Z')
+
+  beforeEach(() => {
+    repository = new InMemoryQuestRepository()
+  })
+
+  it('returns available/in_progress quests whose deadline has passed', async () => {
+    repository.seed({ characterId: 'char-1', title: 'Past due, available', status: 'available', expiresAt: past })
+    repository.seed({ characterId: 'char-1', title: 'Past due, in progress', status: 'in_progress', expiresAt: past })
+
+    const result = await repository.findExpiredActiveQuests(now)
+
+    expect(result.map((q) => q.title).sort()).toEqual(['Past due, available', 'Past due, in progress'])
+  })
+
+  it('excludes quests with no deadline, a future deadline, or an already-terminal status', async () => {
+    repository.seed({ characterId: 'char-1', title: 'No deadline', status: 'available', expiresAt: null })
+    repository.seed({ characterId: 'char-1', title: 'Not due yet', status: 'available', expiresAt: future })
+    repository.seed({ characterId: 'char-1', title: 'Already completed', status: 'completed', expiresAt: past })
+    repository.seed({ characterId: 'char-1', title: 'Already failed', status: 'failed', expiresAt: past })
+    repository.seed({ characterId: 'char-1', title: 'Already expired', status: 'expired', expiresAt: past })
+
+    const result = await repository.findExpiredActiveQuests(now)
+
+    expect(result).toHaveLength(0)
+  })
+})

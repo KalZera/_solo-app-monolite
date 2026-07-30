@@ -9,6 +9,7 @@ import type {
   QuestStatus,
   QuestType,
 } from '../domain/quest'
+import { ACTIVE_QUEST_STATUSES } from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { generateId } from '../../../shared/utils/index.js'
 
@@ -35,6 +36,7 @@ function toDomain (record: PrismaQuestWithObjectives): Quest {
     rewardGold: record.rewardGold,
     minLevel: record.minLevel,
     expiresAt: record.expiresAt,
+    completedAt: record.completedAt,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
   }
@@ -88,6 +90,17 @@ export class PrismaQuestRepository implements QuestRepository {
     return { data: records.map(toDomain), total, page: pagination.page, pageSize: pagination.pageSize }
   }
 
+  async findExpiredActiveQuests (now: Date): Promise<Quest[]> {
+    const records = await this.prisma.quest.findMany({
+      where: {
+        status: { in: ACTIVE_QUEST_STATUSES },
+        expiresAt: { lt: now },
+      },
+      include: { objectives: true },
+    })
+    return records.map(toDomain)
+  }
+
   async create (data: CreateQuestData): Promise<Quest> {
     const record = await this.prisma.quest.create({
       data: {
@@ -132,6 +145,7 @@ export class PrismaQuestRepository implements QuestRepository {
         ...(data.rewardGold !== undefined && { rewardGold: data.rewardGold }),
         ...(data.minLevel !== undefined && { minLevel: data.minLevel }),
         ...(data.expiresAt !== undefined && { expiresAt: data.expiresAt }),
+        ...(data.completedAt !== undefined && { completedAt: data.completedAt }),
       },
       include: { objectives: true },
     })

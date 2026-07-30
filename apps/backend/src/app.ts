@@ -13,6 +13,7 @@ import { prismaPlugin } from './infrastructure/prisma/plugin'
 import { jwtPlugin } from './infrastructure/jwt/plugin'
 import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { characterHistoryPlugin } from './infrastructure/events/character-history-plugin'
+import { questExpirationSchedulerPlugin } from './infrastructure/scheduler/quest-expiration-scheduler-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 
 export function buildApp () {
@@ -26,6 +27,7 @@ export function buildApp () {
   app.register(jwtPlugin)
   app.register(eventStorePlugin)
   app.register(characterHistoryPlugin)
+  app.register(questExpirationSchedulerPlugin)
 
   app.register(identityRoutes, { prefix: '/api/v1/identity' })
   app.register(characterRoutes, { prefix: '/api/v1/characters' })

@@ -54,7 +54,7 @@ export class CompleteQuestUseCase {
       throw new ValidationError('A main quest requires more than 70% of its objectives to be completed')
     }
 
-    const updatedQuest = await this.questRepository.save(quest.id, { status: 'completed' })
+    const updatedQuest = await this.questRepository.save(quest.id, { status: 'completed', completedAt: new Date() })
 
     await this.publishEvent(
       createQuestCompletedEvent(updatedQuest.id, character.id, updatedQuest.type, updatedQuest.title)

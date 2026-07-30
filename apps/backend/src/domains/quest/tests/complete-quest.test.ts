@@ -35,6 +35,7 @@ describe('CompleteQuestUseCase', () => {
     const result = await buildUseCase().execute({ userId: 'user-1', questId: quest.id })
 
     expect(result.quest.status).toBe('completed')
+    expect(result.quest.completedAt).toBeInstanceOf(Date)
     expect(result.character.experience).toBe(10)
     expect(result.character.level).toBe(1)
     expect(result.renewedQuest).toBeNull()

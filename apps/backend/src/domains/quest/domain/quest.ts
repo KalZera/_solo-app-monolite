@@ -35,20 +35,63 @@ export interface Quest {
   rewardGold: number
   minLevel: number
   expiresAt: Date | null
+  completedAt: Date | null
   createdAt: Date
   updatedAt: Date
 }
 
-export interface CreateQuestData extends Omit<Quest, 'id' | 'createdAt' | 'updatedAt' | 'objectives'> {
+export interface CreateQuestData extends Omit<Quest, 'id' | 'createdAt' | 'updatedAt' | 'completedAt' | 'objectives'> {
   objectives: Array<Omit<QuestObjective, 'id'>>
 }
 
 export type QuestFilter = Partial<Omit<Quest, 'objectives'>>
 
+// Views exposed to the quests screen: quests still open to complete, versus
+// quests already resolved (completed or past their deadline).
+export type QuestView = 'available' | 'completed_or_expired'
+
+// Resolved quests (completed/expired) only surface for this many days after resolution.
+export const COMPLETED_OR_EXPIRED_VISIBILITY_WINDOW_DAYS = 7
+
+// A quest is "expired" once its deadline has passed, whether or not it was ever
+// explicitly marked with status 'expired' (there is no background job doing that today).
+export function isQuestExpired (quest: Quest, now: Date = new Date()): boolean {
+  if (quest.status === 'expired') return true
+  if (quest.status === 'completed' || quest.status === 'failed') return false
+  return quest.expiresAt !== null && quest.expiresAt < now
+}
+
+export function isQuestAvailable (quest: Quest, now: Date = new Date()): boolean {
+  return quest.status === 'available' && !isQuestExpired(quest, now)
+}
+
+// The moment a quest was "resolved": when it was completed, or its deadline for expired/failed ones.
+// 'failed' is what the expiration cron sets once a deadline passes, so it resolves like an expired quest.
+function getQuestResolutionDate (quest: Quest): Date | null {
+  if (quest.status === 'completed') return quest.completedAt
+  if (quest.status === 'failed') return quest.expiresAt
+  if (isQuestExpired(quest)) return quest.expiresAt
+  return null
+}
+
+export function isQuestVisibleInCompletedOrExpiredView (
+  quest: Quest,
+  now: Date = new Date(),
+  windowDays: number = COMPLETED_OR_EXPIRED_VISIBILITY_WINDOW_DAYS
+): boolean {
+  const resolutionDate = getQuestResolutionDate(quest)
+  if (!resolutionDate) return false
+
+  const windowMs = windowDays * 24 * 60 * 60 * 1000
+  return now.getTime() - resolutionDate.getTime() <= windowMs
+}
+
 export interface QuestRepository {
   findById(id: ID): Promise<Quest | null>
   findByCharacterId(characterId: ID): Promise<Quest[]>
   findByData(filter: QuestFilter, pagination: PaginationParams): Promise<Paginated<Quest>>
+  // Active (available/in_progress) quests whose deadline has already passed, across all characters.
+  findExpiredActiveQuests(now: Date): Promise<Quest[]>
   create(data: CreateQuestData): Promise<Quest>
   save(id: ID, data: Partial<Quest>): Promise<Quest>
   updateObjective(questId: ID, objectiveId: ID, data: Partial<QuestObjective>): Promise<Quest>

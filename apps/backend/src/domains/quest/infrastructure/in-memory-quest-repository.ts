@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto'
 import type { CreateQuestData, Quest, QuestFilter, QuestObjective, QuestRepository } from '../domain/quest'
+import { ACTIVE_QUEST_STATUSES } from '../domain/quest'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index.js'
 import { paginate } from '../../../shared/utils/index.js'
 
@@ -30,6 +31,7 @@ export class InMemoryQuestRepository implements QuestRepository {
       rewardGold: data.rewardGold ?? 0,
       minLevel: data.minLevel ?? 1,
       expiresAt: data.expiresAt ?? null,
+      completedAt: data.completedAt ?? null,
       createdAt: data.createdAt ?? new Date(),
       updatedAt: data.updatedAt ?? new Date(),
     }
@@ -50,11 +52,18 @@ export class InMemoryQuestRepository implements QuestRepository {
     return paginate(filtered, pagination.page, pagination.pageSize)
   }
 
+  async findExpiredActiveQuests (now: Date): Promise<Quest[]> {
+    return this.quests.filter(
+      (q) => ACTIVE_QUEST_STATUSES.includes(q.status) && q.expiresAt !== null && q.expiresAt < now
+    )
+  }
+
   async create (data: CreateQuestData): Promise<Quest> {
     const quest: Quest = {
       ...data,
       id: randomUUID(),
       objectives: data.objectives.map((objective) => ({ ...objective, id: randomUUID() })),
+      completedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

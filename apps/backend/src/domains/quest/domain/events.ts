@@ -28,6 +28,14 @@ export interface DailyQuestRenewedEvent extends DomainEvent {
   questTitle: string
 }
 
+export interface QuestExpiredEvent extends DomainEvent {
+  eventType: 'QuestExpired'
+  questId: ID
+  characterId: ID
+  questType: QuestType
+  questTitle: string
+}
+
 export function createQuestCompletedEvent (
   questId: ID,
   characterId: ID,
@@ -80,6 +88,24 @@ export function createDailyQuestRenewedEvent (
     previousQuestId,
     newQuestId,
     characterId,
+    questTitle,
+  }
+}
+
+export function createQuestExpiredEvent (
+  questId: ID,
+  characterId: ID,
+  questType: QuestType,
+  questTitle: string
+): QuestExpiredEvent {
+  return {
+    eventId: randomUUID(),
+    eventType: 'QuestExpired',
+    occurredAt: new Date(),
+    aggregateId: questId,
+    questId,
+    characterId,
+    questType,
     questTitle,
   }
 }
