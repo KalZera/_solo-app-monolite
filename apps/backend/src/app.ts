@@ -2,6 +2,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import cookie from '@fastify/cookie'
+import multipart from '@fastify/multipart'
 import { identityRoutes } from './domains/identity/api/routes'
 import { characterRoutes } from './domains/character/api/routes'
 import { questRoutes } from './domains/quest/api/routes'
@@ -22,6 +23,7 @@ export function buildApp () {
   app.register(helmet)
   app.register(cors, { origin: true, credentials: true })
   app.register(cookie)
+  app.register(multipart, { limits: { fileSize: 5 * 1024 * 1024 } })
 
   app.register(prismaPlugin)
   app.register(jwtPlugin)

@@ -5,9 +5,12 @@ import { UpdateCharacterUseCase } from '../application/update-character'
 import { DeleteCharacterUseCase } from '../application/delete-character'
 import { AllocateAttributePointUseCase } from '../application/allocate-attribute-point'
 import { GetCharacterHistoryUseCase } from '../application/get-character-history'
+import { UploadCharacterAvatarUseCase } from '../application/upload-character-avatar'
 import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
 import { PrismaCharacterRestPointRepository } from '../infrastructure/prisma-character-rest-point-repository'
 import { PrismaCharacterHistoryRepository } from '../infrastructure/prisma-character-history-repository'
+import { R2AvatarStorage } from '../../../infrastructure/storage/r2-avatar-storage'
+import { ValidationError } from '../../../shared/errors/app-error'
 import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
@@ -58,6 +61,22 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
       userId: req.user.sub,
       ...(page !== undefined && { page: Number(page) }),
       ...(pageSize !== undefined && { pageSize: Number(pageSize) }),
+    })
+  })
+
+  app.post('/avatar', { preHandler: [app.authenticate] }, async (req) => {
+    const file = await req.file()
+
+    if (!file) {
+      throw new ValidationError('No avatar file uploaded')
+    }
+
+    const fileBuffer = await file.toBuffer()
+    const uploadCharacterAvatar = new UploadCharacterAvatarUseCase(repository, new R2AvatarStorage())
+    return uploadCharacterAvatar.execute({
+      userId: req.user.sub,
+      fileBuffer,
+      mimeType: file.mimetype,
     })
   })
 }

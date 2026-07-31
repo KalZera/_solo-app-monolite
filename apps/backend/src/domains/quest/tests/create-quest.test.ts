@@ -149,36 +149,40 @@ describe('CreateQuestUseCase', () => {
     ).rejects.toThrow(ValidationError)
   })
 
-  it('allows up to 3 active daily quests', async () => {
+  it('allows up to 5 active daily quests', async () => {
     const character = seedCharacter()
     questRepository.seed({ characterId: character.id, title: 'Daily 1', type: 'daily', status: 'available' })
     questRepository.seed({ characterId: character.id, title: 'Daily 2', type: 'daily', status: 'in_progress' })
+    questRepository.seed({ characterId: character.id, title: 'Daily 3', type: 'daily', status: 'available' })
+    questRepository.seed({ characterId: character.id, title: 'Daily 4', type: 'daily', status: 'in_progress' })
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
     const result = await useCase.execute({
       userId: 'user-1',
-      title: 'Daily 3',
-      description: 'Third daily quest',
+      title: 'Daily 5',
+      description: 'Fifth daily quest',
       questRank: 'General',
       type: 'daily',
       rewardXp: 10,
     })
 
-    expect(result.title).toBe('Daily 3')
+    expect(result.title).toBe('Daily 5')
   })
 
-  it('rejects creating a 4th active daily quest', async () => {
+  it('rejects creating a 6th active daily quest', async () => {
     const character = seedCharacter()
     questRepository.seed({ characterId: character.id, title: 'Daily 1', type: 'daily', status: 'available' })
     questRepository.seed({ characterId: character.id, title: 'Daily 2', type: 'daily', status: 'in_progress' })
     questRepository.seed({ characterId: character.id, title: 'Daily 3', type: 'daily', status: 'available' })
+    questRepository.seed({ characterId: character.id, title: 'Daily 4', type: 'daily', status: 'in_progress' })
+    questRepository.seed({ characterId: character.id, title: 'Daily 5', type: 'daily', status: 'available' })
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
     await expect(
       useCase.execute({
         userId: 'user-1',
-        title: 'Daily 4',
-        description: 'Fourth daily quest',
+        title: 'Daily 6',
+        description: 'Sixth daily quest',
         questRank: 'General',
         type: 'daily',
         rewardXp: 10,
