@@ -111,6 +111,25 @@
     },
     "allocateAttribute": {
       "toastErrorTitle": "Could not allocate point"
+    },
+    "avatarEditor": {
+      "title": "Edit Avatar",
+      "editHint": "Tap to change avatar",
+      "chooseFromLibrary": "Choose from Library",
+      "takePhoto": "Take Photo",
+      "cropHint": "Drag to reposition your photo inside the frame.",
+      "zoomIn": "Zoom In",
+      "zoomOut": "Zoom Out",
+      "changePhoto": "Change Photo",
+      "confirm": "Save Avatar",
+      "confirming": "Uploading…",
+      "libraryPermissionDenied": "Permission to access photos is required.",
+      "cameraPermissionDenied": "Permission to access the camera is required.",
+      "pickError": "Could not select the image. Try again.",
+      "cropError": "Could not process the image. Try again.",
+      "toastSuccessTitle": "Avatar updated",
+      "toastSuccessMessage": "Your Hunter's avatar has been updated.",
+      "toastErrorTitle": "Failed to update avatar"
     }
   },
   "home": {

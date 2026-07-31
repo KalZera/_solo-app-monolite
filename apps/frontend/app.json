@@ -41,7 +41,14 @@
           "color": "#4e9afe"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to set your Hunter's avatar.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take a photo for your Hunter's avatar."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

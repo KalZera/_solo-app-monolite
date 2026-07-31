@@ -111,6 +111,25 @@
     },
     "allocateAttribute": {
       "toastErrorTitle": "Não foi possível alocar o ponto"
+    },
+    "avatarEditor": {
+      "title": "Editar Avatar",
+      "editHint": "Toque para alterar o avatar",
+      "chooseFromLibrary": "Escolher da Galeria",
+      "takePhoto": "Tirar Foto",
+      "cropHint": "Arraste para reposicionar sua foto dentro do quadro.",
+      "zoomIn": "Aumentar Zoom",
+      "zoomOut": "Diminuir Zoom",
+      "changePhoto": "Trocar Foto",
+      "confirm": "Salvar Avatar",
+      "confirming": "Enviando…",
+      "libraryPermissionDenied": "É necessária permissão para acessar as fotos.",
+      "cameraPermissionDenied": "É necessária permissão para acessar a câmera.",
+      "pickError": "Não foi possível selecionar a imagem. Tente novamente.",
+      "cropError": "Não foi possível processar a imagem. Tente novamente.",
+      "toastSuccessTitle": "Avatar atualizado",
+      "toastSuccessMessage": "O avatar do seu Caçador foi atualizado.",
+      "toastErrorTitle": "Falha ao atualizar o avatar"
     }
   },
   "home": {

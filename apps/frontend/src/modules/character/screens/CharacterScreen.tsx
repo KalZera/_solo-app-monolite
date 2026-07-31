@@ -1,5 +1,8 @@
+import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, Text, XStack, YStack } from 'tamagui'
+import { Pencil, User } from '@tamagui/lucide-icons-2'
+import { Image as RNImage } from 'react-native'
+import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
@@ -9,6 +12,7 @@ import { StatRow } from '../components/StatRow'
 import { HistoryEntryRow } from '../components/HistoryEntryRow'
 
 export function CharacterScreen() {
+  const router = useRouter()
   const { t } = useTranslation()
   const { data: character, isPending, isError, error } = useCharacterProfile()
   const {
@@ -45,6 +49,53 @@ export function CharacterScreen() {
         {character && (
           <>
             <SystemPanel width="100%" maxWidth={420} gap="$4">
+              <YStack alignItems="center" gap="$3">
+                <Button
+                  unstyled
+                  onPress={() => router.push('/status/avatar')}
+                  accessibilityLabel={t('character.avatarEditor.editHint')}
+                >
+                  <View width={96} height={96} position="relative">
+                    <View
+                      width={96}
+                      height={96}
+                      borderRadius="$4"
+                      borderWidth={2}
+                      borderColor="$soloCyan"
+                      overflow="hidden"
+                      backgroundColor="$soloPanelAlt"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {character.avatar ? (
+                        <RNImage
+                          source={{ uri: character.avatar }}
+                          style={{ width: 96, height: 96 }}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <User color="$soloTextMuted" size={40} />
+                      )}
+                    </View>
+                    <View
+                      position="absolute"
+                      bottom={-4}
+                      right={-4}
+                      width={28}
+                      height={28}
+                      borderRadius={14}
+                      borderWidth={1}
+                      borderColor="$soloBorderStrong"
+                      backgroundColor="$soloBlue"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Pencil color="$soloBg" size={14} />
+                    </View>
+                  </View>
+                </Button>
+              </YStack>
+
               <YStack alignItems="center" gap="$1">
                 <Text color="$soloText" fontSize={28} fontWeight="800" textAlign="center">
                   {character.name}

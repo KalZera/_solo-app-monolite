@@ -37,3 +37,19 @@ export async function getCharacterHistory(
   const { data } = await httpClient.get<Paginated<CharacterHistoryEntry>>('/characters/history', { params })
   return data
 }
+
+export async function uploadCharacterAvatar(croppedImageUri: string): Promise<Character> {
+  const filename = croppedImageUri.split('/').pop() ?? `avatar-${Date.now()}.jpg`
+
+  const formData = new FormData()
+  formData.append('avatar', {
+    uri: croppedImageUri,
+    name: filename,
+    type: 'image/jpeg',
+  } as unknown as Blob)
+
+  const { data } = await httpClient.post<Character>('/characters/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
+}
