@@ -4,8 +4,10 @@ import { Pencil, User } from '@tamagui/lucide-icons-2'
 import { Image as RNImage } from 'react-native'
 import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 import { LoadingIndicator } from '@/shared/components/LoadingIndicator'
+import { ProgressBar } from '@/shared/components/ProgressBar'
 import { SystemButton } from '@/shared/components/SystemButton'
 import { SystemPanel } from '@/shared/components/SystemPanel'
+import { useCharacterProgress } from '@/modules/progression'
 import { isCharacterNotFound, useCharacterProfile } from '../api/useCharacterProfile'
 import { useCharacterHistory } from '../api/useCharacterHistory'
 import { StatRow } from '../components/StatRow'
@@ -15,6 +17,8 @@ export function CharacterScreen() {
   const router = useRouter()
   const { t } = useTranslation()
   const { data: character, isPending, isError, error } = useCharacterProfile()
+  // Analytical progression snapshot derived entirely from accumulated XP.
+  const progress = useCharacterProgress(character?.experience ?? 0)
   const {
     data: historyPages,
     isPending: isHistoryPending,
@@ -111,7 +115,7 @@ export function CharacterScreen() {
                     {t('character.screen.level')}
                   </Text>
                   <Text color="$soloCyan" fontSize="$7" fontWeight="800">
-                    {character.level}
+                    {progress.level}
                   </Text>
                 </YStack>
                 <YStack alignItems="center" gap="$1">
@@ -132,13 +136,26 @@ export function CharacterScreen() {
                 </YStack>
               </XStack>
 
-              <YStack gap="$1.5">
-                <XStack justifyContent="space-between">
+              <YStack gap="$2">
+                <XStack justifyContent="space-between" alignItems="center">
                   <Text color="$soloTextMuted" fontSize="$2" textTransform="uppercase">
                     {t('character.screen.experience')}
                   </Text>
                   <Text color="$soloTextMuted" fontSize="$2">
-                    {character.experience} XP
+                    {progress.xpIntoCurrentLevel} / {progress.xpIntoCurrentLevel + progress.xpRemaining} XP
+                  </Text>
+                </XStack>
+                <ProgressBar
+                  value={progress.xpIntoCurrentLevel}
+                  max={progress.xpIntoCurrentLevel + progress.xpRemaining}
+                  color="$soloCyan"
+                />
+                <XStack justifyContent="space-between" alignItems="center">
+                  <Text color="$soloTextMuted" fontSize="$2">
+                    {t('character.screen.toNextLevel', { xp: progress.xpRemaining })}
+                  </Text>
+                  <Text color="$soloTextMuted" fontSize="$2">
+                    {progress.progress}%
                   </Text>
                 </XStack>
               </YStack>

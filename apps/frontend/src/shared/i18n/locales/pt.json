@@ -92,6 +92,7 @@
       "rank": "Rank",
       "power": "Poder",
       "experience": "Experiência",
+      "toNextLevel": "{{xp}} XP para o próximo nível",
       "attributes": "Atributos",
       "stats": {
         "strength": "Força",

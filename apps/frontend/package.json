@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "build": "expo export --platform web --output-dir dist",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "expo lint"
   },
   "dependencies": {

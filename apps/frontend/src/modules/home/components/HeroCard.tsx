@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Text, XStack, YStack } from 'tamagui'
 import { ProgressBar } from '@/shared/components/ProgressBar'
 import type { CharacterProfile } from '@/modules/character/types'
-
-// Placeholder pacing until a real leveling formula ships server-side.
-const XP_PER_LEVEL = 1400
+import { useCharacterProgress } from '@/modules/progression'
 
 interface HeroCardProps {
   character: CharacterProfile
@@ -13,7 +11,11 @@ interface HeroCardProps {
 
 export function HeroCard({ character }: HeroCardProps) {
   const { t } = useTranslation()
-  const xpIntoLevel = character.experience % XP_PER_LEVEL
+  // Level, XP-into-level and the bar all come from the shared ProgressionEngine,
+  // driven purely by the character's accumulated XP.
+  const progress = useCharacterProgress(character.experience)
+  const xpIntoLevel = progress.xpIntoCurrentLevel
+  const levelSpan = progress.xpIntoCurrentLevel + progress.xpRemaining
 
   return (
     <XStack
@@ -48,13 +50,13 @@ export function HeroCard({ character }: HeroCardProps) {
         </Text>
         <XStack justifyContent="space-between" alignItems="center">
           <Text color="$soloText" fontSize="$3">
-            {t('character.screen.level')} {character.level}
+            {t('character.screen.level')} {progress.level}
           </Text>
           <Text color="$soloTextMuted" fontSize="$2">
-            {xpIntoLevel} / {XP_PER_LEVEL} XP
+            {xpIntoLevel} / {levelSpan} XP
           </Text>
         </XStack>
-        <ProgressBar value={xpIntoLevel} max={XP_PER_LEVEL} color="$soloPurple" />
+        <ProgressBar value={xpIntoLevel} max={levelSpan} color="$soloPurple" />
       </YStack>
     </XStack>
   )

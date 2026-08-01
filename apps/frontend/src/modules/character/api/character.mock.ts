@@ -7,8 +7,10 @@ export const mockCharacterProfile: CharacterProfile = {
   avatar: null,
   title: 'The Weakest Hunter',
   class: 'warrior',
-  level: 24,
-  experience: 4200,
+  // `experience` is the character's *accumulated* XP ("XP Total"); the
+  // ProgressionEngine derives level/progress from it. 12450 XP → level 12.
+  level: 12,
+  experience: 12450,
   powerScore: 1600,
   rank: 'C',
   restPoints: 5,
