@@ -80,11 +80,15 @@ Representa uma característica do personagem.
 
 No MVP:
 
- - STR
- - INT
- - AGI
- - VIT
- - CHA
+ - STR (strength)
+ - INT (intelligence)
+ - AGI (agility)
+ - VIT (vitality)
+ - LUCK (luck)
+
+> Nota (Decisão de auditoria 2026-08-01): o atributo canônico é **LUCK/`luck`**
+> (usado por schema, migrations, engines, histórico e frontend), substituindo o
+> antigo "CHA" citado neste documento.
 
 ### Skill
 
