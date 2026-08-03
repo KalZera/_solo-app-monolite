@@ -1,16 +1,16 @@
-import { Check } from '@tamagui/lucide-icons-2'
-import { Text, XStack, YStack } from 'tamagui'
-import { ProgressBar } from '@/shared/components/ProgressBar'
-import type { Quest } from '@/modules/quest/types'
+import { Check } from "@tamagui/lucide-icons-2";
+import { Text, XStack, YStack } from "tamagui";
+import { ProgressBar } from "@/shared/components/ProgressBar";
+import type { Quest } from "@/modules/quest/types";
 
 interface MissionRowProps {
-  icon: React.ComponentType<{ color?: string; size?: number }>
-  quest: Quest
+  icon: React.ComponentType<{ color?: string; size?: number }>;
+  quest: Quest;
 }
 
 export function MissionRow({ icon: Icon, quest }: MissionRowProps) {
-  const objective = quest.objectives[0]
-  const isCompleted = quest.status === 'completed'
+  const objective = quest.objectives[0];
+  const isCompleted = quest.status === "completed";
 
   return (
     <XStack alignItems="center" gap="$3">
@@ -31,7 +31,11 @@ export function MissionRow({ icon: Icon, quest }: MissionRowProps) {
         </Text>
         {objective && (
           <XStack alignItems="center" gap="$2">
-            <ProgressBar value={objective.current} max={objective.target} color="$soloPurple" />
+            <ProgressBar
+              value={objective.current}
+              max={objective.target}
+              color="$soloPurple"
+            />
             <Text color="$soloTextMuted" fontSize="$1">
               {objective.current}/{objective.target}
             </Text>
@@ -47,5 +51,5 @@ export function MissionRow({ icon: Icon, quest }: MissionRowProps) {
         </Text>
       )}
     </XStack>
-  )
+  );
 }

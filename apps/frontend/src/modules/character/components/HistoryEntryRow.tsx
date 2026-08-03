@@ -1,8 +1,8 @@
-import { Text, YStack } from 'tamagui'
-import type { CharacterHistoryEntry } from '../types'
+import { Text, YStack } from "tamagui";
+import type { CharacterHistoryEntry } from "../types";
 
 interface HistoryEntryRowProps {
-  entry: CharacterHistoryEntry
+  entry: CharacterHistoryEntry;
 }
 
 export function HistoryEntryRow({ entry }: HistoryEntryRowProps) {
@@ -22,5 +22,5 @@ export function HistoryEntryRow({ entry }: HistoryEntryRowProps) {
         {new Date(entry.createdAt).toLocaleString()}
       </Text>
     </YStack>
-  )
+  );
 }

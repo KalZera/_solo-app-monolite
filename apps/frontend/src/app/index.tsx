@@ -1,12 +1,12 @@
-import { Redirect } from 'expo-router'
-import { useSession } from '@/modules/auth/session/SessionProvider'
+import { Redirect } from "expo-router";
+import { useSession } from "@/modules/auth/session/SessionProvider";
 
 export default function Index() {
-  const { isAuthenticated, isLoading } = useSession()
+  const { isAuthenticated, isLoading } = useSession();
 
   if (isLoading) {
-    return null
+    return null;
   }
 
-  return <Redirect href={isAuthenticated ? '/home' : '/login'} />
+  return <Redirect href={isAuthenticated ? "/home" : "/login"} />;
 }

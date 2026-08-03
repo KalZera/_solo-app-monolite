@@ -1,21 +1,21 @@
-import { User } from '@tamagui/lucide-icons-2'
-import { useTranslation } from 'react-i18next'
-import { Text, XStack, YStack } from 'tamagui'
-import { ProgressBar } from '@/shared/components/ProgressBar'
-import type { CharacterProfile } from '@/modules/character/types'
-import { useCharacterProgress } from '@/modules/progression'
+import { User } from "@tamagui/lucide-icons-2";
+import { useTranslation } from "react-i18next";
+import { Text, XStack, YStack } from "tamagui";
+import { ProgressBar } from "@/shared/components/ProgressBar";
+import type { CharacterProfile } from "@/modules/character/types";
+import { useCharacterProgress } from "@/modules/progression";
 
 interface HeroCardProps {
-  character: CharacterProfile
+  character: CharacterProfile;
 }
 
 export function HeroCard({ character }: HeroCardProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   // Level, XP-into-level and the bar all come from the shared ProgressionEngine,
   // driven purely by the character's accumulated XP.
-  const progress = useCharacterProgress(character.experience)
-  const xpIntoLevel = progress.xpIntoCurrentLevel
-  const levelSpan = progress.xpIntoCurrentLevel + progress.xpRemaining
+  const progress = useCharacterProgress(character.experience);
+  const xpIntoLevel = progress.xpIntoCurrentLevel;
+  const levelSpan = progress.xpIntoCurrentLevel + progress.xpRemaining;
 
   return (
     <XStack
@@ -46,11 +46,11 @@ export function HeroCard({ character }: HeroCardProps) {
           {character.name}
         </Text>
         <Text color="$soloPurpleGlow" fontSize="$3" fontWeight="700">
-          {t('character.screen.rank')} {character.rank}
+          {t("character.screen.rank")} {character.rank}
         </Text>
         <XStack justifyContent="space-between" alignItems="center">
           <Text color="$soloText" fontSize="$3">
-            {t('character.screen.level')} {progress.level}
+            {t("character.screen.level")} {progress.level}
           </Text>
           <Text color="$soloTextMuted" fontSize="$2">
             {xpIntoLevel} / {levelSpan} XP
@@ -59,5 +59,5 @@ export function HeroCard({ character }: HeroCardProps) {
         <ProgressBar value={xpIntoLevel} max={levelSpan} color="$soloPurple" />
       </YStack>
     </XStack>
-  )
+  );
 }

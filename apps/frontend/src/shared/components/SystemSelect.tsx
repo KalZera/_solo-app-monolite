@@ -1,16 +1,16 @@
-import { Check, ChevronDown } from '@tamagui/lucide-icons-2'
-import { Adapt, Select, Sheet } from 'tamagui'
+import { Check, ChevronDown } from "@tamagui/lucide-icons-2";
+import { Adapt, Select, Sheet } from "tamagui";
 
 export interface SystemSelectOption<T extends string> {
-  label: string
-  value: T
+  label: string;
+  value: T;
 }
 
 interface SystemSelectProps<T extends string> {
-  value?: T
-  onValueChange: (value: T) => void
-  options: readonly SystemSelectOption<T>[]
-  placeholder?: string
+  value?: T;
+  onValueChange: (value: T) => void;
+  options: readonly SystemSelectOption<T>[];
+  placeholder?: string;
 }
 
 export function SystemSelect<T extends string>({
@@ -20,7 +20,11 @@ export function SystemSelect<T extends string>({
   placeholder,
 }: SystemSelectProps<T>) {
   return (
-    <Select value={value} onValueChange={onValueChange} disablePreventBodyScroll>
+    <Select
+      value={value}
+      onValueChange={onValueChange}
+      disablePreventBodyScroll
+    >
       <Select.Trigger
         backgroundColor="$soloPanelAlt"
         borderColor="$soloBorder"
@@ -40,16 +44,30 @@ export function SystemSelect<T extends string>({
               <Adapt.Contents />
             </Sheet.ScrollView>
           </Sheet.Frame>
-          <Sheet.Overlay enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+          <Sheet.Overlay
+            enterStyle={{ opacity: 0 }}
+            exitStyle={{ opacity: 0 }}
+          />
         </Sheet>
       </Adapt>
 
       <Select.Content>
-        <Select.Viewport backgroundColor="$soloPanel" borderColor="$soloBorder" borderWidth={1} minWidth={200}>
+        <Select.Viewport
+          backgroundColor="$soloPanel"
+          borderColor="$soloBorder"
+          borderWidth={1}
+          minWidth={200}
+        >
           <Select.Group>
             {options.map((option, index) => (
-              <Select.Item index={index} key={option.value} value={option.value}>
-                <Select.ItemText color="$soloText">{option.label}</Select.ItemText>
+              <Select.Item
+                index={index}
+                key={option.value}
+                value={option.value}
+              >
+                <Select.ItemText color="$soloText">
+                  {option.label}
+                </Select.ItemText>
                 <Select.ItemIndicator marginLeft="auto">
                   <Check size={16} color="$soloCyan" />
                 </Select.ItemIndicator>
@@ -59,5 +77,5 @@ export function SystemSelect<T extends string>({
         </Select.Viewport>
       </Select.Content>
     </Select>
-  )
+  );
 }
