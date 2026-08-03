@@ -42,4 +42,18 @@ export class InMemoryProgressionRepository implements ProgressionRepository {
   async addRestPoints (characterId: ID, amount: number): Promise<void> {
     await this.restPointRepository.incrementRestPoints(characterId, amount)
   }
+
+  async saveWithRestPoints (
+    characterId: ID,
+    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>,
+    restPointsToAdd: number
+  ): Promise<CharacterProgression> {
+    const progression = await this.save(characterId, data)
+
+    if (restPointsToAdd > 0) {
+      await this.restPointRepository.incrementRestPoints(characterId, restPointsToAdd)
+    }
+
+    return progression
+  }
 }

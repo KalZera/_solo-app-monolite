@@ -7,6 +7,28 @@ export type QuestType = 'main' | 'side' | 'daily' | 'weekly' | 'event'
 // business_rules.md: "the quest for now will be register only if is a daily quest or main quest"
 export const CREATABLE_QUEST_TYPES: QuestType[] = ['daily', 'main']
 
+// business_rules.md (Decisão #9): quests are classified by rank and the XP reward is
+// derived from the rank on the server — never supplied by the client (prevents XP inflation).
+export type QuestRank = 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
+export const QUEST_RANKS: QuestRank[] = ['E', 'D', 'C', 'B', 'A', 'S']
+
+const QUEST_RANK_XP: Record<QuestRank, number> = {
+  E: 10,
+  D: 20,
+  C: 50,
+  B: 100,
+  A: 250,
+  S: 500,
+}
+
+export function isQuestRank (value: string): value is QuestRank {
+  return (QUEST_RANKS as string[]).includes(value)
+}
+
+export function xpForQuestRank (rank: QuestRank): number {
+  return QUEST_RANK_XP[rank]
+}
+
 // A character cannot hold more than 3 active daily quests at once.
 export const MAX_ACTIVE_DAILY_QUESTS = 3
 export const ACTIVE_QUEST_STATUSES: QuestStatus[] = ['available', 'in_progress']

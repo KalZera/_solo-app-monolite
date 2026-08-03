@@ -13,15 +13,16 @@ describe('UpdateQuestUseCase', () => {
     characterRepository = new InMemoryCharacterRepository()
   })
 
-  it('updates fields on a quest owned by the caller', async () => {
+  it('updates fields and re-derives reward XP from the new rank', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Old title', rewardXp: 10 })
+    const quest = questRepository.seed({ characterId: character.id, title: 'Old title', questRank: 'E', rewardXp: 10 })
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-    const result = await useCase.execute({ userId: 'user-1', questId: quest.id, title: 'New title', rewardXp: 20 })
+    const result = await useCase.execute({ userId: 'user-1', questId: quest.id, title: 'New title', questRank: 'A' })
 
     expect(result.title).toBe('New title')
-    expect(result.rewardXp).toBe(20)
+    expect(result.questRank).toBe('A')
+    expect(result.rewardXp).toBe(250)
   })
 
   it('updates the categoryId on a quest owned by the caller', async () => {
@@ -54,13 +55,15 @@ describe('UpdateQuestUseCase', () => {
     await expect(useCase.execute({ userId: 'user-1', questId: quest.id, type: 'side' })).rejects.toThrow(ConflictError)
   })
 
-  it('rejects dropping the XP reward to 0', async () => {
+  it('rejects an invalid quest rank', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', rewardXp: 10 })
+    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', questRank: 'E' })
 
     const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
 
-    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, rewardXp: 0 })).rejects.toThrow(ValidationError)
+    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, questRank: 'Z' })).rejects.toThrow(
+      ValidationError
+    )
   })
 
   it('throws NotFoundError when updating a quest owned by a different character', async () => {

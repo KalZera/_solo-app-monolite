@@ -10,6 +10,8 @@ import {
   REFRESH_TOKEN_TTL_SECONDS,
 } from '../../../infrastructure/jwt/constants'
 import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
+import { parseInput } from '../../../infrastructure/http/validate'
+import { loginBodySchema, registerBodySchema, updatePasswordBodySchema } from './identity.schemas'
 import '../.././../infrastructure/jwt/types.js'
 
 function setRefreshCookie (reply: FastifyReply, token: string) {
@@ -33,13 +35,15 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
     app.jwt.sign({ ...payload, type: 'refresh' }, { expiresIn: REFRESH_TOKEN_TTL })
 
   app.post('/register', async (req, reply) => {
-    const result = await registerUser.execute(req.body as Parameters<typeof registerUser.execute>[0])
+    const body = parseInput(registerBodySchema, req.body)
+    const result = await registerUser.execute(body)
     return reply.status(201).send(result)
   })
 
   app.post('/login', async (req, reply) => {
+    const body = parseInput(loginBodySchema, req.body)
     const loginUser = new LoginUserUseCase(app.prisma, signAccessToken, signRefreshToken)
-    const { access_token, refresh_token } = await loginUser.execute(req.body as Parameters<typeof loginUser.execute>[0])
+    const { access_token, refresh_token } = await loginUser.execute(body)
     setRefreshCookie(reply, refresh_token)
     return reply.send({ access_token })
   })
@@ -65,9 +69,10 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
     return reply.send(req.user)
   })
 
-  app.patch('/password', async (req, reply) => {
+  app.patch('/password', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(updatePasswordBodySchema, req.body)
     const updateUser = new UpdateUserUseCase(app.prisma)
-    const result = await updateUser.execute(req.body as Parameters<typeof updateUser.execute>[0])
+    const result = await updateUser.execute({ userId: req.user.sub, ...body })
     return reply.send(result)
   })
 }

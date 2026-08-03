@@ -11,6 +11,13 @@ import { PrismaCharacterRestPointRepository } from '../infrastructure/prisma-cha
 import { PrismaCharacterHistoryRepository } from '../infrastructure/prisma-character-history-repository'
 import { R2AvatarStorage } from '../../../infrastructure/storage/r2-avatar-storage'
 import { ValidationError } from '../../../shared/errors/app-error'
+import { parseInput } from '../../../infrastructure/http/validate'
+import {
+  allocateAttributeBodySchema,
+  characterHistoryQuerySchema,
+  createCharacterBodySchema,
+  updateCharacterBodySchema,
+} from './character.schemas'
 import '../../../infrastructure/jwt/types.js'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
@@ -24,20 +31,16 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(createCharacterBodySchema, req.body)
     const createCharacter = new CreateCharacterUseCase(repository, restPointRepository)
-    const result = await createCharacter.execute({
-      ...(req.body as Omit<Parameters<typeof createCharacter.execute>[0], 'userId'>),
-      userId: req.user.sub,
-    })
+    const result = await createCharacter.execute({ ...body, userId: req.user.sub })
     return reply.status(201).send(result)
   })
 
   app.patch('/', { preHandler: [app.authenticate] }, async (req) => {
+    const body = parseInput(updateCharacterBodySchema, req.body)
     const updateCharacter = new UpdateCharacterUseCase(repository)
-    return updateCharacter.execute({
-      ...(req.body as Omit<Parameters<typeof updateCharacter.execute>[0], 'userId'>),
-      userId: req.user.sub,
-    })
+    return updateCharacter.execute({ ...body, userId: req.user.sub })
   })
 
   app.delete('/', { preHandler: [app.authenticate] }, async (req, reply) => {
@@ -47,21 +50,15 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.post('/attributes/allocate', { preHandler: [app.authenticate] }, async (req) => {
+    const body = parseInput(allocateAttributeBodySchema, req.body)
     const allocateAttributePoint = new AllocateAttributePointUseCase(repository, restPointRepository)
-    return allocateAttributePoint.execute({
-      ...(req.body as Omit<Parameters<typeof allocateAttributePoint.execute>[0], 'userId'>),
-      userId: req.user.sub,
-    })
+    return allocateAttributePoint.execute({ ...body, userId: req.user.sub })
   })
 
   app.get('/history', { preHandler: [app.authenticate] }, async (req) => {
-    const { page, pageSize } = req.query as { page?: string; pageSize?: string }
+    const query = parseInput(characterHistoryQuerySchema, req.query)
     const getCharacterHistory = new GetCharacterHistoryUseCase(repository, historyRepository)
-    return getCharacterHistory.execute({
-      userId: req.user.sub,
-      ...(page !== undefined && { page: Number(page) }),
-      ...(pageSize !== undefined && { pageSize: Number(pageSize) }),
-    })
+    return getCharacterHistory.execute({ userId: req.user.sub, ...query })
   })
 
   app.post('/avatar', { preHandler: [app.authenticate] }, async (req) => {

@@ -26,9 +26,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Train for 30 minutes',
       description: 'Spend 30 minutes training',
-      questRank: 'Health',
+      questRank: 'C',
       type: 'daily',
-      rewardXp: 100,
     })
 
     expect(result.type).toBe('daily')
@@ -37,6 +36,30 @@ describe('CreateQuestUseCase', () => {
     expect(result.expiresAt!.toDateString()).toBe(now.toDateString())
     expect(result.expiresAt!.getHours()).toBe(23)
     expect(result.expiresAt!.getMinutes()).toBe(59)
+  })
+
+  it('derives the reward XP from the quest rank instead of trusting the client', async () => {
+    seedCharacter()
+    const useCase = new CreateQuestUseCase(questRepository, characterRepository)
+
+    const easyQuest = await useCase.execute({
+      userId: 'user-1',
+      title: 'Easy quest',
+      description: 'An E-rank quest',
+      questRank: 'E',
+      type: 'daily',
+    })
+    expect(easyQuest.rewardXp).toBe(10)
+
+    const hardQuest = await useCase.execute({
+      userId: 'user-1',
+      title: 'Hard quest',
+      description: 'An A-rank quest',
+      questRank: 'A',
+      type: 'main',
+      categoryId: 'category-1',
+    })
+    expect(hardQuest.rewardXp).toBe(250)
   })
 
   it('persists the provided categoryId, defaulting to null when omitted', async () => {
@@ -48,7 +71,6 @@ describe('CreateQuestUseCase', () => {
       title: 'Quest without category',
       description: 'Description',
       questRank: 'E',
-      rewardXp: 10,
     })
     expect(withoutCategory.categoryId).toBeNull()
 
@@ -59,7 +81,6 @@ describe('CreateQuestUseCase', () => {
       questRank: 'E',
       type: 'main',
       categoryId: 'category-1',
-      rewardXp: 10,
     })
     expect(withCategory.categoryId).toBe('category-1')
   })
@@ -73,9 +94,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Defeat the Ant King',
       description: 'Clear the S-Rank dungeon',
-      questRank: 'Combat',
+      questRank: 'A',
       type: 'main',
-      rewardXp: 250,
     })
 
     const expectedMs = before + 28 * 24 * 60 * 60 * 1000
@@ -92,9 +112,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Custom deadline quest',
       description: 'Has an explicit deadline',
-      questRank: 'Custom',
+      questRank: 'C',
       type: 'main',
-      rewardXp: 50,
       expiresAt: customDeadline,
     })
 
@@ -110,30 +129,28 @@ describe('CreateQuestUseCase', () => {
         userId: 'user-1',
         title: 'Unsupported type',
         description: 'Should be rejected',
-        questRank: 'General',
+        questRank: 'E',
         type,
-        rewardXp: 10,
       })
     ).rejects.toThrow(ValidationError)
   })
 
-  it('rejects a quest created with 0 XP reward', async () => {
+  it('rejects a quest with an invalid rank', async () => {
     seedCharacter()
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
     await expect(
       useCase.execute({
         userId: 'user-1',
-        title: 'No reward',
-        description: 'Should be rejected',
+        title: 'Bad rank',
+        description: 'Rank is not one of E..S',
         questRank: 'General',
         type: 'daily',
-        rewardXp: 0,
       })
     ).rejects.toThrow(ValidationError)
   })
 
-  it('rejects a quest missing title, description or quest rank', async () => {
+  it('rejects a quest missing a title or description', async () => {
     seedCharacter()
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
@@ -142,50 +159,43 @@ describe('CreateQuestUseCase', () => {
         userId: 'user-1',
         title: '',
         description: 'Missing title',
-        questRank: 'General',
+        questRank: 'E',
         type: 'daily',
-        rewardXp: 10,
       })
     ).rejects.toThrow(ValidationError)
   })
 
-  it('allows up to 5 active daily quests', async () => {
+  it('allows up to 3 active daily quests', async () => {
     const character = seedCharacter()
     questRepository.seed({ characterId: character.id, title: 'Daily 1', type: 'daily', status: 'available' })
     questRepository.seed({ characterId: character.id, title: 'Daily 2', type: 'daily', status: 'in_progress' })
-    questRepository.seed({ characterId: character.id, title: 'Daily 3', type: 'daily', status: 'available' })
-    questRepository.seed({ characterId: character.id, title: 'Daily 4', type: 'daily', status: 'in_progress' })
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
     const result = await useCase.execute({
       userId: 'user-1',
-      title: 'Daily 5',
-      description: 'Fifth daily quest',
-      questRank: 'General',
+      title: 'Daily 3',
+      description: 'Third daily quest',
+      questRank: 'E',
       type: 'daily',
-      rewardXp: 10,
     })
 
-    expect(result.title).toBe('Daily 5')
+    expect(result.title).toBe('Daily 3')
   })
 
-  it('rejects creating a 6th active daily quest', async () => {
+  it('rejects creating a 4th active daily quest', async () => {
     const character = seedCharacter()
     questRepository.seed({ characterId: character.id, title: 'Daily 1', type: 'daily', status: 'available' })
     questRepository.seed({ characterId: character.id, title: 'Daily 2', type: 'daily', status: 'in_progress' })
     questRepository.seed({ characterId: character.id, title: 'Daily 3', type: 'daily', status: 'available' })
-    questRepository.seed({ characterId: character.id, title: 'Daily 4', type: 'daily', status: 'in_progress' })
-    questRepository.seed({ characterId: character.id, title: 'Daily 5', type: 'daily', status: 'available' })
     const useCase = new CreateQuestUseCase(questRepository, characterRepository)
 
     await expect(
       useCase.execute({
         userId: 'user-1',
-        title: 'Daily 6',
-        description: 'Sixth daily quest',
-        questRank: 'General',
+        title: 'Daily 4',
+        description: 'Fourth daily quest',
+        questRank: 'E',
         type: 'daily',
-        rewardXp: 10,
       })
     ).rejects.toThrow(ConflictError)
   })
@@ -201,9 +211,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Daily 4',
       description: 'Should still be allowed',
-      questRank: 'General',
+      questRank: 'E',
       type: 'daily',
-      rewardXp: 10,
     })
 
     expect(result.title).toBe('Daily 4')
@@ -220,9 +229,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Main quest',
       description: 'Unaffected by the daily cap',
-      questRank: 'General',
+      questRank: 'A',
       type: 'main',
-      rewardXp: 50,
     })
 
     expect(result.title).toBe('Main quest')
@@ -244,10 +252,9 @@ describe('CreateQuestUseCase', () => {
         userId: 'user-1',
         title: 'Another main quest',
         description: 'Same category',
-        questRank: 'General',
+        questRank: 'A',
         type: 'main',
         categoryId: 'category-1',
-        rewardXp: 50,
       })
     ).rejects.toThrow(ConflictError)
   })
@@ -267,10 +274,9 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'New main quest',
       description: 'Same category, but the old one is done',
-      questRank: 'General',
+      questRank: 'A',
       type: 'main',
       categoryId: 'category-1',
-      rewardXp: 50,
     })
 
     expect(result.title).toBe('New main quest')
@@ -291,10 +297,9 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Another main quest',
       description: 'Different category',
-      questRank: 'General',
+      questRank: 'A',
       type: 'main',
       categoryId: 'category-2',
-      rewardXp: 50,
     })
 
     expect(result.title).toBe('Another main quest')
@@ -309,9 +314,8 @@ describe('CreateQuestUseCase', () => {
       userId: 'user-1',
       title: 'Another main quest',
       description: 'No category on either quest',
-      questRank: 'General',
+      questRank: 'A',
       type: 'main',
-      rewardXp: 50,
     })
 
     expect(result.title).toBe('Another main quest')
@@ -325,9 +329,8 @@ describe('CreateQuestUseCase', () => {
         userId: 'ghost-user',
         title: 'Orphan quest',
         description: 'No character',
-        questRank: 'General',
+        questRank: 'E',
         type: 'daily',
-        rewardXp: 10,
       })
     ).rejects.toThrow(NotFoundError)
   })

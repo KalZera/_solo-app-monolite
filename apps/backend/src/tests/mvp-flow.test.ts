@@ -81,15 +81,14 @@ describe('MVP user journey', () => {
   })
 
   describe('quest creation limits', () => {
-    it('allows up to 5 active daily quests but rejects the 6th', async () => {
-      for (let i = 1; i <= 5; i++) {
+    it('allows up to 3 active daily quests but rejects the 4th', async () => {
+      for (let i = 1; i <= 3; i++) {
         const quest = await createQuest.execute({
           userId,
           title: `Daily quest ${i}`,
           description: 'Train for 30 minutes',
           questRank: 'E',
           type: 'daily',
-          rewardXp: 10,
         })
         expect(quest.status).toBe('available')
       }
@@ -97,11 +96,10 @@ describe('MVP user journey', () => {
       await expect(
         createQuest.execute({
           userId,
-          title: 'Daily quest 6',
+          title: 'Daily quest 4',
           description: 'One too many',
           questRank: 'E',
           type: 'daily',
-          rewardXp: 10,
         })
       ).rejects.toThrow(ConflictError)
     })
@@ -114,7 +112,6 @@ describe('MVP user journey', () => {
         questRank: 'A',
         type: 'main',
         categoryId: 'combat',
-        rewardXp: 250,
       })
       expect(firstDungeon.categoryId).toBe('combat')
 
@@ -126,7 +123,6 @@ describe('MVP user journey', () => {
           questRank: 'A',
           type: 'main',
           categoryId: 'combat',
-          rewardXp: 250,
         })
       ).rejects.toThrow(ConflictError)
 
@@ -137,7 +133,6 @@ describe('MVP user journey', () => {
         questRank: 'B',
         type: 'main',
         categoryId: 'intellect',
-        rewardXp: 250,
       })
       expect(differentCategoryQuest.categoryId).toBe('intellect')
     })
@@ -145,13 +140,13 @@ describe('MVP user journey', () => {
 
   it('completes a quest, grants XP, and levels up crediting 5 rest points to spend', async () => {
     const xpForLevel1 = calculateXpToNextLevel(1)
-    const levelUpQuest = await createQuest.execute({
-      userId,
+    // Seeded with an exact XP reward so the single-completion level-up is deterministic,
+    // independent of the rank→XP table (createQuest now derives XP from the rank).
+    const levelUpQuest = questRepository.seed({
+      characterId,
       title: 'A trial worth a level',
-      description: 'Rewards exactly enough XP to level up once',
-      questRank: 'S',
       type: 'main',
-      categoryId: 'trial',
+      status: 'available',
       rewardXp: xpForLevel1,
     })
 

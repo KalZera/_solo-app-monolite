@@ -44,7 +44,7 @@ model Character {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  user        User                 @relation(fields: [userId], references: [id])
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   progression Progression?
   rewards     Reward[]
   history     CharacterHistory[]
@@ -63,7 +63,7 @@ model CharacterRestPoint {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  character Character @relation(fields: [characterId], references: [id])
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   @@map("characters_rest_points")
 }
@@ -74,7 +74,7 @@ model CharacterHistory {
   description String
   createdAt   DateTime @default(now()) @map("created_at")
 
-  character Character @relation(fields: [characterId], references: [id])
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   @@map("character_history")
 }
@@ -88,7 +88,7 @@ model QuestCategory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  creator User    @relation(fields: [createdBy], references: [id])
+  creator User    @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   quests  Quest[]
 
   @@map("quest_categories")
@@ -113,10 +113,12 @@ model Quest {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  character  Character        @relation(fields: [characterId], references: [id])
-  category   QuestCategory?   @relation(fields: [categoryId], references: [id])
+  character  Character        @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  category   QuestCategory?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   objectives QuestObjective[]
 
+  @@index([characterId])
+  @@index([status])
   @@map("quests")
 }
 
@@ -128,8 +130,9 @@ model QuestObjective {
   current     Int     @default(0)
   completed   Boolean @default(false)
 
-  quest Quest @relation(fields: [questId], references: [id])
+  quest Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
 
+  @@index([questId])
   @@map("quest_objectives")
 }
 
@@ -143,7 +146,7 @@ model Progression {
   totalExperience Int      @default(0) @map("total_experience")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  character Character @relation(fields: [characterId], references: [id])
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   @@map("progressions")
 }
@@ -162,8 +165,9 @@ model Reward {
   claimedAt   DateTime? @map("claimed_at")
   createdAt   DateTime  @default(now()) @map("created_at")
 
-  character Character @relation(fields: [characterId], references: [id])
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
+  @@index([characterId])
   @@map("rewards")
 }
 
@@ -191,7 +195,8 @@ model Notification {
   metadata  Json?
   createdAt DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("notifications")
 }

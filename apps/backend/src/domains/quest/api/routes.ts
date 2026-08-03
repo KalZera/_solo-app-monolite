@@ -11,6 +11,14 @@ import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
 import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
+import { parseInput } from '../../../infrastructure/http/validate'
+import {
+  createQuestBodySchema,
+  listQuestsQuerySchema,
+  questIdParamsSchema,
+  questObjectiveParamsSchema,
+  updateQuestBodySchema,
+} from './quest.schemas'
 import '../../../infrastructure/jwt/types.js'
 
 export const questRoutes: FastifyPluginAsync = async (app) => {
@@ -20,6 +28,8 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
     const { view, ...filter } = (req.query ?? {}) as QuestFilter & { view?: QuestView }
+    // Validate the view enum (rejects unknown values with 400). The remaining filter is read-only.
+    parseInput(listQuestsQuerySchema, { view })
     const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
     return listQuests.execute({
       userId: req.user.sub,
@@ -29,46 +39,41 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {
-    const { id } = req.params as { id: string }
+    const { id } = parseInput(questIdParamsSchema, req.params)
     const getQuest = new GetQuestUseCase(questRepository, characterRepository)
     return getQuest.execute({ userId: req.user.sub, questId: id })
   })
 
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(createQuestBodySchema, req.body)
     const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
-    const result = await createQuest.execute({
-      ...(req.body as Omit<Parameters<typeof createQuest.execute>[0], 'userId'>),
-      userId: req.user.sub,
-    })
+    const result = await createQuest.execute({ ...body, userId: req.user.sub })
     return reply.status(201).send(result)
   })
 
   app.patch('/:id', { preHandler: [app.authenticate] }, async (req) => {
-    const { id } = req.params as { id: string }
+    const { id } = parseInput(questIdParamsSchema, req.params)
+    const body = parseInput(updateQuestBodySchema, req.body)
     const updateQuest = new UpdateQuestUseCase(questRepository, characterRepository)
-    return updateQuest.execute({
-      ...(req.body as Omit<Parameters<typeof updateQuest.execute>[0], 'userId' | 'questId'>),
-      userId: req.user.sub,
-      questId: id,
-    })
+    return updateQuest.execute({ ...body, userId: req.user.sub, questId: id })
   })
 
   app.delete('/:id', { preHandler: [app.authenticate] }, async (req, reply) => {
-    const { id } = req.params as { id: string }
+    const { id } = parseInput(questIdParamsSchema, req.params)
     const deleteQuest = new DeleteQuestUseCase(questRepository, characterRepository)
     await deleteQuest.execute({ userId: req.user.sub, questId: id })
     return reply.status(204).send()
   })
 
   app.post('/:id/complete', { preHandler: [app.authenticate] }, async (req) => {
-    const { id } = req.params as { id: string }
+    const { id } = parseInput(questIdParamsSchema, req.params)
     const grantExperience = new GrantExperienceUseCase(progressionRepository)
     const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository, grantExperience)
     return completeQuest.execute({ userId: req.user.sub, questId: id })
   })
 
   app.post('/:id/objectives/:objectiveId/complete', { preHandler: [app.authenticate] }, async (req) => {
-    const { id, objectiveId } = req.params as { id: string; objectiveId: string }
+    const { id, objectiveId } = parseInput(questObjectiveParamsSchema, req.params)
     const completeQuestObjective = new CompleteQuestObjectiveUseCase(questRepository, characterRepository)
     return completeQuestObjective.execute({ userId: req.user.sub, questId: id, objectiveId })
   })

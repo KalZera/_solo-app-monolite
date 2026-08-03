@@ -87,4 +87,40 @@ export class PrismaProgressionRepository implements ProgressionRepository {
       data: { restPoints: { increment: amount } },
     })
   }
+
+  async saveWithRestPoints (
+    characterId: ID,
+    data: Partial<Pick<CharacterProgression, 'level' | 'experience' | 'stats' | 'powerScore'>>,
+    restPointsToAdd: number
+  ): Promise<CharacterProgression> {
+    const { stats, ...rest } = data
+
+    const record = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.character.update({
+        where: { id: characterId },
+        data: {
+          ...rest,
+          ...(stats && {
+            strength: stats.strength,
+            intelligence: stats.intelligence,
+            agility: stats.agility,
+            vitality: stats.vitality,
+            luck: stats.luck,
+          }),
+        },
+        select: PROGRESSION_SELECT,
+      })
+
+      if (restPointsToAdd > 0) {
+        await tx.characterRestPoint.update({
+          where: { characterId },
+          data: { restPoints: { increment: restPointsToAdd } },
+        })
+      }
+
+      return updated
+    })
+
+    return toDomain(record)
+  }
 }

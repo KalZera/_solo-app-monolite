@@ -16,6 +16,7 @@ import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { characterHistoryPlugin } from './infrastructure/events/character-history-plugin'
 import { questExpirationSchedulerPlugin } from './infrastructure/scheduler/quest-expiration-scheduler-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
+import { errorHandler } from './infrastructure/http/error-handler'
 
 export function buildApp () {
   const app = Fastify({ logger: loggerConfig })
@@ -30,6 +31,8 @@ export function buildApp () {
   app.register(eventStorePlugin)
   app.register(characterHistoryPlugin)
   app.register(questExpirationSchedulerPlugin)
+
+  app.setErrorHandler(errorHandler)
 
   app.register(identityRoutes, { prefix: '/api/v1/identity' })
   app.register(characterRoutes, { prefix: '/api/v1/characters' })

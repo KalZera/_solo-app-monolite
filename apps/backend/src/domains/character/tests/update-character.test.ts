@@ -10,7 +10,7 @@ describe('UpdateCharacterUseCase', () => {
     repository = new InMemoryCharacterRepository()
   })
 
-  it('updates simple fields without touching stats', async () => {
+  it('updates editable profile fields (title/class/avatar)', async () => {
     repository.seed({ userId: 'user-1', name: 'Sung Jinwoo', title: 'The Weakest Hunter' })
     const useCase = new UpdateCharacterUseCase(repository)
 
@@ -20,18 +20,33 @@ describe('UpdateCharacterUseCase', () => {
     expect(result.title).toBe('Shadow Monarch')
   })
 
-  it('merges partial stat updates and recalculates power score', async () => {
+  it('never mass-assigns stats, name, level or power score, even if forced through the body', async () => {
     repository.seed({
       userId: 'user-1',
       name: 'Sung Jinwoo',
+      title: 'The Weakest Hunter',
+      level: 1,
       stats: { strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 },
     })
     const useCase = new UpdateCharacterUseCase(repository)
 
-    const result = await useCase.execute({ userId: 'user-1', stats: { strength: 10 } })
+    const maliciousInput = {
+      userId: 'user-1',
+      title: 'Shadow Monarch',
+      name: 'Hacked Name',
+      level: 999,
+      powerScore: 999999,
+      stats: { strength: 9999, intelligence: 9999, agility: 9999, vitality: 9999, luck: 9999 },
+    }
 
-    expect(result.stats).toEqual({ strength: 10, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
-    expect(result.powerScore).toBe(14)
+    const result = await useCase.execute(maliciousInput as unknown as Parameters<typeof useCase.execute>[0])
+
+    // Only the whitelisted field changed; everything sensitive is untouched.
+    expect(result.title).toBe('Shadow Monarch')
+    expect(result.name).toBe('Sung Jinwoo')
+    expect(result.level).toBe(1)
+    expect(result.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
+    expect(result.powerScore).toBe(5)
   })
 
   it('throws NotFoundError when the user has no character', async () => {

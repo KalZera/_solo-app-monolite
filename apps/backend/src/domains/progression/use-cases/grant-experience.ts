@@ -35,16 +35,19 @@ export class GrantExperienceUseCase {
       levelsGainedCount > 0 ? applyAutoAttributeGains(progression.stats, levelsGainedCount) : progression.stats
     const powerScore = levelsGainedCount > 0 ? calculatePowerScore(stats) : progression.powerScore
 
-    const updated = await this.progressionRepository.save(input.characterId, {
-      level: result.level,
-      experience: result.experience,
-      stats,
-      powerScore,
-    })
-
-    if (levelsGainedCount > 0) {
-      await this.progressionRepository.addRestPoints(input.characterId, levelsGainedCount * ATTRIBUTE_POINTS_PER_LEVEL)
-    }
+    // Persist the progression change and credit the level-up rest points atomically:
+    // a level-up must never save the new level/XP without also crediting its rest points.
+    const restPointsToAdd = levelsGainedCount > 0 ? levelsGainedCount * ATTRIBUTE_POINTS_PER_LEVEL : 0
+    const updated = await this.progressionRepository.saveWithRestPoints(
+      input.characterId,
+      {
+        level: result.level,
+        experience: result.experience,
+        stats,
+        powerScore,
+      },
+      restPointsToAdd
+    )
 
     await this.publishEvent(createXPGrantedEvent(input.characterId, input.amount, input.source))
 

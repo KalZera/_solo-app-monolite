@@ -1,6 +1,6 @@
 import type { CharacterRepository } from '../../character/domain/character'
-import type { QuestRepository, QuestStatus, QuestType } from '../domain/quest'
-import { CREATABLE_QUEST_TYPES } from '../domain/quest'
+import type { QuestRepository, QuestType } from '../domain/quest'
+import { CREATABLE_QUEST_TYPES, QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
 import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 
 interface UpdateQuestInput {
@@ -11,8 +11,6 @@ interface UpdateQuestInput {
   questRank?: string
   type?: QuestType
   categoryId?: string | null
-  status?: QuestStatus
-  rewardXp?: number
   rewardGold?: number
   minLevel?: number
   expiresAt?: Date | null
@@ -50,18 +48,21 @@ export class UpdateQuestUseCase {
       throw new ValidationError(`A quest can only be registered as one of: ${CREATABLE_QUEST_TYPES.join(', ')}`)
     }
 
-    if (input.rewardXp !== undefined && input.rewardXp <= 0) {
-      throw new ValidationError('A quest cannot be created with 0 (or less) XP reward')
+    if (input.questRank !== undefined && !isQuestRank(input.questRank)) {
+      throw new ValidationError(`A quest rank must be one of: ${QUEST_RANKS.join(', ')}`)
     }
+
+    // Changing the rank re-derives the server-authoritative XP reward; the client never sets XP directly.
+    const rewardXp =
+      input.questRank !== undefined && isQuestRank(input.questRank) ? xpForQuestRank(input.questRank) : undefined
 
     return this.questRepository.save(quest.id, {
       ...(input.title !== undefined && { title: input.title }),
       ...(input.description !== undefined && { description: input.description }),
       ...(input.questRank !== undefined && { questRank: input.questRank }),
+      ...(rewardXp !== undefined && { rewardXp }),
       ...(input.type !== undefined && { type: input.type }),
       ...(input.categoryId !== undefined && { categoryId: input.categoryId }),
-      ...(input.status !== undefined && { status: input.status }),
-      ...(input.rewardXp !== undefined && { rewardXp: input.rewardXp }),
       ...(input.rewardGold !== undefined && { rewardGold: input.rewardGold }),
       ...(input.minLevel !== undefined && { minLevel: input.minLevel }),
       ...(input.expiresAt !== undefined && { expiresAt: input.expiresAt }),
