@@ -86,6 +86,10 @@ duplicados. Estimativas em pontos (1 = ~½ dia, 2 = ~1 dia, 3 = ~2 dias, 5 = ~3-
 
 ## Sprint 1 — Integridade de Dados & Anti-cheat
 
+> ✅ **Sprint 1 implementada em 2026-08-02** (backend 27 arquivos / 178 testes verdes;
+> lint + type-check limpos). CARD-101/102/103/105 concluídos. CARD-104 entregue para o caso
+> de maior valor (level-up atômico); a parte cross-repo foi separada em **CARD-104b**.
+
 ### CARD-101 · Fechar mass assignment no update de personagem 🔴
 - **Objetivo:** Impedir set arbitrário de atributos/level/powerScore e travar campos imutáveis.
 - **Descrição:** Remover `stats`/`level`/`experience`/`powerScore` **e `name`** do
@@ -122,17 +126,30 @@ duplicados. Estimativas em pontos (1 = ~½ dia, 2 = ~1 dia, 3 = ~2 dias, 5 = ~3-
   `update-quest.ts`, testes.
 - **Dependências:** Conflito #9 · **Estimativa:** 3 · **Prioridade:** 🟠
 
-### CARD-104 · Transações nas operações multi-passo 🟠
-- **Objetivo:** Evitar estado inconsistente (points deduzidos sem atributo salvo, etc.).
-- **Descrição:** Envolver em `prisma.$transaction`: grant-experience (save + addRestPoints),
-  allocate-attribute-point (save character + save restPoint), complete-quest (save + renew).
+### CARD-104 · Level-up atômico (grant-experience) 🟠 ✅ concluído
+- **Objetivo:** Um level-up nunca salva nível/XP sem creditar os rest points (e vice-versa).
+- **Descrição:** `ProgressionRepository.saveWithRestPoints` grava a progressão e credita os
+  rest points **na mesma `prisma.$transaction`**; `GrantExperienceUseCase` passou a usá-lo.
+  Eventos publicados após a persistência.
 - **Critérios de aceite:**
-  - Falha no meio faz rollback total; teste simulando erro.
-  - Interface de repositório suporta unidade de trabalho.
-- **Business Rules:** — · **Eventos:** os já existentes (publicar só após commit).
-- **Arquivos:** repos Prisma, `grant-experience.ts`, `allocate-attribute-point.ts`,
-  `complete-quest.ts`.
-- **Dependências:** —  · **Estimativa:** 5 · **Prioridade:** 🟠
+  - ✅ Update de progressão + rest points atômicos (Prisma `$transaction`).
+  - ✅ Comportamento preservado (in-memory) e suíte verde.
+- **Arquivos:** `progression/repositories/progression-repository.ts`,
+  `prisma-progression-repository.ts`, `in-memory-progression-repository.ts`, `grant-experience.ts`.
+- **Estimativa:** 3 · **Prioridade:** 🟠
+
+### CARD-104b · Unit of Work para transações cross-repo 🟡
+- **Objetivo:** Atomicidade em operações que cruzam agregados/repos diferentes.
+- **Descrição:** Introduzir um Unit of Work (repos ligados a um `tx` do Prisma) para envolver:
+  `allocate-attribute-point` (character.save + restPoint.save) e `complete-quest`
+  (quest.save + grant-experience + renew) em uma única transação. Requer **banco** para
+  verificação end-to-end (não disponível no ambiente atual).
+- **Critérios de aceite:**
+  - Interface de UoW com impl Prisma (tx) e in-memory (no-op/shared store).
+  - Falha no meio faz rollback total; teste de integração com DB.
+- **Arquivos:** novo `shared/database/unit-of-work.ts`, repos Prisma/in-memory,
+  `allocate-attribute-point.ts`, `complete-quest.ts`, wiring de rotas.
+- **Dependências:** ambiente com Postgres · **Estimativa:** 5 · **Prioridade:** 🟡
 
 ### CARD-105 · Remover mass assignment de `status` em update-quest 🟡
 - **Objetivo:** Impedir flip arbitrário de status (reabrir/forçar completed).
