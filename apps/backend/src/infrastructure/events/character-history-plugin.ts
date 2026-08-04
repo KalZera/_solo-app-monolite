@@ -4,11 +4,7 @@ import { eventBus } from '../../shared/events/domain-event'
 import { PrismaCharacterHistoryRepository } from '../../domains/character/infrastructure/prisma-character-history-repository'
 import type { CharacterStats } from '../../domains/character/domain/character'
 import type { AttributePointAllocatedEvent } from '../../domains/character/domain/events'
-import type {
-  QuestCompletedEvent,
-  QuestObjectiveCompletedEvent,
-  DailyQuestRenewedEvent,
-} from '../../domains/quest/domain/events'
+import type { QuestCompletedEvent, QuestExpiredEvent, QuestFailedEvent } from '../../domains/quest/domain/events'
 import type { LevelUpEvent } from '../../domains/progression/events/level-up.event'
 import type { AttributePointsGrantedEvent } from '../../domains/progression/events/attribute-points-granted.event'
 
@@ -31,15 +27,12 @@ const characterHistoryPlugin: FastifyPluginAsync = fp(async (app) => {
     await recordHistory(event.characterId, `Quest "${event.questTitle}" completada.`)
   })
 
-  eventBus.subscribe<QuestObjectiveCompletedEvent>('QuestObjectiveCompleted', async (event) => {
-    await recordHistory(
-      event.characterId,
-      `Objetivo "${event.objectiveDescription}" da quest "${event.questTitle}" foi completado.`
-    )
+  eventBus.subscribe<QuestFailedEvent>('QuestFailed', async (event) => {
+    await recordHistory(event.characterId, `Quest "${event.questTitle}" falhou.`)
   })
 
-  eventBus.subscribe<DailyQuestRenewedEvent>('DailyQuestRenewed', async (event) => {
-    await recordHistory(event.characterId, `Quest diária "${event.questTitle}" foi renovada para o próximo dia.`)
+  eventBus.subscribe<QuestExpiredEvent>('QuestExpired', async (event) => {
+    await recordHistory(event.characterId, `Quest "${event.questTitle}" expirou.`)
   })
 
   eventBus.subscribe<LevelUpEvent>('LevelUp', async (event) => {

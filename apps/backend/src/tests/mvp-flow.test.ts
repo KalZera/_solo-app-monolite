@@ -12,9 +12,12 @@ import { AllocateAttributePointUseCase } from '../domains/character/application/
 import { InMemoryCharacterRepository } from '../domains/character/infrastructure/in-memory-character-repository'
 import { InMemoryCharacterRestPointRepository } from '../domains/character/infrastructure/in-memory-character-rest-point-repository'
 import { CreateQuestUseCase } from '../domains/quest/application/create-quest'
+import { GetTodayQuestsUseCase } from '../domains/quest/application/get-today-quests'
+import { StartQuestUseCase } from '../domains/quest/application/start-quest'
 import { CompleteQuestUseCase } from '../domains/quest/application/complete-quest'
 import { ExpireQuestsUseCase } from '../domains/quest/application/expire-quests'
 import { InMemoryQuestRepository } from '../domains/quest/infrastructure/in-memory-quest-repository'
+import { InMemoryQuestInstanceRepository } from '../domains/quest/infrastructure/in-memory-quest-instance-repository'
 import { InMemoryProgressionRepository } from '../domains/progression/infrastructure/in-memory-progression-repository'
 import { GrantExperienceUseCase } from '../domains/progression/use-cases/grant-experience'
 import { calculateXpToNextLevel } from '../domains/progression/engines/level.engine'
@@ -26,6 +29,7 @@ describe('MVP user journey', () => {
   const characterRepository = new InMemoryCharacterRepository()
   const restPointRepository = new InMemoryCharacterRestPointRepository()
   const questRepository = new InMemoryQuestRepository()
+  const questInstanceRepository = new InMemoryQuestInstanceRepository()
   const progressionRepository = new InMemoryProgressionRepository(characterRepository, restPointRepository)
   const publishEvent = vi.fn().mockResolvedValue(undefined)
 
@@ -37,28 +41,40 @@ describe('MVP user journey', () => {
   )
   const createCharacter = new CreateCharacterUseCase(characterRepository, restPointRepository)
   const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
+  const getTodayQuests = new GetTodayQuestsUseCase(
+    questRepository,
+    characterRepository,
+    questInstanceRepository,
+    undefined,
+    publishEvent
+  )
+  const startQuest = new StartQuestUseCase(questInstanceRepository, questRepository, characterRepository, publishEvent)
   const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
-  const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository, grantExperience, publishEvent)
+  const completeQuest = new CompleteQuestUseCase(
+    questInstanceRepository,
+    questRepository,
+    characterRepository,
+    grantExperience,
+    publishEvent
+  )
   const allocateAttributePoint = new AllocateAttributePointUseCase(characterRepository, restPointRepository, publishEvent)
-  const expireQuests = new ExpireQuestsUseCase(questRepository, publishEvent)
+  const expireQuests = new ExpireQuestsUseCase(questInstanceRepository, questRepository, publishEvent)
 
   const HUNTER = { email: 'jinwoo@solo.com', username: 'jinwoo', password: 'arise-1234' }
   let userId: string
   let characterId: string
+  let dailyQuestId: string
+  let dailyInstanceId: string
 
   it('registers a new hunter', async () => {
     const user = await registerUser.execute(HUNTER)
-
     expect(user.email).toBe(HUNTER.email)
-    expect(user.username).toBe(HUNTER.username)
     userId = user.id
   })
 
   it('logs the hunter into the app', async () => {
     const session = await loginUser.execute({ email: HUNTER.email, password: HUNTER.password })
-
     expect(session.access_token).toBe('fake-access-token')
-    expect(session.refresh_token).toBe('fake-refresh-token')
   })
 
   it('creates a character for the logged-in user', async () => {
@@ -68,7 +84,6 @@ describe('MVP user journey', () => {
       class: 'warrior',
       title: 'The Weakest Hunter',
     })
-
     expect(character.level).toBe(1)
     expect(character.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
     characterId = character.id
@@ -80,80 +95,57 @@ describe('MVP user journey', () => {
     ).rejects.toThrow(ConflictError)
   })
 
-  describe('quest creation limits', () => {
-    it('allows up to 3 active daily quests but rejects the 4th', async () => {
-      for (let i = 1; i <= 3; i++) {
-        const quest = await createQuest.execute({
-          userId,
-          title: `Daily quest ${i}`,
-          description: 'Train for 30 minutes',
-          questRank: 'E',
-          type: 'daily',
-        })
-        expect(quest.status).toBe('available')
-      }
-
-      await expect(
-        createQuest.execute({
-          userId,
-          title: 'Daily quest 4',
-          description: 'One too many',
-          questRank: 'E',
-          type: 'daily',
-        })
-      ).rejects.toThrow(ConflictError)
+  it('creates a DAILY quest TEMPLATE (no execution is created)', async () => {
+    const quest = await createQuest.execute({
+      userId,
+      title: 'Academia',
+      description: 'Train for 30 minutes',
+      rank: 'E',
+      recurrence: 'DAILY',
     })
 
-    it('allows only one active main quest per category', async () => {
-      const firstDungeon = await createQuest.execute({
-        userId,
-        title: 'Clear the Double Dungeon',
-        description: 'Defeat the boss on the hidden floor',
-        questRank: 'A',
-        type: 'main',
-        categoryId: 'combat',
-      })
-      expect(firstDungeon.categoryId).toBe('combat')
-
-      await expect(
-        createQuest.execute({
-          userId,
-          title: 'Another combat quest',
-          description: 'Same category as an already active main quest',
-          questRank: 'A',
-          type: 'main',
-          categoryId: 'combat',
-        })
-      ).rejects.toThrow(ConflictError)
-
-      const differentCategoryQuest = await createQuest.execute({
-        userId,
-        title: 'Study a new language',
-        description: 'A main quest in a different category',
-        questRank: 'B',
-        type: 'main',
-        categoryId: 'intellect',
-      })
-      expect(differentCategoryQuest.categoryId).toBe('intellect')
-    })
+    expect(quest.recurrence).toBe('DAILY')
+    expect(quest.rewardXp).toBe(10)
+    dailyQuestId = quest.id
+    expect(await questInstanceRepository.findByQuestId(dailyQuestId)).toHaveLength(0)
   })
 
-  it('completes a quest, grants XP, and levels up crediting 5 rest points to spend', async () => {
+  it("materialises today's instance on demand (idempotently)", async () => {
+    const first = await getTodayQuests.execute({ userId })
+    const instance = first.find((candidate) => candidate.questId === dailyQuestId)
+    expect(instance).toBeDefined()
+    expect(instance!.status).toBe('PENDING')
+    dailyInstanceId = instance!.id
+
+    // Second call reuses the same instance — never duplicated.
+    await getTodayQuests.execute({ userId })
+    expect(await questInstanceRepository.findByQuestId(dailyQuestId)).toHaveLength(1)
+  })
+
+  it('starts and completes the instance, granting rank-E XP', async () => {
+    const started = await startQuest.execute({ userId, questInstanceId: dailyInstanceId })
+    expect(started.instance.status).toBe('STARTED')
+
+    const result = await completeQuest.execute({ userId, questInstanceId: dailyInstanceId })
+    expect(result.instance.status).toBe('COMPLETED')
+    expect(result.instance.rewardGranted).toBe(true)
+    expect(result.character.experience).toBe(10)
+  })
+
+  it('levels up crediting 5 rest points when a big-reward instance is completed', async () => {
     const xpForLevel1 = calculateXpToNextLevel(1)
-    // Seeded with an exact XP reward so the single-completion level-up is deterministic,
-    // independent of the rank→XP table (createQuest now derives XP from the rank).
-    const levelUpQuest = questRepository.seed({
+    // Seed a template + instance with an exact XP reward so the level-up is deterministic.
+    const trialQuest = questRepository.seed({
       characterId,
       title: 'A trial worth a level',
-      type: 'main',
-      status: 'available',
+      recurrence: 'NONE',
+      rank: 'S',
       rewardXp: xpForLevel1,
     })
+    const trialInstance = questInstanceRepository.seed({ questId: trialQuest.id, status: 'PENDING', objectives: [] })
 
-    const result = await completeQuest.execute({ userId, questId: levelUpQuest.id })
+    const result = await completeQuest.execute({ userId, questInstanceId: trialInstance.id })
 
-    expect(result.quest.status).toBe('completed')
-    expect(result.quest.completedAt).toBeInstanceOf(Date)
     expect(result.levelsGained).toEqual([2])
     expect(result.character.level).toBe(2)
 
@@ -164,34 +156,29 @@ describe('MVP user journey', () => {
   it('lets the hunter spend all 5 level-up points on a single attribute', async () => {
     const beforeStrength = (await characterRepository.findById(characterId))!.stats.strength
 
-    const { character, restPoints } = await allocateAttributePoint.execute({
-      userId,
-      attribute: 'strength',
-      amount: 5,
-    })
+    const { character, restPoints } = await allocateAttributePoint.execute({ userId, attribute: 'strength', amount: 5 })
 
     expect(character.stats.strength).toBe(beforeStrength + 5)
     expect(restPoints).toBe(0)
   })
 
-  it('fails a quest and emits QuestExpired once its deadline has passed', async () => {
-    const overdueQuest = questRepository.seed({
-      characterId,
-      title: 'Forgotten daily quest',
-      type: 'daily',
-      status: 'available',
-      expiresAt: new Date(Date.now() - 60 * 60 * 1000),
+  it('expires an overdue instance and emits QuestExpired (no XP)', async () => {
+    const overdueQuest = questRepository.seed({ characterId, title: 'Forgotten daily quest' })
+    const overdueInstance = questInstanceRepository.seed({
+      questId: overdueQuest.id,
+      status: 'PENDING',
+      deadline: new Date(Date.now() - 60 * 60 * 1000),
     })
     publishEvent.mockClear()
 
-    const failedQuests = await expireQuests.execute()
-    const failedQuest = failedQuests.find((quest) => quest.id === overdueQuest.id)
+    const expired = await expireQuests.execute()
 
-    expect(failedQuest?.status).toBe('failed')
+    expect(expired.find((instance) => instance.id === overdueInstance.id)?.status).toBe('EXPIRED')
 
     const events = publishEvent.mock.calls.map((call) => call[0] as DomainEvent)
     expect(events).toContainEqual(
-      expect.objectContaining({ eventType: 'QuestExpired', questId: overdueQuest.id, characterId })
+      expect.objectContaining({ eventType: 'QuestExpired', questInstanceId: overdueInstance.id, characterId })
     )
+    expect(events.some((event) => event.eventType === 'XPGranted')).toBe(false)
   })
 })

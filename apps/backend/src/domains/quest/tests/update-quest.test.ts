@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { UpdateQuestUseCase } from '../application/update-quest'
-import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
 import { InMemoryCharacterRepository } from '../../character/infrastructure/in-memory-character-repository'
+import type { Recurrence } from '../domain/recurrence'
 
 describe('UpdateQuestUseCase', () => {
   let questRepository: InMemoryQuestRepository
@@ -13,67 +14,50 @@ describe('UpdateQuestUseCase', () => {
     characterRepository = new InMemoryCharacterRepository()
   })
 
-  it('updates fields and re-derives reward XP from the new rank', async () => {
+  function build () {
+    return new UpdateQuestUseCase(questRepository, characterRepository)
+  }
+
+  it('updates template fields and re-derives XP from the new rank', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Old title', questRank: 'E', rewardXp: 10 })
+    const quest = questRepository.seed({ characterId: character.id, title: 'Old', rank: 'E', rewardXp: 10 })
 
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-    const result = await useCase.execute({ userId: 'user-1', questId: quest.id, title: 'New title', questRank: 'A' })
+    const result = await build().execute({ userId: 'user-1', questId: quest.id, title: 'New', rank: 'A' })
 
-    expect(result.title).toBe('New title')
-    expect(result.questRank).toBe('A')
+    expect(result.title).toBe('New')
+    expect(result.rank).toBe('A')
     expect(result.rewardXp).toBe(250)
   })
 
-  it('updates the categoryId on a quest owned by the caller', async () => {
+  it('updates recurrence and active flag', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', categoryId: null })
+    const quest = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: true })
 
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-    const result = await useCase.execute({ userId: 'user-1', questId: quest.id, categoryId: 'category-1' })
+    const result = await build().execute({ userId: 'user-1', questId: quest.id, recurrence: 'WEEKLY', active: false })
 
-    expect(result.categoryId).toBe('category-1')
+    expect(result.recurrence).toBe('WEEKLY')
+    expect(result.active).toBe(false)
   })
 
-  it('rejects updates to a quest that is already completed', async () => {
+  it('rejects an invalid rank', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Done quest', status: 'completed' })
-
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-
-    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, title: 'Try to edit' })).rejects.toThrow(
-      ConflictError
-    )
+    const quest = questRepository.seed({ characterId: character.id })
+    await expect(build().execute({ userId: 'user-1', questId: quest.id, rank: 'Z' })).rejects.toThrow(ValidationError)
   })
 
-  it('rejects changing the type to one that cannot be registered', async () => {
+  it('rejects an invalid recurrence', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', type: 'daily' })
-
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-
-    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, type: 'side' })).rejects.toThrow(ConflictError)
+    const quest = questRepository.seed({ characterId: character.id })
+    await expect(
+      build().execute({ userId: 'user-1', questId: quest.id, recurrence: 'HOURLY' as Recurrence })
+    ).rejects.toThrow(ValidationError)
   })
 
-  it('rejects an invalid quest rank', async () => {
-    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, title: 'Quest', questRank: 'E' })
-
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-
-    await expect(useCase.execute({ userId: 'user-1', questId: quest.id, questRank: 'Z' })).rejects.toThrow(
-      ValidationError
-    )
-  })
-
-  it('throws NotFoundError when updating a quest owned by a different character', async () => {
-    const characterA = characterRepository.seed({ userId: 'user-1', name: 'Hero A' })
-    characterRepository.seed({ userId: 'user-2', name: 'Hero B' })
-    const quest = questRepository.seed({ characterId: characterA.id, title: 'Quest A' })
-
-    const useCase = new UpdateQuestUseCase(questRepository, characterRepository)
-
-    await expect(useCase.execute({ userId: 'user-2', questId: quest.id, title: 'Hijacked' })).rejects.toThrow(
+  it('throws NotFoundError when updating a quest of a different character', async () => {
+    const characterA = characterRepository.seed({ userId: 'user-1', name: 'A' })
+    characterRepository.seed({ userId: 'user-2', name: 'B' })
+    const quest = questRepository.seed({ characterId: characterA.id })
+    await expect(build().execute({ userId: 'user-2', questId: quest.id, title: 'Hijack' })).rejects.toThrow(
       NotFoundError
     )
   })

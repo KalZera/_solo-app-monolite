@@ -23,29 +23,22 @@ describe('quest schemas', () => {
     const result = parseInput(createQuestBodySchema, {
       title: 'Quest',
       description: 'Do something',
-      questRank: 'A',
-      type: 'main',
+      rank: 'A',
+      recurrence: 'DAILY',
       rewardXp: 999999,
     })
 
     expect(result).not.toHaveProperty('rewardXp')
   })
 
-  it('coerces an ISO string deadline into a Date', () => {
-    const result = parseInput(createQuestBodySchema, {
-      title: 'Quest',
-      description: 'Do something',
-      questRank: 'A',
-      expiresAt: '2026-09-01T00:00:00.000Z',
-    })
-
-    expect(result.expiresAt).toBeInstanceOf(Date)
+  it('rejects an unknown recurrence', () => {
+    expect(() =>
+      parseInput(createQuestBodySchema, { title: 'Quest', description: 'x', rank: 'A', recurrence: 'HOURLY' })
+    ).toThrow(ValidationError)
   })
 
   it('rejects a quest without a title', () => {
-    expect(() => parseInput(createQuestBodySchema, { title: '', description: 'x', questRank: 'A' })).toThrow(
-      ValidationError
-    )
+    expect(() => parseInput(createQuestBodySchema, { title: '', description: 'x', rank: 'A' })).toThrow(ValidationError)
   })
 })
 

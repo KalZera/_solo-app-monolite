@@ -1,54 +1,45 @@
 import type { FastifyPluginAsync } from 'fastify'
-import type { QuestFilter, QuestView } from '../domain/quest'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { ListQuestsUseCase } from '../application/list-quests'
-import { GetQuestUseCase } from '../application/get-quest'
+import { GetTodayQuestsUseCase } from '../application/get-today-quests'
 import { UpdateQuestUseCase } from '../application/update-quest'
 import { DeleteQuestUseCase } from '../application/delete-quest'
+import { StartQuestUseCase } from '../application/start-quest'
+import { UpdateQuestProgressUseCase } from '../application/update-quest-progress'
 import { CompleteQuestUseCase } from '../application/complete-quest'
-import { CompleteQuestObjectiveUseCase } from '../application/complete-quest-objective'
+import { FailQuestUseCase } from '../application/fail-quest'
 import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository'
+import { PrismaQuestInstanceRepository } from '../infrastructure/prisma-quest-instance-repository'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
 import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
 import { parseInput } from '../../../infrastructure/http/validate'
 import {
   createQuestBodySchema,
-  listQuestsQuerySchema,
   questIdParamsSchema,
-  questObjectiveParamsSchema,
+  questInstanceIdParamsSchema,
+  updateProgressBodySchema,
   updateQuestBodySchema,
 } from './quest.schemas'
 import '../../../infrastructure/jwt/types.js'
 
 export const questRoutes: FastifyPluginAsync = async (app) => {
   const questRepository = new PrismaQuestRepository(app.prisma)
+  const questInstanceRepository = new PrismaQuestInstanceRepository(app.prisma)
   const characterRepository = new PrismaCharacterRepository(app.prisma)
   const progressionRepository = new PrismaProgressionRepository(app.prisma)
 
-  app.get('/', { preHandler: [app.authenticate] }, async (req) => {
-    const { view, ...filter } = (req.query ?? {}) as QuestFilter & { view?: QuestView }
-    // Validate the view enum (rejects unknown values with 400). The remaining filter is read-only.
-    parseInput(listQuestsQuerySchema, { view })
-    const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
-    return listQuests.execute({
-      userId: req.user.sub,
-      filter: Object.keys(filter).length > 0 ? filter : undefined,
-      view,
-    })
-  })
-
-  app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {
-    const { id } = parseInput(questIdParamsSchema, req.params)
-    const getQuest = new GetQuestUseCase(questRepository, characterRepository)
-    return getQuest.execute({ userId: req.user.sub, questId: id })
-  })
-
+  // ─── Templates ─────────────────────────────────────────────────────────────
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
     const body = parseInput(createQuestBodySchema, req.body)
     const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
     const result = await createQuest.execute({ ...body, userId: req.user.sub })
     return reply.status(201).send(result)
+  })
+
+  app.get('/', { preHandler: [app.authenticate] }, async (req) => {
+    const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
+    return listQuests.execute({ userId: req.user.sub })
   })
 
   app.patch('/:id', { preHandler: [app.authenticate] }, async (req) => {
@@ -65,16 +56,40 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
     return reply.status(204).send()
   })
 
-  app.post('/:id/complete', { preHandler: [app.authenticate] }, async (req) => {
-    const { id } = parseInput(questIdParamsSchema, req.params)
-    const grantExperience = new GrantExperienceUseCase(progressionRepository)
-    const completeQuest = new CompleteQuestUseCase(questRepository, characterRepository, grantExperience)
-    return completeQuest.execute({ userId: req.user.sub, questId: id })
+  // ─── Instances (executions) ─────────────────────────────────────────────────
+  app.get('/today', { preHandler: [app.authenticate] }, async (req) => {
+    const getTodayQuests = new GetTodayQuestsUseCase(questRepository, characterRepository, questInstanceRepository)
+    return getTodayQuests.execute({ userId: req.user.sub })
   })
 
-  app.post('/:id/objectives/:objectiveId/complete', { preHandler: [app.authenticate] }, async (req) => {
-    const { id, objectiveId } = parseInput(questObjectiveParamsSchema, req.params)
-    const completeQuestObjective = new CompleteQuestObjectiveUseCase(questRepository, characterRepository)
-    return completeQuestObjective.execute({ userId: req.user.sub, questId: id, objectiveId })
+  app.post('/instances/:instanceId/start', { preHandler: [app.authenticate] }, async (req) => {
+    const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
+    const startQuest = new StartQuestUseCase(questInstanceRepository, questRepository, characterRepository)
+    return startQuest.execute({ userId: req.user.sub, questInstanceId: instanceId })
+  })
+
+  app.post('/instances/:instanceId/progress', { preHandler: [app.authenticate] }, async (req) => {
+    const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
+    const body = parseInput(updateProgressBodySchema, req.body)
+    const updateProgress = new UpdateQuestProgressUseCase(questInstanceRepository, questRepository, characterRepository)
+    return updateProgress.execute({ userId: req.user.sub, questInstanceId: instanceId, ...body })
+  })
+
+  app.post('/instances/:instanceId/complete', { preHandler: [app.authenticate] }, async (req) => {
+    const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
+    const grantExperience = new GrantExperienceUseCase(progressionRepository)
+    const completeQuest = new CompleteQuestUseCase(
+      questInstanceRepository,
+      questRepository,
+      characterRepository,
+      grantExperience
+    )
+    return completeQuest.execute({ userId: req.user.sub, questInstanceId: instanceId })
+  })
+
+  app.post('/instances/:instanceId/fail', { preHandler: [app.authenticate] }, async (req) => {
+    const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
+    const failQuest = new FailQuestUseCase(questInstanceRepository, questRepository, characterRepository)
+    return failQuest.execute({ userId: req.user.sub, questInstanceId: instanceId })
   })
 }

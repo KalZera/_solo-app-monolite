@@ -1,68 +1,64 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { ExpireQuestsUseCase } from '../application/expire-quests'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
+import { InMemoryQuestInstanceRepository } from '../infrastructure/in-memory-quest-instance-repository'
 import type { DomainEvent } from '../../../shared/events/domain-event'
+
+const NOW = new Date('2026-08-05T00:00:00.000Z')
+const PAST = new Date('2026-08-01T00:00:00.000Z')
+const FUTURE = new Date('2026-08-10T00:00:00.000Z')
 
 describe('ExpireQuestsUseCase', () => {
   let questRepository: InMemoryQuestRepository
+  let questInstanceRepository: InMemoryQuestInstanceRepository
   let publishEvent: ReturnType<typeof vi.fn>
-  const now = new Date('2026-07-30T12:00:00.000Z')
-  const past = new Date('2026-07-29T00:00:00.000Z')
-  const future = new Date('2026-08-01T00:00:00.000Z')
 
   beforeEach(() => {
     questRepository = new InMemoryQuestRepository()
+    questInstanceRepository = new InMemoryQuestInstanceRepository()
     publishEvent = vi.fn().mockResolvedValue(undefined)
   })
 
-  it('marks past-due available/in_progress quests as failed and publishes a QuestExpired event for each', async () => {
-    const overdueAvailable = questRepository.seed({
-      characterId: 'char-1',
-      title: 'Overdue available quest',
-      type: 'main',
-      status: 'available',
-      expiresAt: past,
-    })
-    const overdueInProgress = questRepository.seed({
-      characterId: 'char-1',
-      title: 'Overdue in-progress quest',
-      type: 'daily',
-      status: 'in_progress',
-      expiresAt: past,
-    })
-    const stillOpen = questRepository.seed({
-      characterId: 'char-1',
-      title: 'Not due yet',
-      status: 'available',
-      expiresAt: future,
-    })
+  function build () {
+    return new ExpireQuestsUseCase(questInstanceRepository, questRepository, publishEvent)
+  }
 
-    const useCase = new ExpireQuestsUseCase(questRepository, publishEvent)
-    const result = await useCase.execute(now)
+  it('expires active instances past their deadline and publishes QuestExpired (no XP)', async () => {
+    const quest = questRepository.seed({ characterId: 'character-1', title: 'Academia' })
+    const instance = questInstanceRepository.seed({ questId: quest.id, status: 'PENDING', deadline: PAST })
 
-    expect(result.map((q) => q.title).sort()).toEqual(['Overdue available quest', 'Overdue in-progress quest'])
-    expect(result.every((q) => q.status === 'failed')).toBe(true)
+    const expired = await build().execute(NOW)
 
-    const updatedStillOpenQuest = await questRepository.findById(stillOpen.id)
-    expect(updatedStillOpenQuest?.status).toBe('available')
+    expect(expired).toHaveLength(1)
+    expect(expired[0].status).toBe('EXPIRED')
 
     const events = publishEvent.mock.calls.map((call) => call[0] as DomainEvent)
-    expect(events).toHaveLength(2)
-    expect(events).toContainEqual(
-      expect.objectContaining({ eventType: 'QuestExpired', questId: overdueAvailable.id, characterId: 'char-1' })
-    )
-    expect(events).toContainEqual(
-      expect.objectContaining({ eventType: 'QuestExpired', questId: overdueInProgress.id, characterId: 'char-1' })
-    )
+    expect(events).toHaveLength(1)
+    expect(events[0]).toMatchObject({
+      eventType: 'QuestExpired',
+      questInstanceId: instance.id,
+      characterId: 'character-1',
+      questTitle: 'Academia',
+    })
+    expect(events.some((event) => event.eventType === 'XPGranted')).toBe(false)
   })
 
-  it('does nothing when there are no past-due active quests', async () => {
-    questRepository.seed({ characterId: 'char-1', title: 'Fine for now', status: 'available', expiresAt: future })
+  it('does not expire instances whose deadline is in the future', async () => {
+    const quest = questRepository.seed({ characterId: 'character-1' })
+    questInstanceRepository.seed({ questId: quest.id, status: 'PENDING', deadline: FUTURE })
 
-    const useCase = new ExpireQuestsUseCase(questRepository, publishEvent)
-    const result = await useCase.execute(now)
+    const expired = await build().execute(NOW)
 
-    expect(result).toHaveLength(0)
+    expect(expired).toHaveLength(0)
     expect(publishEvent).not.toHaveBeenCalled()
+  })
+
+  it('does not touch already-terminal instances', async () => {
+    const quest = questRepository.seed({ characterId: 'character-1' })
+    questInstanceRepository.seed({ questId: quest.id, status: 'COMPLETED', deadline: PAST })
+
+    const expired = await build().execute(NOW)
+
+    expect(expired).toHaveLength(0)
   })
 })
