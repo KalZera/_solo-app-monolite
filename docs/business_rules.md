@@ -104,3 +104,26 @@ Resolução dos conflitos identificados em `docs/AUDIT_REPORT.md`. Estas decisõ
 | 7 | Quest→Progression | Integração **síncrona** (chamada direta ao Progression Engine); evento `QuestCompleted` segue para histórico/auditoria. | Registrado em **ADR-003**; sem migração para consumer. |
 | 8 | Categoria da quest | **Obrigatória** na criação. | A implementar: validar `categoryId` (CARD-103/backlog). |
 | 9 | XP por rank | `rewardXp` **derivado do rank**: E10/D20/C50/B100/A250/**S500**. | A implementar (CARD-103); remove `rewardXp` livre. |
+
+---
+
+## Quest: Template + Instance (ADR-004, 2026-08-03)
+
+A partir de agora **uma `Quest` é apenas um TEMPLATE** (definição recorrente); cada execução é
+uma **`QuestInstance`**. Ver `ADRs/ADR-004.md` e `docs/domains.md`.
+
+- [x] Uma Quest possui **recorrência**: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM (CUSTOM modelado,
+  ainda não agendável). O deadline de expiração é derivado do período (em GMT-3).
+- [x] **Uma Quest nunca é duplicada** — as execuções são QuestInstances. Índice único
+  `(questId, scheduledDate)`.
+- [x] Instâncias são criadas **sob demanda** (dashboard/worker/scheduler via `RecurrenceEngine`),
+  **nunca** em massa.
+- [x] Status da instância: PENDING, STARTED, COMPLETED, FAILED, EXPIRED.
+- [x] **COMPLETED** é imutável; **FAILED** não volta para PENDING; **EXPIRED** não gera XP.
+- [x] **COMPLETED** gera `QuestCompletedEvent`; **FAILED** gera `QuestFailedEvent`; **EXPIRED**
+  gera `QuestExpiredEvent` (também `QuestInstanceCreated`, `QuestStarted`, `QuestProgressUpdated`).
+- [x] Objectives **preservados** na instância (regra dos 70% para conclusão quando há objectives).
+- [ ] **Frontend** do módulo quest ainda no modelo antigo — adaptação é follow-up.
+
+> **Regras que saíram** (eram acopladas ao `type`, substituído por `recurrence`): "máx 3 diárias
+> ativas" (CARD-003) e "1 main ativa por categoria". Podem retornar como limites de **template**.

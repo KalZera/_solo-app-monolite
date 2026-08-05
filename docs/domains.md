@@ -287,3 +287,30 @@ Essas perguntas devem permanecer vivas até que o produto amadureça.
 - Como será calculada a dificuldade?
 - Como a IA criará novas quests?
 - Como evitar fraudes na conclusão das missões?
+
+---
+
+## Modelo Quest: Template + Instance (ADR-004)
+
+> Atualização 2026-08-03. Ver `ADRs/ADR-004.md`.
+
+Uma **Quest** representa apenas um **TEMPLATE** (a definição recorrente) — nunca uma execução.
+Cada execução é uma **QuestInstance**.
+
+**Quest (template)**: `id, characterId, categoryId, title, description, recurrence, rank,
+rewardXp, active, objectiveTemplates[], createdAt, updatedAt`.
+
+**QuestInstance (execução)**: `id, questId, scheduledDate, deadline, startedAt, completedAt,
+progress, status, rewardGranted, objectives[], createdAt, updatedAt`. Único por
+`(questId, scheduledDate)`.
+
+**Recurrence**: `NONE` (instância única), `DAILY`, `WEEKLY`, `MONTHLY`, `CUSTOM` (preparado,
+ainda não agendável). Boundaries de período/deadline calculados em **GMT-3** pela
+**RecurrenceEngine** (materialização sob demanda; nunca em massa).
+
+**Status da QuestInstance**: `PENDING → STARTED → COMPLETED`; `FAILED`; `EXPIRED`
+(COMPLETED imutável, FAILED não volta, EXPIRED não gera XP).
+
+**Fluxo:** `Quest (template) → RecurrenceEngine → QuestInstance → QuestStarted →
+QuestProgressUpdated → QuestCompleted → (síncrono) ProgressionEngine + QuestCompletedEvent →
+consumers (History; futuros Notification/Dashboard/Penalty)`.
