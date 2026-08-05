@@ -7,6 +7,7 @@ import { identityRoutes } from './domains/identity/api/routes'
 import { characterRoutes } from './domains/character/api/routes'
 import { questRoutes } from './domains/quest/api/routes'
 import { questCategoryRoutes } from './domains/quest/api/quest-category-routes'
+import { dashboardRoutes } from './domains/dashboard/api/routes'
 // import { progressionRoutes } from './domains/progression/api/routes'
 // import { rewardRoutes } from './domains/reward/api/routes'
 // import { notificationRoutes } from './domains/notification/api/routes'
@@ -38,6 +39,7 @@ export function buildApp () {
   app.register(characterRoutes, { prefix: '/api/v1/characters' })
   app.register(questRoutes, { prefix: '/api/v1/quests' })
   app.register(questCategoryRoutes, { prefix: '/api/v1/quest-categories' })
+  app.register(dashboardRoutes, { prefix: '/api/v1/dashboard' })
   // app.register(progressionRoutes, { prefix: '/api/v1/progression' })
   // app.register(rewardRoutes, { prefix: '/api/v1/rewards' })
   // app.register(notificationRoutes, { prefix: '/api/v1/notifications' })
