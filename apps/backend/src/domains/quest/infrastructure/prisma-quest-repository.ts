@@ -6,6 +6,7 @@ import type {
 } from '@prisma/client'
 import type { CreateQuestData, Quest, QuestRepository } from '../domain/quest'
 import type { ID } from '../../../shared/types/index'
+import type { Recurrence } from '../domain/recurrence'
 
 type QuestRecord = PrismaQuest & { objectiveTemplates: PrismaObjectiveTemplate[] }
 
@@ -41,8 +42,14 @@ export class PrismaQuestRepository implements QuestRepository {
     return record ? toDomain(record) : null
   }
 
-  async findByCharacterId (characterId: ID): Promise<Quest[]> {
-    const records = await this.prisma.quest.findMany({ where: { characterId }, include: INCLUDE_TEMPLATES })
+  async findByCharacterId (characterId: ID, recurrence?: Recurrence): Promise<Quest[]> {
+    const records = await this.prisma.quest.findMany({ 
+      where: { 
+        characterId, 
+        ...(recurrence && { recurrence })
+      },
+      include: INCLUDE_TEMPLATES 
+    })
     return records.map(toDomain)
   }
 

@@ -73,7 +73,7 @@ export class CreateQuestUseCase {
       questId: quest.id,
       deadline: quest.deadlineDate,
       scheduledDate: new Date(),
-      objectives: quest.objectiveTemplates.map((objective) => ({
+      objectives:(quest?.objectiveTemplates ?? []).map((objective) => ({
         description: objective.description,
         target: objective.target,
       }))

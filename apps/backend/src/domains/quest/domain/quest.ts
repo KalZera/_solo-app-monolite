@@ -48,7 +48,7 @@ export interface Quest {
   // of that day. Ignored for DAILY/WEEKLY/MONTHLY/CUSTOM, whose deadline is derived from the
   // period instead. Null means the NoneStrategy default (28 days from creation) applies.
   deadlineDate: Date | null
-  objectiveTemplates: QuestObjectiveTemplate[]
+  objectiveTemplates?: QuestObjectiveTemplate[]
   createdAt: Date
   updatedAt: Date
 }
@@ -68,7 +68,7 @@ export interface CreateQuestData {
 
 export interface QuestRepository {
   findById(id: ID): Promise<Quest | null>
-  findByCharacterId(characterId: ID): Promise<Quest[]>
+  findByCharacterId(characterId: ID, recurrence?: Recurrence): Promise<Quest[]>
   // Active templates only — used to materialise today's instances.
   findActiveByCharacterId(characterId: ID): Promise<Quest[]>
   findManyByActive(active: boolean): Promise<Quest[]>

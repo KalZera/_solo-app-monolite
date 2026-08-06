@@ -1,4 +1,5 @@
 import type { ID } from '../../../shared/types/index'
+import type { Quest } from './quest'
 import type { Recurrence } from './recurrence'
 
 // ─── QuestInstance (EXECUTION) ───────────────────────────────────────────────
@@ -39,6 +40,7 @@ export interface QuestInstance {
   objectives: QuestInstanceObjective[]
   createdAt: Date
   updatedAt: Date
+  quest?: Quest
 }
 
 export interface CreateQuestInstanceData {

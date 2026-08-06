@@ -1,6 +1,7 @@
 import type {
   Prisma,
   PrismaClient,
+  Quest as PrismaQuest,
   QuestInstance as PrismaQuestInstance,
   QuestInstanceObjective as PrismaQuestInstanceObjective,
 } from '@prisma/client'
@@ -12,7 +13,7 @@ import type {
 } from '../domain/quest-instance'
 import type { ID } from '../../../shared/types/index'
 
-type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObjective[] }
+type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObjective[], quest?: PrismaQuest }
 
 const INCLUDE_OBJECTIVES = { objectives: true } as const
 
@@ -36,6 +37,7 @@ function toDomain (record: InstanceRecord): QuestInstance {
     })),
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
+    quest: record.quest ? record.quest : undefined,
   }
 }
 
@@ -43,7 +45,11 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
   constructor (private readonly prisma: PrismaClient) {}
 
   async findById (id: ID): Promise<QuestInstance | null> {
-    const record = await this.prisma.questInstance.findUnique({ where: { id }, include: INCLUDE_OBJECTIVES })
+    
+    const record = await this.prisma.questInstance.findUnique({ where: { id }, 
+      include: {...INCLUDE_OBJECTIVES, quest:true} 
+    })
+    console.log({record, domain:toDomain(record as InstanceRecord)})
     return record ? toDomain(record) : null
   }
 

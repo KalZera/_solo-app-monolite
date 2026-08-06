@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { ListQuestsUseCase } from '../application/list-quests'
+import { GetQuestUseCase } from '../application/get-quest'
 import { CreateQuestInstanceUseCase } from '../application/create-quest-instance'
 import { UpdateQuestUseCase } from '../application/update-quest'
 import { DeleteQuestUseCase } from '../application/delete-quest'
@@ -41,6 +42,12 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
     const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
     return listQuests.execute({ userId: req.user.sub })
+  })
+//have to use the id of instance to get all details of quest 
+  app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {
+    const { id } = req.params as { id: string }
+    const getQuest = new GetQuestUseCase(questInstanceRepository, characterRepository)
+    return getQuest.execute({ userId: req.user.sub, questInstanceId: id })
   })
 
   app.patch('/:id', { preHandler: [app.authenticate] }, async (req) => {
