@@ -12,6 +12,8 @@ interface UpdateQuestInput {
   rank?: string
   recurrence?: Recurrence
   categoryId?: string | null
+  // Only meaningful for NONE recurrence (see NoneStrategy) — ignored otherwise.
+  deadlineDate?: Date
   active?: boolean
 }
 
@@ -43,6 +45,12 @@ export class UpdateQuestUseCase {
     const rewardXp =
       input.rank !== undefined && isQuestRank(input.rank) ? xpForQuestRank(input.rank) : undefined
 
+    // deadlineDate only applies to NONE (recurring types derive their deadline from the
+    // period); if the quest is/becomes non-NONE, any submitted value is dropped.
+    const effectiveRecurrence = input.recurrence ?? quest.recurrence
+    const deadlineDate =
+      input.deadlineDate !== undefined ? (effectiveRecurrence === 'NONE' ? input.deadlineDate : null) : undefined
+
     return this.questRepository.save(quest.id, {
       ...(input.title !== undefined && { title: input.title }),
       ...(input.description !== undefined && { description: input.description }),
@@ -50,6 +58,7 @@ export class UpdateQuestUseCase {
       ...(rewardXp !== undefined && { rewardXp }),
       ...(input.recurrence !== undefined && { recurrence: input.recurrence }),
       ...(input.categoryId !== undefined && { categoryId: input.categoryId }),
+      ...(deadlineDate !== undefined && { deadlineDate }),
       ...(input.active !== undefined && { active: input.active }),
     })
   }

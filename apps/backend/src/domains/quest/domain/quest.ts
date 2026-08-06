@@ -42,6 +42,12 @@ export interface Quest {
   rank: string
   rewardXp: number
   active: boolean
+  // Last day (any instant within it — normalised to its GMT-3 calendar day) for a
+  // NONE-recurrence quest's single instance — every quest expires regardless of recurrence
+  // (business_rules.md, ADR-004 addendum). The actual deadline is always 23:59:59.999 GMT-3
+  // of that day. Ignored for DAILY/WEEKLY/MONTHLY/CUSTOM, whose deadline is derived from the
+  // period instead. Null means the NoneStrategy default (28 days from creation) applies.
+  deadlineDate: Date | null
   objectiveTemplates: QuestObjectiveTemplate[]
   createdAt: Date
   updatedAt: Date
@@ -56,6 +62,7 @@ export interface CreateQuestData {
   rank: string
   rewardXp: number
   active: boolean
+  deadlineDate: Date | null
   objectiveTemplates: Array<Omit<QuestObjectiveTemplate, 'id'>>
 }
 

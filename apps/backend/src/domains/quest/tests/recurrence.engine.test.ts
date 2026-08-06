@@ -14,6 +14,7 @@ function buildQuest (overrides: Partial<Quest> = {}): Quest {
     rank: 'E',
     rewardXp: 10,
     active: true,
+    deadlineDate: null,
     objectiveTemplates: [],
     createdAt: new Date('2026-08-03T10:00:00.000Z'),
     updatedAt: new Date('2026-08-03T10:00:00.000Z'),
@@ -60,7 +61,7 @@ describe('RecurrenceEngine', () => {
     expect(engine.nextOccurrence('MONTHLY', scheduledDate).toISOString()).toBe('2026-09-01T03:00:00.000Z')
   })
 
-  it('anchors a NONE quest to its creation day with no deadline (single instance)', () => {
+  it('anchors a NONE quest to its creation day, expiring after the default 28 days', () => {
     const quest = buildQuest({ recurrence: 'NONE', createdAt: new Date('2026-08-03T10:00:00.000Z') })
 
     // The reference is the creation day, not `now`, so the key never changes across days.
@@ -69,7 +70,35 @@ describe('RecurrenceEngine', () => {
 
     expect(first.toISOString()).toBe('2026-08-03T03:00:00.000Z')
     expect(later.getTime()).toBe(first.getTime())
-    expect(engine.deadlineFor(quest, first)).toBeNull()
+    // Every quest expires, regardless of recurrence: 28 days after periodStart (00:00 GMT-3).
+    expect(engine.deadlineFor(quest, first)?.toISOString()).toBe('2026-08-31T02:59:59.999Z')
+  })
+
+  it('honours a NONE quest custom deadlineDate instead of the 28-day default', () => {
+    const quest = buildQuest({
+      recurrence: 'NONE',
+      createdAt: new Date('2026-08-03T10:00:00.000Z'),
+      // Noon UTC safely falls within the intended GMT-3 calendar day (Aug 8).
+      deadlineDate: new Date('2026-08-08T12:00:00.000Z'),
+    })
+
+    const scheduledDate = engine.scheduledDateFor(quest, new Date('2026-08-03T10:00:00.000Z'))
+
+    // Always 23:59:59.999 GMT-3 of the given day, regardless of the time-of-day supplied.
+    expect(engine.deadlineFor(quest, scheduledDate)?.toISOString()).toBe('2026-08-09T02:59:59.999Z')
+  })
+
+  it('normalises deadlineDate to its GMT-3 calendar day (UTC midnight is still the previous GMT-3 day)', () => {
+    const quest = buildQuest({
+      recurrence: 'NONE',
+      createdAt: new Date('2026-08-03T10:00:00.000Z'),
+      // UTC midnight on Aug 10 is 21:00 GMT-3 on Aug 9 — still within the Aug 9 GMT-3 day.
+      deadlineDate: new Date('2026-08-10T00:00:00.000Z'),
+    })
+
+    const scheduledDate = engine.scheduledDateFor(quest, new Date('2026-08-03T10:00:00.000Z'))
+
+    expect(engine.deadlineFor(quest, scheduledDate)?.toISOString()).toBe('2026-08-10T02:59:59.999Z')
   })
 
   it('returns the same scheduledDate for two moments in the same day (no duplication)', () => {

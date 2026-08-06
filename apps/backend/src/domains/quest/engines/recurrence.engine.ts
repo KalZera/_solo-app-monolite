@@ -43,7 +43,7 @@ export class RecurrenceEngine {
   }
 
   deadlineFor (quest: Quest, scheduledDate: Date): Date | null {
-    return this.strategyFor(quest.recurrence).periodEnd(scheduledDate)
+    return this.strategyFor(quest.recurrence).periodEnd(scheduledDate, quest)
   }
 
   // A ready-to-persist plan for the current period's instance, with objectives copied from the

@@ -11,6 +11,8 @@ interface CreateQuestInput {
   rank: string
   recurrence?: Recurrence
   categoryId?: string | null
+  // Only meaningful for NONE recurrence (see NoneStrategy) — ignored otherwise.
+  deadlineDate?: Date
   objectives?: Array<{ description: string; target: number }>
 }
 
@@ -53,6 +55,8 @@ export class CreateQuestUseCase {
       rank: input.rank,
       rewardXp: xpForQuestRank(input.rank),
       active: true,
+      // Irrelevant for recurring types, which derive their deadline from the period instead.
+      deadlineDate: recurrence === 'NONE' ? (input.deadlineDate ?? null) : null,
       objectiveTemplates: (input.objectives ?? []).map((objective) => ({
         description: objective.description,
         target: objective.target,

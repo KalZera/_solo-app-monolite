@@ -1,7 +1,8 @@
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { CharacterRepository } from '../../character/domain/character'
 import type { QuestRepository } from '../domain/quest'
-import type { QuestInstance, QuestInstanceRepository } from '../domain/quest-instance'
+import type { QuestInstance, QuestInstanceRepository, QuestTab } from '../domain/quest-instance'
+import { isVisibleInActiveFeed, matchesQuestTab } from '../domain/quest-instance'
 import { SCHEDULABLE_RECURRENCES } from '../domain/recurrence'
 import { RecurrenceEngine } from '../engines/recurrence.engine'
 import { createQuestInstanceCreatedEvent } from '../domain/events'
@@ -9,6 +10,13 @@ import { NotFoundError } from '../../../shared/errors/app-error'
 
 interface GetTodayQuestsInput {
   userId: string
+  // When true, returns only currently-actionable executions (open, not expired):
+  // today's plus recurring ones still in progress; completed/expired are dropped.
+  // Ignored when `tab` is set.
+  activeOnly?: boolean
+  // Scopes the result to a single Quest List UI tab (see matchesQuestTab). Takes
+  // precedence over `activeOnly` — the frontend sends this and renders the result as-is.
+  tab?: QuestTab
 }
 
 // Materialises (lazily) and returns the current-period instance of every active template of
@@ -47,6 +55,14 @@ export class GetTodayQuestsUseCase {
         await this.publishEvent(
           createQuestInstanceCreatedEvent(instance.id, quest.id, character.id, quest.title, quest.recurrence)
         )
+      }
+
+      if (input.tab) {
+        if (!matchesQuestTab(quest.recurrence, instance, input.tab, now)) continue
+      } else if (input.activeOnly && !isVisibleInActiveFeed(quest.recurrence, instance, now)) {
+        // The active feed keeps open executions and today's completed dailies, but drops
+        // completed weekly/monthly (done for the period), failed and expired ones.
+        continue
       }
 
       instances.push(instance)

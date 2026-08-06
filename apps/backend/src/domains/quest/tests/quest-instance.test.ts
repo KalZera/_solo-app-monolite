@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import {
+  STARTED_FAIL_GRACE_PERIOD_DAYS,
   calculateProgress,
   canComplete,
   isExpired,
   isTerminalStatus,
   objectivesCompletionRatio,
+  shouldAutoFail,
   type QuestInstance,
   type QuestInstanceObjective,
   type QuestInstanceStatus,
@@ -78,5 +80,39 @@ describe('QuestInstance domain', () => {
     expect(isExpired(buildInstance({ deadline: null, status: 'PENDING' }), now)).toBe(false)
     expect(isExpired(buildInstance({ deadline: past, status: 'COMPLETED' }), now)).toBe(false)
     expect(isExpired(buildInstance({ status: 'EXPIRED' }), now)).toBe(true)
+  })
+
+  describe('shouldAutoFail', () => {
+    const DAY_MS = 24 * 60 * 60 * 1000
+    const now = new Date('2026-08-05T00:00:00.000Z')
+
+    it('never fires while within the deadline, or with no deadline', () => {
+      const future = new Date(now.getTime() + DAY_MS)
+      expect(shouldAutoFail(buildInstance({ status: 'PENDING', deadline: future }), now)).toBe(false)
+      expect(shouldAutoFail(buildInstance({ status: 'PENDING', deadline: null }), now)).toBe(false)
+    })
+
+    it('fires immediately for an overdue PENDING instance', () => {
+      const justOverdue = new Date(now.getTime() - 1)
+      expect(shouldAutoFail(buildInstance({ status: 'PENDING', deadline: justOverdue }), now)).toBe(true)
+    })
+
+    it('gives an overdue STARTED instance a grace period before firing', () => {
+      const graceMs = STARTED_FAIL_GRACE_PERIOD_DAYS * DAY_MS
+      const withinGrace = new Date(now.getTime() - DAY_MS)
+      const atBoundary = new Date(now.getTime() - graceMs)
+      const beyondGrace = new Date(now.getTime() - graceMs - 1)
+
+      expect(shouldAutoFail(buildInstance({ status: 'STARTED', deadline: withinGrace }), now)).toBe(false)
+      expect(shouldAutoFail(buildInstance({ status: 'STARTED', deadline: atBoundary }), now)).toBe(false)
+      expect(shouldAutoFail(buildInstance({ status: 'STARTED', deadline: beyondGrace }), now)).toBe(true)
+    })
+
+    it('never fires for an already-terminal instance', () => {
+      const overdue = new Date(now.getTime() - 10 * DAY_MS)
+      expect(shouldAutoFail(buildInstance({ status: 'COMPLETED', deadline: overdue }), now)).toBe(false)
+      expect(shouldAutoFail(buildInstance({ status: 'FAILED', deadline: overdue }), now)).toBe(false)
+      expect(shouldAutoFail(buildInstance({ status: 'EXPIRED', deadline: overdue }), now)).toBe(false)
+    })
   })
 })

@@ -162,7 +162,7 @@ describe('MVP user journey', () => {
     expect(restPoints).toBe(0)
   })
 
-  it('expires an overdue instance and emits QuestExpired (no XP)', async () => {
+  it('fails an overdue PENDING instance and emits QuestFailed (no XP)', async () => {
     const overdueQuest = questRepository.seed({ characterId, title: 'Forgotten daily quest' })
     const overdueInstance = questInstanceRepository.seed({
       questId: overdueQuest.id,
@@ -171,13 +171,13 @@ describe('MVP user journey', () => {
     })
     publishEvent.mockClear()
 
-    const expired = await expireQuests.execute()
+    const failed = await expireQuests.execute()
 
-    expect(expired.find((instance) => instance.id === overdueInstance.id)?.status).toBe('EXPIRED')
+    expect(failed.find((instance) => instance.id === overdueInstance.id)?.status).toBe('FAILED')
 
     const events = publishEvent.mock.calls.map((call) => call[0] as DomainEvent)
     expect(events).toContainEqual(
-      expect.objectContaining({ eventType: 'QuestExpired', questInstanceId: overdueInstance.id, characterId })
+      expect.objectContaining({ eventType: 'QuestFailed', questInstanceId: overdueInstance.id, characterId })
     )
     expect(events.some((event) => event.eventType === 'XPGranted')).toBe(false)
   })

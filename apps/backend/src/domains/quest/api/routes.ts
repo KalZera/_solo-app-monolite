@@ -18,6 +18,7 @@ import {
   createQuestBodySchema,
   questIdParamsSchema,
   questInstanceIdParamsSchema,
+  todayQuestsQuerySchema,
   updateProgressBodySchema,
   updateQuestBodySchema,
 } from './quest.schemas'
@@ -58,8 +59,9 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
 
   // ─── Instances (executions) ─────────────────────────────────────────────────
   app.get('/today', { preHandler: [app.authenticate] }, async (req) => {
+    const { status, tab } = parseInput(todayQuestsQuerySchema, req.query)
     const getTodayQuests = new GetTodayQuestsUseCase(questRepository, characterRepository, questInstanceRepository)
-    return getTodayQuests.execute({ userId: req.user.sub })
+    return getTodayQuests.execute({ userId: req.user.sub, activeOnly: status === 'active', tab })
   })
 
   app.post('/instances/:instanceId/start', { preHandler: [app.authenticate] }, async (req) => {

@@ -123,6 +123,10 @@ model Quest {
   rank        String
   rewardXp    Int        @default(0) @map("reward_xp")
   active      Boolean    @default(true)
+  // Last day (GMT-3 calendar day) for a NONE-recurrence quest's single instance — the actual
+  // deadline is always 23:59:59.999 GMT-3 of that day. Ignored for recurring types, which
+  // derive their deadline from the period. Null = NoneStrategy default (28 days).
+  deadlineDate DateTime? @map("deadline_date")
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 

@@ -22,6 +22,7 @@ function toDomain (record: QuestRecord): Quest {
     rank: record.rank,
     rewardXp: record.rewardXp,
     active: record.active,
+    deadlineDate: record.deadlineDate,
     objectiveTemplates: record.objectiveTemplates.map((template) => ({
       id: template.id,
       description: template.description,
@@ -64,6 +65,7 @@ export class PrismaQuestRepository implements QuestRepository {
         rank: data.rank,
         rewardXp: data.rewardXp,
         active: data.active,
+        deadlineDate: data.deadlineDate,
         objectiveTemplates: {
           create: data.objectiveTemplates.map((objective) => ({
             description: objective.description,
@@ -84,6 +86,7 @@ export class PrismaQuestRepository implements QuestRepository {
       ...(data.rank !== undefined && { rank: data.rank }),
       ...(data.rewardXp !== undefined && { rewardXp: data.rewardXp }),
       ...(data.active !== undefined && { active: data.active }),
+      ...(data.deadlineDate !== undefined && { deadlineDate: data.deadlineDate }),
       ...(data.categoryId !== undefined && {
         category: data.categoryId ? { connect: { id: data.categoryId } } : { disconnect: true },
       }),

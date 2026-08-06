@@ -6,9 +6,16 @@
 // Each recurrence is a small strategy object (Strategy/OCP) — new recurrences are added by
 // providing another strategy, never by editing a conditional.
 
+import type { Quest } from '../domain/quest'
+
 const GMT_MINUS_3_OFFSET_MS = 3 * 60 * 60 * 1000
 const DAY_MS = 24 * 60 * 60 * 1000
 const DAYS_IN_WEEK = 7
+
+// Default deadline (in days from creation) for a NONE-recurrence quest when
+// `Quest.deadlineDate` is not set (business_rules.md — every quest expires, regardless of
+// recurrence). Mirrors the pre-ADR-004 "main quest" default window.
+export const DEFAULT_NONE_DEADLINE_DAYS = 28
 
 function toWall (instant: Date): Date {
   return new Date(instant.getTime() - GMT_MINUS_3_OFFSET_MS)
@@ -54,8 +61,9 @@ function startOfNextMonth (periodStart: Date): Date {
 export interface RecurrenceStrategy {
   // The canonical key of the period that `reference` falls into.
   periodStart(reference: Date): Date
-  // The last instant of the period (null = never auto-expires).
-  periodEnd(periodStart: Date): Date | null
+  // The last instant of the period. `quest` is only consulted by NoneStrategy
+  // (for its configurable deadlineDays); other strategies derive it from the period alone.
+  periodEnd(periodStart: Date, quest: Quest): Date | null
   // The periodStart of the following occurrence.
   next(periodStart: Date): Date
 }
@@ -65,8 +73,13 @@ export class NoneStrategy implements RecurrenceStrategy {
     return startOfDay(reference)
   }
 
-  periodEnd (): Date | null {
-    return null
+  // Single lifetime instance, but it still expires — every quest does, regardless of
+  // recurrence (business_rules.md). The deadline is always 23:59:59.999 GMT-3 of the last
+  // day: the quest's own `deadlineDate` (normalised to its GMT-3 calendar day) when set,
+  // otherwise DEFAULT_NONE_DEADLINE_DAYS after creation.
+  periodEnd (periodStart: Date, quest: Quest): Date {
+    if (quest.deadlineDate) return endOfDay(startOfDay(quest.deadlineDate))
+    return new Date(periodStart.getTime() + DEFAULT_NONE_DEADLINE_DAYS * DAY_MS - 1)
   }
 
   next (periodStart: Date): Date {
