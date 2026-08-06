@@ -21,19 +21,20 @@ export class ExpireQuestsUseCase {
 
   async execute (now: Date = new Date()): Promise<QuestInstance[]> {
     const dueInstances = await this.questInstanceRepository.findDueForExpiration(now)
+    const toFail = dueInstances.filter((instance) => shouldAutoFail(instance, now))
 
-    const failed: QuestInstance[] = []
-    for (const instance of dueInstances) {
-      if (!shouldAutoFail(instance, now)) continue
-
-      const quest = await this.questRepository.findById(instance.questId)
-      const updated = await this.questInstanceRepository.save(instance.id, { status: 'FAILED' })
-      await this.publishEvent(
-        createQuestFailedEvent(updated.id, updated.questId, quest?.characterId ?? '', quest?.title ?? 'Quest')
-      )
-      failed.push(updated)
-    }
-
-    return failed
+    // Fail instances concurrently rather than one DB round-trip at a time — with a large
+    // backlog, a fully sequential loop can keep this process busy long enough to delay other
+    // timers (e.g. node-cron's own heartbeat) and trigger spurious "missed execution" warnings.
+    return Promise.all(
+      toFail.map(async (instance) => {
+        const quest = await this.questRepository.findById(instance.questId)
+        const updated = await this.questInstanceRepository.save(instance.id, { status: 'FAILED' })
+        await this.publishEvent(
+          createQuestFailedEvent(updated.id, updated.questId, quest?.characterId ?? '', quest?.title ?? 'Quest')
+        )
+        return updated
+      })
+    )
   }
 }
