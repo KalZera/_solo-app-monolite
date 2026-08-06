@@ -3,6 +3,8 @@ import type { CreateQuestData, QuestRepository } from '../domain/quest'
 import { QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
 import { isRecurrence, type Recurrence } from '../domain/recurrence'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import type { QuestInstanceRepository } from '../domain/quest-instance'
+import { getDateFilter } from '@shared/utils/date-filter'
 
 interface CreateQuestInput {
   userId: string
@@ -21,7 +23,8 @@ interface CreateQuestInput {
 export class CreateQuestUseCase {
   constructor (
     private readonly questRepository: QuestRepository,
-    private readonly characterRepository: CharacterRepository
+    private readonly characterRepository: CharacterRepository,
+    private readonly questInstanceRepository: QuestInstanceRepository
   ) {}
 
   async execute (input: CreateQuestInput) {
@@ -44,7 +47,8 @@ export class CreateQuestUseCase {
     if (!isRecurrence(recurrence)) {
       throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM')
     }
-
+    //variable only if deadlineDate is not provided, otherwise it will be the provided date
+    const {end:tomorrow} = getDateFilter(new Date(Date.now() + 24 * 60 * 60 * 1000));
     // XP is derived from the rank on the server, never trusted from the client (CARD-103).
     const data: CreateQuestData = {
       characterId: character.id,
@@ -56,13 +60,25 @@ export class CreateQuestUseCase {
       rewardXp: xpForQuestRank(input.rank),
       active: true,
       // Irrelevant for recurring types, which derive their deadline from the period instead.
-      deadlineDate: recurrence === 'NONE' ? (input.deadlineDate ?? null) : null,
+      deadlineDate: recurrence === 'NONE' ? (input.deadlineDate ?? tomorrow) : tomorrow,
       objectiveTemplates: (input.objectives ?? []).map((objective) => ({
         description: objective.description,
         target: objective.target,
       })),
     }
 
-    return this.questRepository.create(data)
+    const quest = await this.questRepository.create(data)
+
+    const instance = await this.questInstanceRepository.create({
+      questId: quest.id,
+      deadline: quest.deadlineDate,
+      scheduledDate: new Date(),
+      objectives: quest.objectiveTemplates.map((objective) => ({
+        description: objective.description,
+        target: objective.target,
+      }))
+    })
+
+    return { quest, instance }
   }
 }

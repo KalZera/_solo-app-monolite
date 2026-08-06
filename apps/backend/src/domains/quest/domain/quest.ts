@@ -71,6 +71,7 @@ export interface QuestRepository {
   findByCharacterId(characterId: ID): Promise<Quest[]>
   // Active templates only — used to materialise today's instances.
   findActiveByCharacterId(characterId: ID): Promise<Quest[]>
+  findManyByActive(active: boolean): Promise<Quest[]>
   create(data: CreateQuestData): Promise<Quest>
   save(id: ID, data: Partial<Omit<Quest, 'objectiveTemplates'>>): Promise<Quest>
   delete(id: ID): Promise<void>

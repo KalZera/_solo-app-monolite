@@ -1,5 +1,5 @@
-import type { Character, CharacterRepository } from '../../character/domain/character'
-import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
+import type {  CharacterRepository } from '../../character/domain/character'
+import { GrantExperienceUseCase } from '../../progression/application/grant-experience'
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { QuestRepository } from '../domain/quest'
 import type { QuestInstanceRepository } from '../domain/quest-instance'
@@ -58,20 +58,12 @@ export class CompleteQuestUseCase {
     )
 
     // XP is granted synchronously by the Progression Engine (ADR-003). EXPIRED/FAILED never reach here.
-    const { progression, levelsGained } = await this.grantExperience.execute({
+    const { character: updatedCharacter } = await this.grantExperience.execute({
       characterId: character.id,
       amount: quest.rewardXp,
       source: 'quest',
     })
 
-    const updatedCharacter: Character = {
-      ...character,
-      level: progression.level,
-      experience: progression.experience,
-      stats: progression.stats,
-      powerScore: progression.powerScore,
-    }
-
-    return { instance: updatedInstance, character: updatedCharacter, levelsGained }
+    return { instance: updatedInstance, character: updatedCharacter }
   }
 }

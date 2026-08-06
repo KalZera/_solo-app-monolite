@@ -60,6 +60,21 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return records.map(toDomain)
   }
 
+  async findByQuestActive(active: boolean): Promise<QuestInstance[]> {
+    const records = await this.prisma.questInstance.findMany({ 
+      include: INCLUDE_OBJECTIVES,
+      where:{
+        quest: {
+          active: active
+        },
+        status: {
+          in: ['PENDING']
+        }
+      }
+     })
+    return records.map(toDomain)
+  }
+
   async create (data: CreateQuestInstanceData): Promise<QuestInstance> {
     const record = await this.prisma.questInstance.create({
       data: {

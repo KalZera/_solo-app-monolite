@@ -140,6 +140,7 @@ export function matchesQuestTab (
 
 export interface QuestInstanceRepository {
   findById(id: ID): Promise<QuestInstance | null>
+  findByQuestActive(active: boolean): Promise<QuestInstance[]>
   findByQuestAndScheduledDate(questId: ID, scheduledDate: Date): Promise<QuestInstance | null>
   findByQuestId(questId: ID): Promise<QuestInstance[]>
   create(data: CreateQuestInstanceData): Promise<QuestInstance>

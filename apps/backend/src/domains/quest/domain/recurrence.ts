@@ -7,7 +7,7 @@ export const RECURRENCES: Recurrence[] = ['NONE', 'DAILY', 'WEEKLY', 'MONTHLY', 
 
 // CUSTOM is modelled but not yet schedulable — the structure is ready for a future
 // user-defined recurrence rule.
-export const SCHEDULABLE_RECURRENCES: Recurrence[] = ['NONE', 'DAILY', 'WEEKLY', 'MONTHLY']
+export const SCHEDULABLE_RECURRENCES: Recurrence[] = ['DAILY', 'WEEKLY', 'MONTHLY']
 
 export function isRecurrence (value: string): value is Recurrence {
   return (RECURRENCES as string[]).includes(value)

@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { ListQuestsUseCase } from '../application/list-quests'
-import { GetTodayQuestsUseCase } from '../application/get-today-quests'
+import { CreateQuestInstanceUseCase } from '../application/create-quest-instance'
 import { UpdateQuestUseCase } from '../application/update-quest'
 import { DeleteQuestUseCase } from '../application/delete-quest'
 import { StartQuestUseCase } from '../application/start-quest'
@@ -12,7 +12,7 @@ import { PrismaQuestRepository } from '../infrastructure/prisma-quest-repository
 import { PrismaQuestInstanceRepository } from '../infrastructure/prisma-quest-instance-repository'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
-import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
+import { GrantExperienceUseCase } from '../../progression/application/grant-experience'
 import { parseInput } from '../../../infrastructure/http/validate'
 import {
   createQuestBodySchema,
@@ -33,7 +33,7 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   // ─── Templates ─────────────────────────────────────────────────────────────
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
     const body = parseInput(createQuestBodySchema, req.body)
-    const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
+    const createQuest = new CreateQuestUseCase(questRepository, characterRepository, questInstanceRepository)
     const result = await createQuest.execute({ ...body, userId: req.user.sub })
     return reply.status(201).send(result)
   })
@@ -57,11 +57,13 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
     return reply.status(204).send()
   })
 
-  // ─── Instances (executions) ─────────────────────────────────────────────────
+  // ─── Instances (executions) ─────────────────────────────────────────────────\
+  // isso vai virar uma cron job que vai rodar todo dia e criar as quests do dia, então não precisa de rota pra isso
+  // somente se rodar manualmente 
   app.get('/today', { preHandler: [app.authenticate] }, async (req) => {
     const { status, tab } = parseInput(todayQuestsQuerySchema, req.query)
-    const getTodayQuests = new GetTodayQuestsUseCase(questRepository, characterRepository, questInstanceRepository)
-    return getTodayQuests.execute({ userId: req.user.sub, activeOnly: status === 'active', tab })
+    const createQuestInstance = new CreateQuestInstanceUseCase(questRepository, questInstanceRepository)
+    return createQuestInstance.execute({ userId: req.user.sub, activeOnly: status === 'active'})
   })
 
   app.post('/instances/:instanceId/start', { preHandler: [app.authenticate] }, async (req) => {
@@ -79,7 +81,7 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
 
   app.post('/instances/:instanceId/complete', { preHandler: [app.authenticate] }, async (req) => {
     const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
-    const grantExperience = new GrantExperienceUseCase(progressionRepository)
+    const grantExperience = new GrantExperienceUseCase(characterRepository, progressionRepository)
     const completeQuest = new CompleteQuestUseCase(
       questInstanceRepository,
       questRepository,
