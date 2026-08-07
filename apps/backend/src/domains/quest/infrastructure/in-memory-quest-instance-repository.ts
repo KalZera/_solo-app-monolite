@@ -1,19 +1,19 @@
 import { randomUUID } from 'crypto'
 import type {
   CreateQuestInstanceData,
-  QuestInstance,
+  QuestFullInstance,
   QuestInstanceObjective,
   QuestInstanceRepository,
 } from '../domain/quest-instance'
 import type { ID } from '../../../shared/types/index'
 
-type SeedInput = Pick<QuestInstance, 'questId'> & Partial<Omit<QuestInstance, 'questId'>>
+type SeedInput = Pick<QuestFullInstance, 'questId'> & Partial<Omit<QuestFullInstance, 'questId'>>
 
 export class InMemoryQuestInstanceRepository implements QuestInstanceRepository {
-  private instances: QuestInstance[] = []
+  private instances: QuestFullInstance[] = []
 
-  seed (data: SeedInput): QuestInstance {
-    const instance: QuestInstance = {
+  seed (data: SeedInput): QuestFullInstance {
+    const instance: QuestFullInstance = {
       id: data.id ?? randomUUID(),
       questId: data.questId,
       scheduledDate: data.scheduledDate ?? new Date(),
@@ -31,11 +31,11 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     return instance
   }
 
-  async findById (id: ID): Promise<QuestInstance | null> {
+  async findById (id: ID): Promise<QuestFullInstance | null> {
     return this.instances.find((instance) => instance.id === id) ?? null
   }
 
-  async findByQuestAndScheduledDate (questId: ID, scheduledDate: Date): Promise<QuestInstance | null> {
+  async findByQuestAndScheduledDate (questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null> {
     return (
       this.instances.find(
         (instance) => instance.questId === questId && instance.scheduledDate.getTime() === scheduledDate.getTime()
@@ -43,12 +43,12 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     )
   }
 
-  async findByQuestId (questId: ID): Promise<QuestInstance[]> {
+  async findByQuestId (questId: ID): Promise<QuestFullInstance[]> {
     return this.instances.filter((instance) => instance.questId === questId)
   }
 
-  async create (data: CreateQuestInstanceData): Promise<QuestInstance> {
-    const instance: QuestInstance = {
+  async create (data: CreateQuestInstanceData): Promise<QuestFullInstance> {
+    const instance: QuestFullInstance = {
       id: randomUUID(),
       questId: data.questId,
       scheduledDate: data.scheduledDate,
@@ -72,7 +72,7 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     return instance
   }
 
-  async save (id: ID, data: Partial<Omit<QuestInstance, 'objectives'>>): Promise<QuestInstance> {
+  async save (id: ID, data: Partial<Omit<QuestFullInstance, 'objectives'>>): Promise<QuestFullInstance> {
     const index = this.instances.findIndex((instance) => instance.id === id)
     if (index === -1) throw new Error(`QuestInstance ${id} not found`)
     this.instances[index] = { ...this.instances[index], ...data, updatedAt: new Date() }
@@ -83,7 +83,7 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     instanceId: ID,
     objectiveId: ID,
     data: Partial<QuestInstanceObjective>
-  ): Promise<QuestInstance> {
+  ): Promise<QuestFullInstance> {
     const index = this.instances.findIndex((instance) => instance.id === instanceId)
     if (index === -1) throw new Error(`QuestInstance ${instanceId} not found`)
 
@@ -97,7 +97,7 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     return this.instances[index]
   }
 
-  async findDueForExpiration (now: Date): Promise<QuestInstance[]> {
+  async findDueForExpiration (now: Date): Promise<QuestFullInstance[]> {
     return this.instances.filter(
       (instance) =>
         (instance.status === 'PENDING' || instance.status === 'STARTED') &&

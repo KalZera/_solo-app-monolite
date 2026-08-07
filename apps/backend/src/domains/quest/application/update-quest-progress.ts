@@ -2,7 +2,7 @@ import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { CharacterRepository } from '../../character/domain/character'
 import type { QuestRepository } from '../domain/quest'
 import type { QuestInstanceRepository } from '../domain/quest-instance'
-import { calculateProgress, isTerminalStatus } from '../domain/quest-instance'
+import { calculateProgress, isTerminalStatus, QuestInstanceObjective } from '../domain/quest-instance'
 import { createQuestProgressUpdatedEvent } from '../domain/events'
 import { ConflictError, NotFoundError } from '../../../shared/errors/app-error'
 
@@ -41,7 +41,7 @@ export class UpdateQuestProgressUseCase {
       throw new ConflictError(`A quest instance with status "${instance.status}" cannot have its progress updated`)
     }
 
-    const objective = instance.objectives.find((candidate) => candidate.id === input.objectiveId)
+    const objective = (instance.objectives as QuestInstanceObjective[]).find((candidate) => candidate.id === input.objectiveId)
     if (!objective) {
       throw new NotFoundError('QuestInstanceObjective', input.objectiveId)
     }
@@ -53,7 +53,7 @@ export class UpdateQuestProgressUseCase {
       completed: current >= target,
     })
 
-    const progress = calculateProgress(withObjective.objectives)
+    const progress = calculateProgress(withObjective.objectives as QuestInstanceObjective[])
     const updated = await this.questInstanceRepository.save(instance.id, { progress })
 
     await this.publishEvent(createQuestProgressUpdatedEvent(updated.id, quest.id, character.id, progress))

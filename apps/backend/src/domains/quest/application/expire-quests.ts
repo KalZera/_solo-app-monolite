@@ -1,6 +1,6 @@
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { QuestRepository } from '../domain/quest'
-import type { QuestInstance, QuestInstanceRepository } from '../domain/quest-instance'
+import type { QuestFullInstance, QuestInstanceRepository } from '../domain/quest-instance'
 import { shouldAutoFail } from '../domain/quest-instance'
 import { createQuestFailedEvent } from '../domain/events'
 
@@ -19,7 +19,7 @@ export class ExpireQuestsUseCase {
     private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute (now: Date = new Date()): Promise<QuestInstance[]> {
+  async execute (now: Date = new Date()): Promise<QuestFullInstance[]> {
     const dueInstances = await this.questInstanceRepository.findDueForExpiration(now)
     const toFail = dueInstances.filter((instance) => shouldAutoFail(instance, now))
 

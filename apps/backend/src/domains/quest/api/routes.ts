@@ -14,6 +14,7 @@ import { PrismaQuestInstanceRepository } from '../infrastructure/prisma-quest-in
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaProgressionRepository } from '../../progression/infrastructure/prisma-progression-repository'
 import { GrantExperienceUseCase } from '../../progression/application/grant-experience'
+import { ApplyLevelUpUseCase } from '../../progression/application/apply-level-up'
 import { parseInput } from '../../../infrastructure/http/validate'
 import {
   createQuestBodySchema,
@@ -30,6 +31,7 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   const questInstanceRepository = new PrismaQuestInstanceRepository(app.prisma)
   const characterRepository = new PrismaCharacterRepository(app.prisma)
   const progressionRepository = new PrismaProgressionRepository(app.prisma)
+  const applyLevelUp = new ApplyLevelUpUseCase(progressionRepository)
 
   // ─── Templates ─────────────────────────────────────────────────────────────
   app.post('/', { preHandler: [app.authenticate] }, async (req, reply) => {
@@ -40,7 +42,7 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
-    const listQuests = new ListQuestsUseCase(questRepository, characterRepository)
+    const listQuests = new ListQuestsUseCase(questInstanceRepository, characterRepository)
     return listQuests.execute({ userId: req.user.sub })
   })
 //have to use the id of instance to get all details of quest 
@@ -88,7 +90,7 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
 
   app.post('/instances/:instanceId/complete', { preHandler: [app.authenticate] }, async (req) => {
     const { instanceId } = parseInput(questInstanceIdParamsSchema, req.params)
-    const grantExperience = new GrantExperienceUseCase(characterRepository, progressionRepository)
+    const grantExperience = new GrantExperienceUseCase(characterRepository, applyLevelUp)
     const completeQuest = new CompleteQuestUseCase(
       questInstanceRepository,
       questRepository,
