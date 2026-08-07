@@ -1,0 +1,19 @@
+// Learn more: https://docs.expo.dev/guides/monorepos/
+const { getDefaultConfig } = require('expo/metro-config')
+const { withNativeWind } = require('nativewind/metro')
+const path = require('path')
+
+const projectRoot = __dirname
+const workspaceRoot = path.resolve(projectRoot, '../..')
+
+const config = getDefaultConfig(projectRoot)
+
+// Monorepo: watch the workspace root and resolve hoisted dependencies from both
+// the app and the workspace root node_modules.
+config.watchFolders = [workspaceRoot]
+config.resolver.nodeModulesPaths = [
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(workspaceRoot, 'node_modules'),
+]
+
+module.exports = withNativeWind(config, { input: './global.css' })

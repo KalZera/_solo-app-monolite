@@ -1,0 +1,306 @@
+{
+  "common": {
+    "appName": "Solo Leveling",
+    "systemLabel": "O Sistema",
+    "loading": "Carregando…",
+    "retry": "Tentar novamente",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "back": "Voltar",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "successTitle": "Sucesso",
+    "errorTitle": "Algo deu errado",
+    "failedToReachSystem": "Falha ao conectar com o Sistema. Tente novamente.",
+    "comingSoon": "Em breve",
+    "mockedNotice": "Dados simulados — em breve virão do backend."
+  },
+  "tabs": {
+    "dashboard": "Painel",
+    "dash": "Dash",
+    "character": "Personagem",
+    "quests": "Missões",
+    "history": "Histórico",
+    "profile": "Perfil"
+  },
+  "auth": {
+    "login": {
+      "title": "Solo Leveling",
+      "subtitle": "Somente um Caçador registrado no Sistema pode prosseguir.",
+      "email": "ID de Caçador",
+      "emailPlaceholder": "cacador@associacao.com",
+      "password": "Senha",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Entrar no Sistema",
+      "submitting": "Autenticando…",
+      "registerLink": "Novo Caçador? Cadastre-se",
+      "errorTitle": "Falha na autenticação"
+    },
+    "register": {
+      "title": "Cadastro de Caçador",
+      "subtitle": "Desperte como um Caçador e responda ao chamado do Sistema.",
+      "email": "ID de Caçador",
+      "emailPlaceholder": "cacador@associacao.com",
+      "username": "Nome de Caçador",
+      "usernamePlaceholder": "jinwoo",
+      "password": "Senha",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Cadastrar Caçador",
+      "submitting": "Cadastrando…",
+      "loginLink": "Já é um Caçador? Entrar",
+      "errorTitle": "Falha no cadastro",
+      "successTitle": "Caçador cadastrado",
+      "successMessage": "Bem-vindo ao Sistema. Faça login para prosseguir."
+    },
+    "validation": {
+      "emailRequired": "O e-mail é obrigatório",
+      "emailInvalid": "Informe um e-mail válido",
+      "passwordRequired": "A senha é obrigatória",
+      "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
+      "usernameMinLength": "O nome deve ter pelo menos 3 caracteres",
+      "usernameMaxLength": "O nome deve ter no máximo 20 caracteres",
+      "usernamePattern": "Apenas letras, números e sublinhados são permitidos"
+    }
+  },
+  "character": {
+    "create": {
+      "heading": "Desperte como um Caçador",
+      "subtitle": "O Sistema ainda não tem registro seu. Cadastre seu Caçador para começar.",
+      "name": "Nome de Caçador",
+      "namePlaceholder": "Sung Jinwoo",
+      "titleField": "Título",
+      "titlePlaceholder": "O Caçador Mais Fraco",
+      "class": "Classe",
+      "submit": "Despertar Caçador",
+      "submitting": "Despertando…",
+      "successTitle": "Caçador despertado",
+      "successMessage": "Bem-vindo ao Sistema, Caçador.",
+      "errorTitle": "Não foi possível criar o Caçador"
+    },
+    "classes": {
+      "warrior": "Guerreiro",
+      "mage": "Mago",
+      "rogue": "Ladino",
+      "ranger": "Patrulheiro",
+      "healer": "Curandeiro"
+    },
+    "stats": {
+      "strength": "Força",
+      "intelligence": "Inteligência",
+      "agility": "Agilidade",
+      "vitality": "Vitalidade",
+      "luck": "Sorte"
+    },
+    "validation": {
+      "nameMin": "O nome deve ter pelo menos 1 caractere",
+      "nameMax": "O nome é muito longo (máx. 40)",
+      "titleMin": "O título deve ter pelo menos 1 caractere",
+      "titleMax": "O título é muito longo (máx. 60)",
+      "classRequired": "Escolha uma classe"
+    },
+    "screen": {
+      "title": "Personagem",
+      "hunter": "Caçador",
+      "level": "Nível",
+      "xp": "{{current}} / {{max}} XP",
+      "titleLabel": "Título",
+      "noTitle": "Nenhum título equipado",
+      "information": "Informações",
+      "hunterId": "ID do Caçador",
+      "affiliation": "Afiliação",
+      "affiliationNone": "Nenhuma",
+      "ranking": "Ranking",
+      "powerScore": "Power Score"
+    },
+    "status": {
+      "title": "Status",
+      "power": "Poder"
+    }
+  },
+  "dashboard": {
+    "title": "Janela de Status",
+    "greeting": "Bem-vindo de volta, {{name}}",
+    "rank": "Rank",
+    "level": "Nível",
+    "power": "Poder",
+    "experience": "Experiência",
+    "toNextLevel": "{{xp}} XP para o próximo nível",
+    "attributes": "Atributos",
+    "stats": {
+      "strength": "Força",
+      "agility": "Agilidade",
+      "intelligence": "Inteligência",
+      "vitality": "Vitalidade",
+      "perception": "Percepção"
+    },
+    "dailyQuests": "Missões Diárias",
+    "questsProgress": "{{completed}}/{{total}} concluídas",
+    "streak": "Sequência",
+    "streakUnit": "{{count}} dias",
+    "noQuests": "Nenhuma missão ativa. Vá até a aba Missões para forjar uma.",
+    "dash": {
+      "title": "Dashboard",
+      "summary": "Resumo",
+      "completedQuests": "Missões completas",
+      "streak": "Sequência atual",
+      "streakUnit": "dias",
+      "pointsToday": "Pontos hoje",
+      "progress": "Progresso",
+      "level": "Nível",
+      "attributes": "Atributos"
+    }
+  },
+  "quest": {
+    "recurrence": {
+      "NONE": "Única",
+      "DAILY": "Diária",
+      "WEEKLY": "Semanal",
+      "MONTHLY": "Mensal",
+      "CUSTOM": "Personalizada"
+    },
+    "status": {
+      "PENDING": "Pendente",
+      "STARTED": "Em andamento",
+      "COMPLETED": "Concluída",
+      "FAILED": "Falhou",
+      "EXPIRED": "Expirada"
+    },
+    "list": {
+      "title": "Diário de Missões",
+      "subtitle": "Forje e acompanhe suas missões.",
+      "loading": "Carregando missões…",
+      "failed": "Falha ao conectar com o Sistema. Tente novamente.",
+      "empty": "Nenhuma missão ainda. Toque em + para forjar a primeira.",
+      "create": "Nova Missão",
+      "filters": {
+        "all": "Todos",
+        "daily": "Diárias",
+        "weekly": "Semanais",
+        "history": "Histórico"
+      },
+      "reward": "{{xp}} XP",
+      "objectivesCount_one": "{{count}} objetivo",
+      "objectivesCount_other": "{{count}} objetivos"
+    },
+    "detail": {
+      "title": "Detalhes da Missão",
+      "objectives": "Objetivos ({{completed}}/{{total}})",
+      "objectiveDone": "Concluir",
+      "thresholdHint": "Conclua mais de 70% dos objetivos para finalizar esta missão.",
+      "start": "Iniciar Missão",
+      "starting": "Iniciando…",
+      "complete": "Concluir Missão",
+      "completing": "Concluindo…",
+      "notActionable": "Esta missão não tem execução agendada no momento.",
+      "notFound": "Missão não encontrada.",
+      "startErrorTitle": "Não foi possível iniciar a missão",
+      "completeErrorTitle": "Não foi possível concluir a missão",
+      "objectiveErrorTitle": "Não foi possível atualizar o objetivo",
+      "completeSuccessTitle": "Missão concluída",
+      "completeSuccessMessage": "+{{xp}} XP ganhos",
+      "levelUpMessage": "Subiu de nível! Você alcançou o nível {{level}}."
+    },
+    "create": {
+      "title": "Nova Missão",
+      "subtitle": "Defina um modelo de missão. O Sistema define o XP pelo rank.",
+      "sectionInfo": "Detalhes da missão",
+      "sectionObjectives": "Objetivos",
+      "titleField": "Título",
+      "titlePlaceholder": "Treinar por 30 minutos",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Passar 30 minutos treinando o corpo.",
+      "rank": "Rank",
+      "rankHint": "Recompensa: {{xp}} XP",
+      "recurrence": "Recorrência",
+      "category": "Categoria",
+      "categoryNone": "Sem categoria",
+      "objectivesHint": "Opcional. Uma missão com objetivos pode ser concluída quando mais de 70% forem feitos.",
+      "addObjective": "Adicionar objetivo",
+      "objectiveDescription": "Objetivo {{number}}",
+      "objectivePlaceholder": "Ler 100 páginas",
+      "target": "Meta",
+      "removeObjective": "Remover objetivo",
+      "rewardPreview": "Recompensa do Sistema",
+      "rewardValue": "{{xp}} XP",
+      "submit": "Forjar Missão",
+      "submitting": "Forjando…",
+      "successTitle": "Missão forjada",
+      "successMessage": "Seu modelo de missão está pronto.",
+      "errorTitle": "Falha ao criar missão"
+    },
+    "validation": {
+      "titleMin": "O título deve ter pelo menos 1 caractere",
+      "titleMax": "O título é muito longo (máx. 120)",
+      "descriptionMin": "A descrição deve ter pelo menos 1 caractere",
+      "descriptionMax": "A descrição é muito longa (máx. 1000)",
+      "rankRequired": "Escolha um rank",
+      "recurrenceRequired": "Escolha uma recorrência",
+      "objectiveDescriptionMin": "A descrição do objetivo é muito curta",
+      "objectiveDescriptionMax": "A descrição do objetivo é muito longa (máx. 200)",
+      "targetInteger": "A meta deve ser um número inteiro",
+      "targetPositive": "A meta deve ser maior que 0"
+    }
+  },
+  "history": {
+    "title": "Histórico",
+    "subtitle": "Cada passo da sua ascensão.",
+    "loading": "Carregando histórico…",
+    "failed": "Falha ao carregar o histórico. Tente novamente.",
+    "empty": "Nenhum histórico ainda.",
+    "filters": {
+      "all": "Tudo",
+      "quests": "Missões",
+      "levels": "Níveis",
+      "rewards": "Recompensas"
+    },
+    "entryTypes": {
+      "questCompleted": "Missão concluída",
+      "questFailed": "Missão falhou",
+      "levelUp": "Subiu de nível",
+      "rewardEarned": "Recompensa obtida",
+      "attributeAllocated": "Atributo distribuído"
+    },
+    "xpGain": "+{{xp}} XP"
+  },
+  "levelUp": {
+    "title": "Subiu de Nível",
+    "subtitle": "Você subiu de nível!",
+    "level": "Nível",
+    "confirm": "Confirmar"
+  },
+  "profile": {
+    "title": "Perfil do Caçador",
+    "subtitle": "Gerencie seu Caçador e preferências.",
+    "defaultName": "Caçador",
+    "hunterId": "ID de Caçador",
+    "memberSince": "Despertou em {{date}}",
+    "editAvatar": "Editar avatar",
+    "avatarHint": "Toque no retrato para alterá-lo",
+    "account": "Conta",
+    "preferences": "Preferências",
+    "language": "Idioma",
+    "languageEnglish": "Inglês",
+    "languagePortuguese": "Português",
+    "logOff": "Sair",
+    "loggingOff": "Saindo…",
+    "avatar": {
+      "title": "Editar Avatar",
+      "editHint": "Escolha uma foto para o retrato do seu Caçador.",
+      "chooseFromLibrary": "Escolher da Galeria",
+      "takePhoto": "Tirar Foto",
+      "cropHint": "Arraste para reposicionar. Use os botões para dar zoom.",
+      "zoomIn": "Aumentar zoom",
+      "zoomOut": "Diminuir zoom",
+      "changePhoto": "Trocar Foto",
+      "confirm": "Salvar Avatar",
+      "confirming": "Enviando…",
+      "libraryPermissionDenied": "É necessária permissão para acessar as fotos.",
+      "cameraPermissionDenied": "É necessária permissão para acessar a câmera.",
+      "pickError": "Não foi possível selecionar a imagem. Tente novamente.",
+      "cropError": "Não foi possível processar a imagem. Tente novamente.",
+      "successTitle": "Avatar atualizado",
+      "successMessage": "O retrato do seu Caçador foi atualizado.",
+      "errorTitle": "Falha ao atualizar o avatar"
+    }
+  }
+}

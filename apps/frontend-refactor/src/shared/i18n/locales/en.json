@@ -1,0 +1,306 @@
+{
+  "common": {
+    "appName": "Solo Leveling",
+    "systemLabel": "The System",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "back": "Back",
+    "confirm": "Confirm",
+    "close": "Close",
+    "successTitle": "Success",
+    "errorTitle": "Something went wrong",
+    "failedToReachSystem": "Failed to reach the System. Try again.",
+    "comingSoon": "Coming soon",
+    "mockedNotice": "Mocked data — the backend will power this soon."
+  },
+  "tabs": {
+    "dashboard": "Dashboard",
+    "dash": "Dash",
+    "character": "Character",
+    "quests": "Quests",
+    "history": "History",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": {
+      "title": "Solo Leveling",
+      "subtitle": "Only a Hunter registered with the System may proceed.",
+      "email": "Hunter ID",
+      "emailPlaceholder": "hunter@association.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Enter the System",
+      "submitting": "Authenticating…",
+      "registerLink": "New Hunter? Register",
+      "errorTitle": "Authentication failed"
+    },
+    "register": {
+      "title": "Hunter Registration",
+      "subtitle": "Awaken as a Hunter and answer the System's call.",
+      "email": "Hunter ID",
+      "emailPlaceholder": "hunter@association.com",
+      "username": "Hunter Name",
+      "usernamePlaceholder": "jinwoo",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Register Hunter",
+      "submitting": "Registering…",
+      "loginLink": "Already a Hunter? Log in",
+      "errorTitle": "Registration failed",
+      "successTitle": "Hunter registered",
+      "successMessage": "Welcome to the System. Log in to proceed."
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "usernameMinLength": "Username must be at least 3 characters",
+      "usernameMaxLength": "Username must be at most 20 characters",
+      "usernamePattern": "Only letters, numbers and underscores are allowed"
+    }
+  },
+  "character": {
+    "create": {
+      "heading": "Awaken as a Hunter",
+      "subtitle": "The System has no record of you yet. Register your Hunter to begin.",
+      "name": "Hunter Name",
+      "namePlaceholder": "Sung Jinwoo",
+      "titleField": "Title",
+      "titlePlaceholder": "The Weakest Hunter",
+      "class": "Class",
+      "submit": "Awaken Hunter",
+      "submitting": "Awakening…",
+      "successTitle": "Hunter awakened",
+      "successMessage": "Welcome to the System, Hunter.",
+      "errorTitle": "Could not create Hunter"
+    },
+    "classes": {
+      "warrior": "Warrior",
+      "mage": "Mage",
+      "rogue": "Rogue",
+      "ranger": "Ranger",
+      "healer": "Healer"
+    },
+    "stats": {
+      "strength": "Strength",
+      "intelligence": "Intelligence",
+      "agility": "Agility",
+      "vitality": "Vitality",
+      "luck": "Luck"
+    },
+    "validation": {
+      "nameMin": "Name must be at least 1 character",
+      "nameMax": "Name is too long (max 40)",
+      "titleMin": "Title must be at least 1 character",
+      "titleMax": "Title is too long (max 60)",
+      "classRequired": "Choose a class"
+    },
+    "screen": {
+      "title": "Character",
+      "hunter": "Hunter",
+      "level": "Level",
+      "xp": "{{current}} / {{max}} XP",
+      "titleLabel": "Title",
+      "noTitle": "No title equipped",
+      "information": "Information",
+      "hunterId": "Hunter ID",
+      "affiliation": "Affiliation",
+      "affiliationNone": "None",
+      "ranking": "Ranking",
+      "powerScore": "Power Score"
+    },
+    "status": {
+      "title": "Status",
+      "power": "Power"
+    }
+  },
+  "dashboard": {
+    "title": "Status Window",
+    "greeting": "Welcome back, {{name}}",
+    "rank": "Rank",
+    "level": "Level",
+    "power": "Power",
+    "experience": "Experience",
+    "toNextLevel": "{{xp}} XP to next level",
+    "attributes": "Attributes",
+    "stats": {
+      "strength": "Strength",
+      "agility": "Agility",
+      "intelligence": "Intelligence",
+      "vitality": "Vitality",
+      "perception": "Perception"
+    },
+    "dailyQuests": "Daily Quests",
+    "questsProgress": "{{completed}}/{{total}} completed",
+    "streak": "Streak",
+    "streakUnit": "{{count}} days",
+    "noQuests": "No active quests. Head to the Quests tab to forge one.",
+    "dash": {
+      "title": "Dashboard",
+      "summary": "Summary",
+      "completedQuests": "Completed missions",
+      "streak": "Current streak",
+      "streakUnit": "days",
+      "pointsToday": "Points today",
+      "progress": "Progress",
+      "level": "Level",
+      "attributes": "Attributes"
+    }
+  },
+  "quest": {
+    "recurrence": {
+      "NONE": "One-time",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "CUSTOM": "Custom"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "STARTED": "In progress",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
+      "EXPIRED": "Expired"
+    },
+    "list": {
+      "title": "Quest Log",
+      "subtitle": "Forge and track your quests.",
+      "loading": "Loading quests…",
+      "failed": "Failed to reach the System. Try again.",
+      "empty": "No quests yet. Tap + to forge your first one.",
+      "create": "New Quest",
+      "filters": {
+        "all": "All",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "history": "History"
+      },
+      "reward": "{{xp}} XP",
+      "objectivesCount_one": "{{count}} objective",
+      "objectivesCount_other": "{{count}} objectives"
+    },
+    "detail": {
+      "title": "Quest Details",
+      "objectives": "Objectives ({{completed}}/{{total}})",
+      "objectiveDone": "Done",
+      "thresholdHint": "Complete more than 70% of the objectives to finish this quest.",
+      "start": "Start Quest",
+      "starting": "Starting…",
+      "complete": "Complete Quest",
+      "completing": "Completing…",
+      "notActionable": "This quest has no scheduled run right now.",
+      "notFound": "Quest not found.",
+      "startErrorTitle": "Could not start quest",
+      "completeErrorTitle": "Could not complete quest",
+      "objectiveErrorTitle": "Could not update objective",
+      "completeSuccessTitle": "Quest completed",
+      "completeSuccessMessage": "+{{xp}} XP earned",
+      "levelUpMessage": "Level up! You reached level {{level}}."
+    },
+    "create": {
+      "title": "New Quest",
+      "subtitle": "Define a quest template. The System sets its XP from the rank.",
+      "sectionInfo": "Quest details",
+      "sectionObjectives": "Objectives",
+      "titleField": "Title",
+      "titlePlaceholder": "Train for 30 minutes",
+      "description": "Description",
+      "descriptionPlaceholder": "Spend 30 minutes training your body.",
+      "rank": "Rank",
+      "rankHint": "Reward: {{xp}} XP",
+      "recurrence": "Recurrence",
+      "category": "Category",
+      "categoryNone": "No category",
+      "objectivesHint": "Optional. A quest with objectives is completable once more than 70% are done.",
+      "addObjective": "Add objective",
+      "objectiveDescription": "Objective {{number}}",
+      "objectivePlaceholder": "Read 100 pages",
+      "target": "Target",
+      "removeObjective": "Remove objective",
+      "rewardPreview": "System reward",
+      "rewardValue": "{{xp}} XP",
+      "submit": "Forge Quest",
+      "submitting": "Forging…",
+      "successTitle": "Quest forged",
+      "successMessage": "Your quest template is ready.",
+      "errorTitle": "Failed to create quest"
+    },
+    "validation": {
+      "titleMin": "Title must be at least 1 character",
+      "titleMax": "Title is too long (max 120)",
+      "descriptionMin": "Description must be at least 1 character",
+      "descriptionMax": "Description is too long (max 1000)",
+      "rankRequired": "Choose a rank",
+      "recurrenceRequired": "Choose a recurrence",
+      "objectiveDescriptionMin": "Objective description is too short",
+      "objectiveDescriptionMax": "Objective description is too long (max 200)",
+      "targetInteger": "Target must be a whole number",
+      "targetPositive": "Target must be greater than 0"
+    }
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "Every step of your ascent.",
+    "loading": "Loading history…",
+    "failed": "Failed to load history. Try again.",
+    "empty": "No history yet.",
+    "filters": {
+      "all": "All",
+      "quests": "Quests",
+      "levels": "Level-ups",
+      "rewards": "Rewards"
+    },
+    "entryTypes": {
+      "questCompleted": "Quest completed",
+      "questFailed": "Quest failed",
+      "levelUp": "Level up",
+      "rewardEarned": "Reward earned",
+      "attributeAllocated": "Attribute allocated"
+    },
+    "xpGain": "+{{xp}} XP"
+  },
+  "levelUp": {
+    "title": "Level Up",
+    "subtitle": "You have leveled up!",
+    "level": "Level",
+    "confirm": "Confirm"
+  },
+  "profile": {
+    "title": "Hunter Profile",
+    "subtitle": "Manage your Hunter and preferences.",
+    "defaultName": "Hunter",
+    "hunterId": "Hunter ID",
+    "memberSince": "Awakened on {{date}}",
+    "editAvatar": "Edit avatar",
+    "avatarHint": "Tap the portrait to change it",
+    "account": "Account",
+    "preferences": "Preferences",
+    "language": "Language",
+    "languageEnglish": "English",
+    "languagePortuguese": "Portuguese",
+    "logOff": "Log Off",
+    "loggingOff": "Logging off…",
+    "avatar": {
+      "title": "Edit Avatar",
+      "editHint": "Choose a photo to set your Hunter's portrait.",
+      "chooseFromLibrary": "Choose from Library",
+      "takePhoto": "Take Photo",
+      "cropHint": "Drag to reposition. Pinch or use the buttons to zoom.",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "changePhoto": "Change Photo",
+      "confirm": "Save Avatar",
+      "confirming": "Uploading…",
+      "libraryPermissionDenied": "Permission to access photos is required.",
+      "cameraPermissionDenied": "Permission to access the camera is required.",
+      "pickError": "Could not select the image. Try again.",
+      "cropError": "Could not process the image. Try again.",
+      "successTitle": "Avatar updated",
+      "successMessage": "Your Hunter's portrait has been updated.",
+      "errorTitle": "Failed to update avatar"
+    }
+  }
+}
