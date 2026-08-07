@@ -7,7 +7,7 @@ import type {
 } from '@prisma/client'
 import type {
   CreateQuestInstanceData,
-  QuestInstance,
+  QuestFullInstance,
   QuestInstanceObjective,
   QuestInstanceRepository,
 } from '../domain/quest-instance'
@@ -17,7 +17,7 @@ type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObj
 
 const INCLUDE_OBJECTIVES = { objectives: true } as const
 
-function toDomain (record: InstanceRecord): QuestInstance {
+function toDomain (record: InstanceRecord): QuestFullInstance {
   return {
     id: record.id,
     questId: record.questId,
@@ -44,16 +44,26 @@ function toDomain (record: InstanceRecord): QuestInstance {
 export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
   constructor (private readonly prisma: PrismaClient) {}
 
-  async findById (id: ID): Promise<QuestInstance | null> {
-    
+  async findById (id: ID): Promise<QuestFullInstance | null> {
     const record = await this.prisma.questInstance.findUnique({ where: { id }, 
       include: {...INCLUDE_OBJECTIVES, quest:true} 
     })
-    console.log({record, domain:toDomain(record as InstanceRecord)})
     return record ? toDomain(record) : null
   }
+   
+  async findByCharacterId (characterId: ID): Promise<QuestFullInstance[]> {
+    const record = await this.prisma.questInstance.findMany({ 
+    where:{
+      quest:{
+        characterId: characterId
+      },
+    }, include:{...INCLUDE_OBJECTIVES, quest:true}
+    })
 
-  async findByQuestAndScheduledDate (questId: ID, scheduledDate: Date): Promise<QuestInstance | null> {
+    return record.map(toDomain)
+  }
+
+  async findByQuestAndScheduledDate (questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null> {
     const record = await this.prisma.questInstance.findUnique({
       where: { questId_scheduledDate: { questId, scheduledDate } },
       include: INCLUDE_OBJECTIVES,
@@ -61,12 +71,12 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return record ? toDomain(record) : null
   }
 
-  async findByQuestId (questId: ID): Promise<QuestInstance[]> {
+  async findByQuestId (questId: ID): Promise<QuestFullInstance[]> {
     const records = await this.prisma.questInstance.findMany({ where: { questId }, include: INCLUDE_OBJECTIVES })
     return records.map(toDomain)
   }
 
-  async findByQuestActive(active: boolean): Promise<QuestInstance[]> {
+  async findByQuestActive(active: boolean): Promise<QuestFullInstance[]> {
     const records = await this.prisma.questInstance.findMany({ 
       include: INCLUDE_OBJECTIVES,
       where:{
@@ -81,7 +91,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return records.map(toDomain)
   }
 
-  async create (data: CreateQuestInstanceData): Promise<QuestInstance> {
+  async create (data: CreateQuestInstanceData): Promise<QuestFullInstance> {
     const record = await this.prisma.questInstance.create({
       data: {
         questId: data.questId,
@@ -99,7 +109,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return toDomain(record)
   }
 
-  async save (id: ID, data: Partial<Omit<QuestInstance, 'objectives'>>): Promise<QuestInstance> {
+  async save (id: ID, data: Partial<Omit<QuestFullInstance, 'objectives'>>): Promise<QuestFullInstance> {
     const patch: Prisma.QuestInstanceUpdateInput = {
       ...(data.scheduledDate !== undefined && { scheduledDate: data.scheduledDate }),
       ...(data.deadline !== undefined && { deadline: data.deadline }),
@@ -118,7 +128,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     instanceId: ID,
     objectiveId: ID,
     data: Partial<QuestInstanceObjective>
-  ): Promise<QuestInstance> {
+  ): Promise<QuestFullInstance> {
     await this.prisma.questInstanceObjective.update({
       where: { id: objectiveId },
       data: {
@@ -136,7 +146,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return toDomain(record)
   }
 
-  async findDueForExpiration (now: Date): Promise<QuestInstance[]> {
+  async findDueForExpiration (now: Date): Promise<QuestFullInstance[]> {
     const records = await this.prisma.questInstance.findMany({
       where: { status: { in: ['PENDING', 'STARTED'] }, deadline: { lt: now } },
       include: INCLUDE_OBJECTIVES,

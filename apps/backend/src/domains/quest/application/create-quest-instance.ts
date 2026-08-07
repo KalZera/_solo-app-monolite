@@ -1,6 +1,6 @@
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
 import type { QuestRepository } from '../domain/quest'
-import type { QuestInstance, QuestInstanceRepository, QuestTab } from '../domain/quest-instance'
+import type { QuestFullInstance, QuestInstanceRepository, QuestTab } from '../domain/quest-instance'
 import { SCHEDULABLE_RECURRENCES } from '../domain/recurrence'
 import { RecurrenceEngine } from '../engines/recurrence.engine'
 import { createQuestInstanceCreatedEvent } from '../domain/events'
@@ -23,10 +23,10 @@ export class CreateQuestInstanceUseCase {
     private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute (input: GetTodayQuestsInput, now: Date = new Date()): Promise<QuestInstance[]> {
+  async execute (input: GetTodayQuestsInput, now: Date = new Date()): Promise<QuestFullInstance[]> {
     const quests = await this.questRepository.findManyByActive(true)
     const existedInstances = await this.questInstanceRepository.findByQuestActive(true)
-    const instances: QuestInstance[] = []
+    const instances: QuestFullInstance[] = []
 
     for (const quest of quests) {
       const InstanceFromQuest = existedInstances.find((instance) => instance.questId === quest.id)

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { CompleteQuestUseCase } from '../application/complete-quest'
-import { GrantExperienceUseCase } from '../../progression/use-cases/grant-experience'
+import { GrantExperienceUseCase } from '../../progression/application/grant-experience'
+import { ApplyLevelUpUseCase } from '../../progression/application/apply-level-up'
 import { InMemoryProgressionRepository } from '../../progression/infrastructure/in-memory-progression-repository'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
 import { InMemoryQuestInstanceRepository } from '../infrastructure/in-memory-quest-instance-repository'
@@ -31,7 +32,8 @@ describe('CompleteQuestUseCase', () => {
 
   function build () {
     const progressionRepository = new InMemoryProgressionRepository(characterRepository, restPointRepository)
-    const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
+    const applyLevelUp = new ApplyLevelUpUseCase(progressionRepository)
+    const grantExperience = new GrantExperienceUseCase(characterRepository, applyLevelUp, undefined, publishEvent)
     return new CompleteQuestUseCase(
       questInstanceRepository,
       questRepository,

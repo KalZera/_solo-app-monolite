@@ -15,7 +15,6 @@ import { prismaPlugin } from './infrastructure/prisma/plugin'
 import { jwtPlugin } from './infrastructure/jwt/plugin'
 import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { characterHistoryPlugin } from './infrastructure/events/character-history-plugin'
-import { progressionPlugin } from './infrastructure/events/progression-plugin'
 import { questExpirationSchedulerPlugin } from './infrastructure/scheduler/quest-expiration-scheduler-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 import { errorHandler } from './infrastructure/http/error-handler'
@@ -32,7 +31,6 @@ export function buildApp () {
   app.register(jwtPlugin)
   app.register(eventStorePlugin)
   app.register(characterHistoryPlugin)
-  app.register(progressionPlugin)
   app.register(questExpirationSchedulerPlugin)
 
   app.setErrorHandler(errorHandler)

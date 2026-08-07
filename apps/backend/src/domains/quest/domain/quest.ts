@@ -1,4 +1,5 @@
 import type { ID } from '../../../shared/types/index'
+import type { QuestInstance } from './quest-instance'
 import type { Recurrence } from './recurrence'
 
 // ─── Quest rank → XP (Decisão #9 / CARD-103) ─────────────────────────────────
@@ -51,6 +52,22 @@ export interface Quest {
   objectiveTemplates?: QuestObjectiveTemplate[]
   createdAt: Date
   updatedAt: Date
+}
+
+export interface QuestParsed {
+  id: ID
+  characterId: ID
+  categoryId: ID | null
+  title: string
+  description: string
+  recurrence: Recurrence
+  rank: string
+  rewardXp: number
+  active: boolean
+  deadlineDate: Date | null
+  createdAt: Date
+  updatedAt: Date
+  instance: QuestInstance
 }
 
 export interface CreateQuestData {

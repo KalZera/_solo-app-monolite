@@ -17,7 +17,7 @@ export const QUEST_INSTANCE_STATUSES: QuestInstanceStatus[] = [
 
 // Once an instance reaches a terminal status it can no longer transition
 // (COMPLETED is immutable; FAILED never returns to PENDING; EXPIRED is final).
-export const TERMINAL_QUEST_INSTANCE_STATUSES: QuestInstanceStatus[] = ['COMPLETED', 'FAILED', 'EXPIRED']
+export const FINISHED_QUEST_INSTANCE_STATUSES: QuestInstanceStatus[] = ['COMPLETED', 'FAILED', 'EXPIRED']
 
 export interface QuestInstanceObjective {
   id: ID
@@ -37,7 +37,22 @@ export interface QuestInstance {
   progress: number
   status: QuestInstanceStatus
   rewardGranted: boolean
-  objectives: QuestInstanceObjective[]
+  objectives?: QuestInstanceObjective[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface QuestFullInstance {
+  id: ID
+  questId: ID
+  scheduledDate: Date
+  deadline: Date | null
+  startedAt: Date | null
+  completedAt: Date | null
+  progress: number
+  status: QuestInstanceStatus
+  rewardGranted: boolean
+  objectives?: QuestInstanceObjective[]
   createdAt: Date
   updatedAt: Date
   quest?: Quest
@@ -57,7 +72,7 @@ export const OBJECTIVE_COMPLETION_THRESHOLD = 0.7
 const PERCENT = 100
 
 export function isTerminalStatus (status: QuestInstanceStatus): boolean {
-  return TERMINAL_QUEST_INSTANCE_STATUSES.includes(status)
+  return FINISHED_QUEST_INSTANCE_STATUSES.includes(status)
 }
 
 // Ratio of completed objectives (0..1). No objectives is treated as unblocked (ratio 1).
@@ -74,19 +89,19 @@ export function calculateProgress (objectives: QuestInstanceObjective[]): number
   return Math.round(objectivesCompletionRatio(objectives) * PERCENT)
 }
 
-export function canComplete (instance: QuestInstance): boolean {
+export function canComplete (instance: QuestFullInstance): boolean {
   if (isTerminalStatus(instance.status)) return false
-  return objectivesCompletionRatio(instance.objectives) > OBJECTIVE_COMPLETION_THRESHOLD
+  return objectivesCompletionRatio(instance.objectives || []) > OBJECTIVE_COMPLETION_THRESHOLD
 }
 
-export function isExpired (instance: QuestInstance, now: Date = new Date()): boolean {
+export function isExpired (instance: QuestFullInstance, now: Date = new Date()): boolean {
   if (isTerminalStatus(instance.status)) return instance.status === 'EXPIRED'
   return instance.deadline !== null && instance.deadline < now
 }
 
 // Currently actionable: still open (PENDING/STARTED) and past no deadline. Completed,
 // failed and expired executions are excluded (e.g. a weekly already done this week).
-export function isActiveInstance (instance: QuestInstance, now: Date = new Date()): boolean {
+export function isActiveInstance (instance: QuestFullInstance, now: Date = new Date()): boolean {
   return !isTerminalStatus(instance.status) && !isExpired(instance, now)
 }
 
@@ -102,7 +117,7 @@ export const STARTED_FAIL_GRACE_PERIOD_DAYS = 3
 //   - PENDING (never started) → as soon as the deadline passes.
 //   - STARTED (in progress) → only once STARTED_FAIL_GRACE_PERIOD_DAYS have elapsed since
 //     the deadline (a longer grace period than PENDING, but not indefinite).
-export function shouldAutoFail (instance: QuestInstance, now: Date = new Date()): boolean {
+export function shouldAutoFail (instance: QuestFullInstance, now: Date = new Date()): boolean {
   if (instance.deadline === null || instance.deadline >= now) return false
   if (instance.status === 'PENDING') return true
   if (instance.status === 'STARTED') {
@@ -117,7 +132,7 @@ export function shouldAutoFail (instance: QuestInstance, now: Date = new Date())
 // executions drop out so they don't linger for the whole period).
 export function isVisibleInActiveFeed (
   recurrence: Recurrence,
-  instance: QuestInstance,
+  instance: QuestFullInstance,
   now: Date = new Date()
 ): boolean {
   if (isActiveInstance(instance, now)) return true
@@ -131,7 +146,7 @@ export type QuestTab = 'daily' | 'weekly' | 'history'
 
 export function matchesQuestTab (
   recurrence: Recurrence,
-  instance: QuestInstance,
+  instance: QuestFullInstance,
   tab: QuestTab,
   now: Date = new Date()
 ): boolean {
@@ -141,13 +156,14 @@ export function matchesQuestTab (
 }
 
 export interface QuestInstanceRepository {
-  findById(id: ID): Promise<QuestInstance | null>
-  findByQuestActive(active: boolean): Promise<QuestInstance[]>
-  findByQuestAndScheduledDate(questId: ID, scheduledDate: Date): Promise<QuestInstance | null>
-  findByQuestId(questId: ID): Promise<QuestInstance[]>
-  create(data: CreateQuestInstanceData): Promise<QuestInstance>
-  save(id: ID, data: Partial<Omit<QuestInstance, 'objectives'>>): Promise<QuestInstance>
-  updateObjective(instanceId: ID, objectiveId: ID, data: Partial<QuestInstanceObjective>): Promise<QuestInstance>
+  findById(id: ID): Promise<QuestFullInstance | null>
+  findByCharacterId(characterId: ID): Promise<QuestFullInstance[]>
+  findByQuestActive(active: boolean): Promise<QuestFullInstance[]>
+  findByQuestAndScheduledDate(questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null>
+  findByQuestId(questId: ID): Promise<QuestFullInstance[]>
+  create(data: CreateQuestInstanceData): Promise<QuestFullInstance>
+  save(id: ID, data: Partial<Omit<QuestFullInstance, 'objectives'>>): Promise<QuestFullInstance>
+  updateObjective(instanceId: ID, objectiveId: ID, data: Partial<QuestInstanceObjective>): Promise<QuestFullInstance>
   // Active (PENDING/STARTED) instances whose deadline has already passed.
-  findDueForExpiration(now: Date): Promise<QuestInstance[]>
+  findDueForExpiration(now: Date): Promise<QuestFullInstance[]>
 }
