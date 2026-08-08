@@ -8,6 +8,13 @@ interface ProgressBarProps {
   className?: string
 }
 
+const borderClass = {
+  primary: 'border-primary/70',
+  success: 'border-success/70',
+  epic: 'border-epic/15',
+  legendary: 'border-legendary/70',
+} as const
+
 const fillClass = {
   primary: 'bg-primary',
   success: 'bg-success',
@@ -17,7 +24,13 @@ const fillClass = {
 export function ProgressBar({ value, max = 100, tone = 'primary', className }: ProgressBarProps) {
   const pct = max <= 0 ? 0 : Math.max(0, Math.min(100, (value / max) * 100))
   return (
-    <View className={cn('h-2 w-full overflow-hidden rounded-full bg-surface-raised', className)}>
+    <View
+      className={cn(
+        'h-2 w-full overflow-hidden rounded-full bg-surface-raised border',
+        borderClass[tone],
+        className,
+      )}
+    >
       <View className={cn('h-full rounded-full', fillClass[tone])} style={{ width: `${pct}%` }} />
     </View>
   )

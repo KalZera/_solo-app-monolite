@@ -17,14 +17,15 @@ function Corners() {
 
 interface SystemCardProps {
   children: ReactNode
+  corners?: boolean
   className?: string
 }
 
 /** Bordered surface panel framed with corner brackets. */
-export function SystemCard({ children, className }: SystemCardProps) {
+export function SystemCard({ children, corners = true, className }: SystemCardProps) {
   return (
-    <View className={cn('relative rounded-2xl border border-line bg-surface/50 p-4', className)}>
-      <Corners />
+    <View className={cn('relative rounded-lg border border-line bg-surface/50 p-4', className)}>
+      {corners ?? <Corners />}
       {children}
     </View>
   )

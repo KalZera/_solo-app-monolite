@@ -18,6 +18,18 @@ export interface CharacterProfile {
   powerScore?: number
   stats?: CharacterStats
   rank?: string
+  progression:Progression
+}
+
+interface Progression {
+  level: number
+  totalXp: number
+  currentLevelXp: number
+  nextLevelXp: number
+  xpIntoCurrentLevel: number
+  xpRemaining: number
+  progress: number
+  attributePointsAvailable: number
 }
 
 /** Body accepted by `POST /characters/` (see character.schemas.ts on the backend). */

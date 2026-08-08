@@ -28,7 +28,7 @@ export function Select<T extends string>({ options, value, onChange, className }
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
             className={cn(
-              'rounded-lg border px-3.5 py-2',
+              'rounded border px-3.5 py-2',
               selected ? 'border-primary bg-primary/15' : 'border-line bg-surface',
             )}
           >
