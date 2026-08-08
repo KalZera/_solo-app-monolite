@@ -151,6 +151,15 @@
     }
   },
   "quest": {
+    "category": {
+      "estudo": "Study",
+      "saúde": "Health",
+      "carreira": "Career",
+      "pessoal": "Personal",
+      "trabalho": "Work",
+      "social": "Social",
+      "hobby": "Hobby"
+    },
     "recurrence": {
       "NONE": "One-time",
       "DAILY": "Daily",
@@ -188,6 +197,7 @@
       "objectiveDone": "Done",
       "thresholdHint": "Complete more than 70% of the objectives to finish this quest.",
       "start": "Start Quest",
+      "completeBy": "Complete By",
       "starting": "Starting…",
       "complete": "Complete Quest",
       "completing": "Completing…",

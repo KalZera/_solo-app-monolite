@@ -151,6 +151,15 @@
     }
   },
   "quest": {
+    "category": {
+      "estudo": "Estudo",
+      "saúde": "Saúde",
+      "carreira": "Carreira",
+      "pessoal": "Pessoal",
+      "trabalho": "Trabalho",
+      "social": "Social",
+      "hobby": "Hobby"
+    },
     "recurrence": {
       "NONE": "Única",
       "DAILY": "Diária",
@@ -188,6 +197,7 @@
       "objectiveDone": "Concluir",
       "thresholdHint": "Conclua mais de 70% dos objetivos para finalizar esta missão.",
       "start": "Iniciar Missão",
+      "completeBy": "Finalizar até",
       "starting": "Iniciando…",
       "complete": "Concluir Missão",
       "completing": "Concluindo…",
