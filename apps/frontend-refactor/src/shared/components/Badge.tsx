@@ -29,14 +29,15 @@ interface BadgeProps {
   label: string
   tone?: BadgeTone
   className?: string
+  classNameText?: string
 }
 
-export function Badge({ label, tone = 'primary', className }: BadgeProps) {
+export function Badge({ label, tone = 'primary', className, classNameText }: BadgeProps) {
   return (
     <View className={cn('self-start rounded-md px-2 py-0.5', containerClass[tone], className)}>
       <Text
         weight="semibold"
-        className={cn('text-[11px] uppercase tracking-wider', textClass[tone])}
+        className={cn('text-[11px] uppercase tracking-wider', textClass[tone], classNameText)}
       >
         {label}
       </Text>

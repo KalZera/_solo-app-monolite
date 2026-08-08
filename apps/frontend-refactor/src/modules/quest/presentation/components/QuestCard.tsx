@@ -1,18 +1,10 @@
 import { Pressable, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
-import { Badge, Panel, Text, type BadgeTone } from '@/shared/components'
+import { Badge, GradientBackground, Panel, Text } from '@/shared/components'
 import type { Quest } from '../../domain/quest.types'
 import type { QuestInstance } from '../../domain/quest-instance.types'
 import { QuestStatusBadge } from './QuestStatusBadge'
-
-const rankTone: Record<string, BadgeTone> = {
-  E: 'muted',
-  D: 'primary',
-  C: 'success',
-  B: 'warning',
-  A: 'epic',
-  S: 'legendary',
-}
+import { rankTone } from './rank-tone'
 
 interface QuestCardProps {
   quest: Quest
@@ -27,7 +19,7 @@ export function QuestCard({ quest, instance, onPress }: QuestCardProps) {
     ? new Date(instance.deadline as string).toLocaleDateString('pt-br')
     : 'N/A'
   const card = (
-    <Panel className="gap-3">
+    <Panel className="gap-3 rounded-lg">
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
           <Text weight="semibold" className="text-lg text-content">

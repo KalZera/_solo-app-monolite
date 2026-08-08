@@ -8,7 +8,7 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 export type ButtonSize = 'md' | 'lg'
 
 const containerClass: Record<ButtonVariant, string> = {
-  primary: 'bg-primary active:bg-primary-hover',
+  primary: 'bg-primary/10 active:bg-primary/20 border-primary/60',
   secondary: 'bg-surface-raised border border-line active:border-primary',
   ghost: 'bg-transparent active:opacity-60',
   danger: 'bg-danger active:opacity-90',
@@ -34,6 +34,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children'> {
   icon?: ReactNode
   fullWidth?: boolean
   className?: string
+  classNameLabel?: string
 }
 
 export function Button({
@@ -45,6 +46,7 @@ export function Button({
   fullWidth = true,
   disabled,
   className,
+  classNameLabel,
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading
@@ -54,7 +56,8 @@ export function Button({
       accessibilityRole="button"
       disabled={isDisabled}
       className={cn(
-        'flex-row items-center justify-center gap-2 rounded-xl',
+        // 'flex-row items-center justify-center gap-2 rounded-xl  bg-primary/10 active:bg-primary/20',
+        'flex-row mt-1 gap-2 items-center justify-center rounded-lg border  py-3',
         sizeClass[size],
         containerClass[variant],
         fullWidth && 'w-full',
@@ -70,7 +73,10 @@ export function Button({
       ) : (
         icon
       )}
-      <Text weight="semibold" className={cn('text-base tracking-wide', labelClass[variant])}>
+      <Text
+        weight="semibold"
+        className={cn('text-base tracking-wide uppercase', labelClass[variant], classNameLabel)}
+      >
         {label}
       </Text>
     </Pressable>

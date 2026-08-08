@@ -24,9 +24,13 @@ import {
 } from '../../domain/quest-instance.rules'
 import { QuestObjectiveRow } from '../components/QuestObjectiveRow'
 import { QuestStatusBadge } from '../components/QuestStatusBadge'
+import { QuestCategoryIcon } from '../components/QuestCategoryIcon'
 import { useQuestsById } from '../../application/useQuestById'
 import type { QuestFullInstance } from '../../domain/quest-instance.types'
 import { useQuestCategories } from '../../application/useQuestCategories'
+import { Calendar, ArrowUp10, CircleCheckBig } from 'lucide-react-native'
+import { rankTone } from '../components/rank-tone'
+import { colors } from '@/shared/theme/colors'
 
 export function QuestDetailScreen() {
   const { t } = useTranslation()
@@ -87,18 +91,73 @@ export function QuestDetailScreen() {
       <View className="gap-5 flex-1">
         <View className="flex-1">
           <Panel className={`gap-3 ${instance?.objectives?.length ? 'flex-1' : ''}`}>
-            <View className="flex-row items-start justify-between gap-3">
-              <Text weight="bold" className="flex-1 text-2xl text-content flex justify-center">
-                {quest.title}
-              </Text>
-              {/* <Badge label={quest.rank} tone="legendary" /> */}
+            <View className="flex-row items-center justify-between gap-3">
+              <QuestCategoryIcon categoryName={category?.name} />
+              <View className="flex flex-column flex-start items-start flex-1">
+                <Text weight="bold" className="flex-1 text-2xl text-content flex uppercase">
+                  {quest.title}
+                </Text>
+              </View>
+              <View>
+                <Badge
+                  label={quest.rank}
+                  tone={rankTone[quest.rank] ?? 'primary'}
+                  className="h-10 w-10 items-center justify-center"
+                  classNameText="text-[24px]"
+                />
+              </View>
             </View>
-            <Text className="text-sm text-content-muted flex justify-center">
-              {quest.description}
-            </Text>
-            <Text className="text-sm text-content flex justify-center">
-              RANK <Badge label={quest.rank} tone="legendary" />
-            </Text>
+            <View className="flex flex-row gap-2">
+              <View className="flex-1 items-center rounded-lg px-3 py-2 border border-primary/60 bg-primary/15 flex-row">
+                <View>
+                  <Calendar color="#FFF" />
+                </View>
+                <View>
+                  <Text className="text-xs uppercase tracking-wide text-primary">
+                    {' '}
+                    {t(`quest.detail.type`)}{' '}
+                  </Text>
+                  <Text
+                    weight={'semibold'}
+                    className="text-xs uppercase tracking-wide text-primary"
+                  >
+                    {' '}
+                    {t(`quest.recurrence.${quest.recurrence}`)}{' '}
+                  </Text>
+                </View>
+              </View>
+              <View className="flex-1 items-center rounded-lg px-3 py-2 border border-primary/60 bg-primary/15 flex-row">
+                <View>
+                  <ArrowUp10 color="#FFF" />
+                </View>
+                <View>
+                  <Text className="text-xs uppercase tracking-wide text-primary">
+                    {' '}
+                    {t(`quest.detail.reward`)}{' '}
+                  </Text>
+                  <Text
+                    weight={'semibold'}
+                    className="text-xs uppercase tracking-wide text-primary"
+                  >
+                    {' '}
+                    {t('quest.list.reward', { xp: quest.rewardXp })}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <View className="flex flex-row gap-2">
+                <View className="flex-1 rounded-lg px-3 py-2 border border-primary/60 bg-primary/15">
+                  <Text className="text-xs uppercase tracking-wide text-primary pb-2">
+                    {' '}
+                    {t(`quest.detail.description`)}{' '}
+                  </Text>
+                  <Text weight={'semibold'} className="text-xs tracking-wide text-content">
+                    {quest.description}
+                  </Text>
+                </View>
+              </View>
+            </View>
             <View className="py-5 gap-2">
               {instance && totalObjectives > 0 ? (
                 <>
@@ -142,30 +201,36 @@ export function QuestDetailScreen() {
               ) : null}
             </View>
             <View className="flex-1" />
+
             <View className="flex-row items-center gap-2 pt-1">
-              {/* <QuestStatusBadge status={instance.status} />
-              <Badge
-                label={t(`quest.category.${(category?.name ?? 'pessoal').toLowerCase()}`)}
-                tone="muted"
-              /> */}
-              <Text weight="bold" className="text-primary">
-                {t('quest.detail.completeBy').toUpperCase()}{' '}
-                {instance.deadline
-                  ? new Date(instance.deadline).toLocaleDateString('pt-br')
-                  : 'N/A'}
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2 pt-1">
-              <Badge label={t(`quest.recurrence.${quest.recurrence}`)} tone="muted" />
-              <Badge
-                label={t(`quest.category.${(category?.name ?? 'pessoal').toLowerCase()}`)}
-                tone="muted"
-              />
-              <QuestStatusBadge status={instance.status} />
-              <View className="flex-1" />
-              <Text weight="bold" className="text-primary">
-                {t('quest.list.reward', { xp: quest.rewardXp })}
-              </Text>
+              <View className="items-center rounded-lg px-3 py-2 border border-primary/60 bg-primary/15 flex-row gap-2">
+                <View>
+                  <Calendar color="#FFF" />
+                </View>
+                <View>
+                  <Text className="text-xs uppercase tracking-wide text-primary">
+                    {' '}
+                    {t('quest.detail.completeBy').toUpperCase()}{' '}
+                  </Text>
+                  <Text
+                    weight={'semibold'}
+                    className="text-xs uppercase tracking-wide text-primary"
+                  >
+                    {instance.deadline
+                      ? new Date(instance.deadline).toLocaleDateString('pt-br')
+                      : 'N/A'}
+                  </Text>
+                </View>
+              </View>
+              <View className="rounded-lg px-3 py-2 border border-primary/60 bg-primary/15">
+                <Text className="text-xs uppercase tracking-wide text-primary">
+                  {' '}
+                  {t('quest.detail.status').toUpperCase()}{' '}
+                </Text>
+                <Text weight={'semibold'} className="text-xs uppercase tracking-wide text-primary">
+                  <QuestStatusBadge status={instance.status} />
+                </Text>
+              </View>
             </View>
           </Panel>
 
@@ -185,6 +250,12 @@ export function QuestDetailScreen() {
               loading={completeQuest.isPending}
               disabled={!canComplete(instance)}
               onPress={() => completeQuest.mutate(instance.id)}
+            />
+          ) : instance.status === 'COMPLETED' ? (
+            <Button
+              icon={<CircleCheckBig size={16} color={colors.success} />}
+              label={t('quest.detail.completeSuccessTitle')}
+              classNameLabel={`text-[${colors.success}]`}
             />
           ) : null}
         </View>

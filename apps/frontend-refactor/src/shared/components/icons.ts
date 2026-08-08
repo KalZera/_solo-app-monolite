@@ -43,5 +43,10 @@ export {
   Heart,
   Eye,
   Zap,
+  BookOpen,
+  TrendingUp,
+  Briefcase,
+  Users,
+  Gamepad2,
   type LucideIcon,
 } from 'lucide-react-native'
