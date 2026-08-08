@@ -14,12 +14,12 @@ export function LevelTransition({ from, to }: LevelTransitionProps) {
   const { t } = useTranslation()
 
   return (
-    <View className="flex-row items-center justify-center gap-3 py-1">
+    <View className="flex-row items-center justify-center gap-3 py-3">
       <View className="items-center">
-        <Text className="text-[10px] uppercase tracking-[3px] text-primary">
+        <Text className="text-[12px] uppercase tracking-[3px] text-primary">
           {t('levelUp.level')}
         </Text>
-        <Text weight="bold" className="text-4xl text-primary">
+        <Text weight="bold" className="text-5xl text-primary">
           {from}
         </Text>
       </View>
@@ -28,7 +28,7 @@ export function LevelTransition({ from, to }: LevelTransitionProps) {
 
       <Text
         weight="bold"
-        className="text-5xl text-primary-hover"
+        className="text-6xl text-primary-hover"
         style={{ textShadowColor: colors.primaryHover, textShadowRadius: 16 }}
       >
         {to}

@@ -36,7 +36,7 @@ export function LevelUpModal({ event, onConfirm }: LevelUpModalProps) {
       >
         <Pressable
           onPress={() => undefined}
-          className="w-full max-w-[340px] overflow-hidden rounded-2xl border border-primary/50"
+          className="w-full max-w-[340px] overflow-hidden rounded-lgl border border-primary/50"
           style={{
             shadowColor: colors.primary,
             shadowOpacity: 0.5,

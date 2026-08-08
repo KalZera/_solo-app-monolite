@@ -18,18 +18,18 @@ export function LevelUpStatsTable({ stats }: { stats: LevelUpStatChange[] }) {
         <View
           key={stat.key}
           className={cn(
-            'flex-row items-center px-3.5 py-2',
+            'flex-row items-center px-3.5 py-2 gap-2',
             index > 0 && 'border-t border-primary/10',
           )}
         >
-          <Text className="flex-1 text-xs uppercase tracking-wide text-content-muted">
+          <Text className="flex-1 text-xs uppercase tracking-wide text-content">
             {t(`character.stats.${stat.key}`)}
           </Text>
-          <Text className="w-14 text-right text-xs text-content-muted">{stat.from}</Text>
-          <View className="w-6 items-center">
-            <ChevronsRight size={12} color={colors.primary} />
+          <Text className="text-right text-xs text-content">{stat.from}</Text>
+          <View className="items-center">
+            <ChevronsRight size={16} color={colors.primary} />
           </View>
-          <Text weight="semibold" className="w-14 text-right text-xs text-primary">
+          <Text weight="semibold" className="text-right text-xs text-primary">
             {stat.to}
           </Text>
         </View>
