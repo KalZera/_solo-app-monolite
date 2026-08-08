@@ -6,11 +6,6 @@ import { RecurrenceEngine } from '../engines/recurrence.engine'
 import { createQuestInstanceCreatedEvent } from '../domain/events'
 import { getDateFilter } from '@shared/utils/date-filter'
 
-interface GetTodayQuestsInput {
-  userId: string
-  activeOnly?: boolean
-}
-
 // Materialises (lazily) and returns the current-period instance of every active template of
 // the character. Never creates future instances in bulk; the RecurrenceEngine + the
 // (questId, scheduledDate) uniqueness make it idempotent. The same "ensure" path is reusable
@@ -23,7 +18,7 @@ export class CreateQuestInstanceUseCase {
     private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
-  async execute (input: GetTodayQuestsInput, now: Date = new Date()): Promise<QuestFullInstance[]> {
+  async execute (now: Date = new Date()): Promise<QuestFullInstance[]> {
     const quests = await this.questRepository.findManyByActive(true)
     const existedInstances = await this.questInstanceRepository.findByQuestActive(true)
     const instances: QuestFullInstance[] = []

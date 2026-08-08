@@ -70,9 +70,9 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   // isso vai virar uma cron job que vai rodar todo dia e criar as quests do dia, então não precisa de rota pra isso
   // somente se rodar manualmente 
   app.get('/today', { preHandler: [app.authenticate] }, async (req) => {
-    const { status, tab } = parseInput(todayQuestsQuerySchema, req.query)
+    parseInput(todayQuestsQuerySchema, req.query)
     const createQuestInstance = new CreateQuestInstanceUseCase(questRepository, questInstanceRepository)
-    return createQuestInstance.execute({ userId: req.user.sub, activeOnly: status === 'active'})
+    return createQuestInstance.execute()
   })
 
   app.post('/instances/:instanceId/start', { preHandler: [app.authenticate] }, async (req) => {

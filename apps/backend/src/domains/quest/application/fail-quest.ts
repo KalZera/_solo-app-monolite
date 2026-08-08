@@ -28,7 +28,7 @@ export class FailQuestUseCase {
     const instance = await this.questInstanceRepository.findById(input.questInstanceId)
     if (!instance) throw new NotFoundError('QuestInstance', input.questInstanceId)
 
-    const quest = await this.questRepository.findById(instance.questId)
+    const quest = instance.quest ?? await this.questRepository.findById(instance.questId)
     if (!quest || quest.characterId !== character.id) {
       throw new NotFoundError('QuestInstance', input.questInstanceId)
     }
