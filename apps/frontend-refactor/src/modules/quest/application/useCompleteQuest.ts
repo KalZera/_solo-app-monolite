@@ -30,14 +30,13 @@ export function useCompleteQuest(rewardXp: number) {
     onSuccess: (result) => {
       // Snapshot the character BEFORE invalidating so level-up deltas are accurate.
       const previous = queryClient.getQueryData<CharacterProfile>(characterKeys.profile())
-
       queryClient.invalidateQueries({ queryKey: questKeys.all })
       // Completing grants XP, so the character/profile is now stale too.
       queryClient.invalidateQueries({ queryKey: characterKeys.all })
 
-      if (result.levelsGained.length > 0) {
+      if (result.character.level > (previous?.level ?? 0)) {
         showLevelUp({
-          fromLevel: previous?.level ?? result.character.level - result.levelsGained.length,
+          fromLevel: previous?.level ?? result.character.level - 1,
           toLevel: result.character.level,
           stats: buildStatChanges(previous, result.character),
         })

@@ -16,13 +16,13 @@ const rankTone: Record<string, BadgeTone> = {
 
 interface QuestCardProps {
   quest: Quest
-  // instance?: QuestInstance | null
+  instance?: QuestInstance | null
   onPress?: () => void
 }
 
-export function QuestCard({ quest, onPress }: QuestCardProps) {
+export function QuestCard({ quest, instance, onPress }: QuestCardProps) {
   const { t } = useTranslation()
-  const objectivesCount = quest.objectiveTemplates.length
+  const objectivesCount = (quest.objectiveTemplates ?? []).length
 
   const card = (
     <Panel className="gap-3">
@@ -40,7 +40,7 @@ export function QuestCard({ quest, onPress }: QuestCardProps) {
 
       <View className="flex-row flex-wrap items-center gap-2">
         <Badge label={t(`quest.recurrence.${quest.recurrence}`)} tone="muted" />
-        {/* {instance ? <QuestStatusBadge status={instance.status} /> : null} */}
+        {instance ? <QuestStatusBadge status={instance.status} /> : null}
         <View className="flex-1" />
         {objectivesCount > 0 ? (
           <Text className="text-xs text-content-muted">

@@ -57,7 +57,6 @@ export function CreateQuestScreen() {
     value,
   }))
   const categoryOptions = [
-    { label: t('quest.create.categoryNone'), value: '' },
     ...(categories ?? []).map((category) => ({ label: category.name, value: category.id })),
   ]
 
@@ -123,7 +122,7 @@ export function CreateQuestScreen() {
               render={({ field }) => (
                 <Select
                   options={categoryOptions}
-                  value={field.value ?? ''}
+                  value={field.value ?? categoryOptions[0]?.value ?? ''}
                   onChange={(value) => field.onChange(value || null)}
                 />
               )}

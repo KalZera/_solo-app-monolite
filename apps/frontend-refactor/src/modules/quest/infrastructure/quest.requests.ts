@@ -1,7 +1,7 @@
 import { httpClient } from '@/shared/api/http-client'
 import type { CharacterStats } from '@/modules/profile/domain/character.types'
 import type { CreateQuestPayload, Quest, QuestCategory } from '../domain/quest.types'
-import type { QuestInstance } from '../domain/quest-instance.types'
+import type { QuestFullInstance, QuestInstance } from '../domain/quest-instance.types'
 
 // ─── Templates ───────────────────────────────────────────────────────────────
 export function listQuests(): Promise<Quest[]> {
@@ -21,6 +21,10 @@ export function listQuestCategories(): Promise<QuestCategory[]> {
 // template and returns them (idempotent).
 export function getTodayQuests(): Promise<QuestInstance[]> {
   return httpClient.get<QuestInstance[]>('/quests/today')
+}
+
+export function getQuestById(id: string): Promise<QuestFullInstance> {
+  return httpClient.get<QuestFullInstance>(`/quests/${id}`)
 }
 
 // Currently-actionable executions only (backend-filtered): today's plus recurring

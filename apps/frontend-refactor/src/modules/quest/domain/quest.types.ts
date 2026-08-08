@@ -1,3 +1,4 @@
+import type { QuestInstance } from './quest-instance.types'
 import type { Recurrence } from './recurrence'
 
 /**
@@ -25,9 +26,10 @@ export interface Quest {
   // the server's default (28 days from creation) applies. Ignored for
   // DAILY/WEEKLY/MONTHLY/CUSTOM, which derive their deadline from the period instead.
   deadlineDate: string | null
-  objectiveTemplates: QuestObjectiveTemplate[]
+  objectiveTemplates?: QuestObjectiveTemplate[]
   createdAt: string
   updatedAt: string
+  instance?: QuestInstance
 }
 
 export interface QuestCategory {

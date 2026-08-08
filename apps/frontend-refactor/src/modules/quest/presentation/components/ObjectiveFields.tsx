@@ -23,7 +23,7 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
         </Text>
         <Pressable
           accessibilityRole="button"
-          onPress={() => append({ description: '', target: '' })}
+          onPress={() => append({ description: '', target: 1 })}
           className="flex-row items-center gap-1 rounded-lg border border-line px-2.5 py-1.5"
         >
           <Plus size={14} color={colors.primary} />
@@ -47,14 +47,7 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
               inputProps={{ placeholder: t('quest.create.objectivePlaceholder') }}
             />
           </View>
-          <View className="w-20">
-            <ControlledInput
-              control={control}
-              name={`objectives.${index}.target`}
-              label={t('quest.create.target')}
-              inputProps={{ placeholder: '1', keyboardType: 'numeric' }}
-            />
-          </View>
+
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('quest.create.removeObjective')}

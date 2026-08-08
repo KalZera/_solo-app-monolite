@@ -9,6 +9,7 @@ import {
   Panel,
   Screen,
   ScreenHeader,
+  SystemCard,
   SystemNotice,
   Text,
 } from '@/shared/components'
@@ -25,16 +26,16 @@ import {
 } from '../../domain/quest-instance.rules'
 import { QuestObjectiveRow } from '../components/QuestObjectiveRow'
 import { QuestStatusBadge } from '../components/QuestStatusBadge'
+import { useQuestsById } from '../../application/useQuestById'
+import type { QuestFullInstance } from '../../domain/quest-instance.types'
 
 export function QuestDetailScreen() {
   const { t } = useTranslation()
   const router = useRouter()
   const { id } = useLocalSearchParams<{ id: string }>()
 
-  const quests = useQuests()
-  const today = useTodayQuests()
-  const quest = quests.data?.find((item) => item.id === id) ?? null
-  const instance = today.data?.find((item) => item.questId === id) ?? null
+  const { data: questResponse, isLoading } = useQuestsById(id)
+  const { quest, ...instance } = questResponse ?? ({} as QuestFullInstance)
 
   const startQuest = useStartQuest()
   const completeQuest = useCompleteQuest(quest?.rewardXp ?? 0)
@@ -45,11 +46,11 @@ export function QuestDetailScreen() {
       title={t('quest.detail.title')}
       eyebrow={t('common.systemLabel')}
       onBack={() => router.back()}
-      right={instance ? <QuestStatusBadge status={instance.status} /> : undefined}
+      // right={instance ? <QuestStatusBadge status={instance.status} /> : undefined}
     />
   )
 
-  if (quests.isLoading || today.isLoading) {
+  if (isLoading) {
     return (
       <Screen>
         {header}
@@ -58,7 +59,7 @@ export function QuestDetailScreen() {
     )
   }
 
-  if (!quest) {
+  if (!quest || !instance) {
     return (
       <Screen>
         {header}
@@ -67,18 +68,20 @@ export function QuestDetailScreen() {
     )
   }
 
-  const completedCount = instance?.objectives.filter((objective) => objective.completed).length ?? 0
-  const totalObjectives = instance?.objectives.length ?? 0
+  const completedCount =
+    (instance?.objectives ?? []).filter((objective) => objective.completed).length ?? 0
+  const totalObjectives = (instance?.objectives ?? []).length ?? 0
   const showThresholdHint =
     instance !== null &&
     totalObjectives > 0 &&
     !isTerminalStatus(instance.status) &&
-    objectivesCompletionRatio(instance.objectives) <= OBJECTIVE_COMPLETION_THRESHOLD
+    objectivesCompletionRatio(instance?.objectives ?? []) <= OBJECTIVE_COMPLETION_THRESHOLD
 
   return (
     <Screen scroll>
       {header}
       <View className="gap-5">
+        {/* <SystemCard className="gap-3"> */}
         <Panel className="gap-3">
           <View className="flex-row items-start justify-between gap-3">
             <Text weight="bold" className="flex-1 text-2xl text-content">
@@ -87,6 +90,15 @@ export function QuestDetailScreen() {
             <Badge label={quest.rank} tone="legendary" />
           </View>
           <Text className="text-sm text-content-muted">{quest.description}</Text>
+          <View className="flex-row items-center gap-2 pt-1">
+            <QuestStatusBadge status={instance.status} />
+            {/* <Badge label={t(`quest.category.${quest.category.toLowerCase()}`)} tone="muted" /> */}
+            <View className="flex-1" />
+            <Text weight="bold" className="text-primary">
+              FINALIZAR ATÉ{' '}
+              {instance.deadline ? new Date(instance.deadline).toLocaleDateString() : 'N/A'}
+            </Text>
+          </View>
           <View className="flex-row items-center gap-2 pt-1">
             <Badge label={t(`quest.recurrence.${quest.recurrence}`)} tone="muted" />
             <View className="flex-1" />
@@ -102,9 +114,12 @@ export function QuestDetailScreen() {
               weight="semibold"
               className="text-xs uppercase tracking-widest text-content-muted"
             >
-              {t('quest.detail.objectives', { completed: completedCount, total: totalObjectives })}
+              {t('quest.detail.objectives', {
+                completed: completedCount,
+                total: totalObjectives,
+              })}
             </Text>
-            {instance.objectives.map((objective) => (
+            {(instance?.objectives ?? []).map((objective) => (
               <QuestObjectiveRow
                 key={objective.id}
                 objective={objective}
@@ -138,6 +153,7 @@ export function QuestDetailScreen() {
             onPress={() => completeQuest.mutate(instance.id)}
           />
         ) : null}
+        {/* </SystemCard> */}
       </View>
     </Screen>
   )

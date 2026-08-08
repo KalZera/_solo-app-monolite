@@ -63,7 +63,13 @@ export function QuestListScreen() {
         renderItem={({ item }) => (
           <QuestCard
             quest={item}
-            onPress={() => router.push({ pathname: '/quests/[id]', params: { id: item.id } })}
+            instance={item.instance}
+            onPress={() =>
+              router.push({
+                pathname: '/quests/[id]',
+                params: { id: item?.instance?.id as string },
+              })
+            }
           />
         )}
         ItemSeparatorComponent={() => <View className="h-3" />}
