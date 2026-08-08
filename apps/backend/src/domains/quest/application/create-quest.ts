@@ -47,6 +47,7 @@ export class CreateQuestUseCase {
     if (!isRecurrence(recurrence)) {
       throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM')
     }
+    const initialObjective = {description: "Concluir no prazo", target:1}
     //variable only if deadlineDate is not provided, otherwise it will be the provided date
     const {end:tomorrow} = getDateFilter(new Date(Date.now() + 24 * 60 * 60 * 1000));
     // XP is derived from the rank on the server, never trusted from the client (CARD-103).
@@ -61,7 +62,7 @@ export class CreateQuestUseCase {
       active: true,
       // Irrelevant for recurring types, which derive their deadline from the period instead.
       deadlineDate: recurrence === 'NONE' ? (input.deadlineDate ?? tomorrow) : tomorrow,
-      objectiveTemplates: (input.objectives ?? []).map((objective) => ({
+      objectiveTemplates: (input.objectives ?? [initialObjective]).map((objective) => ({
         description: objective.description,
         target: objective.target,
       })),
@@ -73,7 +74,7 @@ export class CreateQuestUseCase {
       questId: quest.id,
       deadline: quest.deadlineDate,
       scheduledDate: new Date(),
-      objectives:(quest?.objectiveTemplates ?? []).map((objective) => ({
+      objectives:(quest?.objectiveTemplates ?? [initialObjective]).map((objective) => ({
         description: objective.description,
         target: objective.target,
       }))

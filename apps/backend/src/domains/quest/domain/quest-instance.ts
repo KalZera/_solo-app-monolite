@@ -37,7 +37,7 @@ export interface QuestInstance {
   progress: number
   status: QuestInstanceStatus
   rewardGranted: boolean
-  objectives?: QuestInstanceObjective[]
+  objectives: QuestInstanceObjective[]
   createdAt: Date
   updatedAt: Date
 }
@@ -52,7 +52,7 @@ export interface QuestFullInstance {
   progress: number
   status: QuestInstanceStatus
   rewardGranted: boolean
-  objectives?: QuestInstanceObjective[]
+  objectives: QuestInstanceObjective[]
   createdAt: Date
   updatedAt: Date
   quest?: Quest

@@ -12,6 +12,7 @@ import type {
   QuestInstanceRepository,
 } from '../domain/quest-instance'
 import type { ID } from '../../../shared/types/index'
+import type { Quest } from '../domain/quest'
 
 type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObjective[], quest?: PrismaQuest }
 
@@ -37,7 +38,7 @@ function toDomain (record: InstanceRecord): QuestFullInstance {
     })),
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
-    quest: record.quest ? record.quest : undefined,
+    quest: record.quest ? record.quest as Quest : undefined,
   }
 }
 
@@ -57,7 +58,10 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
       quest:{
         characterId: characterId
       },
-    }, include:{...INCLUDE_OBJECTIVES, quest:true}
+    }, include:{...INCLUDE_OBJECTIVES, quest:true},
+    orderBy:{
+      status:'asc'
+    }
     })
 
     return record.map(toDomain)

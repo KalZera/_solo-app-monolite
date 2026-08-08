@@ -49,7 +49,7 @@ export interface Quest {
   // of that day. Ignored for DAILY/WEEKLY/MONTHLY/CUSTOM, whose deadline is derived from the
   // period instead. Null means the NoneStrategy default (28 days from creation) applies.
   deadlineDate: Date | null
-  objectiveTemplates?: QuestObjectiveTemplate[]
+  objectiveTemplates: QuestObjectiveTemplate[]
   createdAt: Date
   updatedAt: Date
 }
