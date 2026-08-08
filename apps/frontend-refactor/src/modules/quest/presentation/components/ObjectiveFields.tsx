@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useFieldArray, type Control } from 'react-hook-form'
 import { Pressable, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
@@ -15,6 +16,11 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
   const { t } = useTranslation()
   const { fields, append, remove } = useFieldArray({ control, name: 'objectives' })
 
+  useEffect(() => {
+    const initial = { description: 'Concluir no prazo', target: 1 }
+    append(initial)
+  }, [])
+
   return (
     <View className="gap-3">
       <View className="flex-row items-center justify-between">
@@ -23,7 +29,7 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
         </Text>
         <Pressable
           accessibilityRole="button"
-          onPress={() => append({ description: '', target: 1 })}
+          onPress={() => append({ description: '', target: '' })}
           className="flex-row items-center gap-1 rounded-lg border border-line px-2.5 py-1.5"
         >
           <Plus size={14} color={colors.primary} />
@@ -47,14 +53,22 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
               inputProps={{ placeholder: t('quest.create.objectivePlaceholder') }}
             />
           </View>
-
+          <View className="w-20">
+            <ControlledInput
+              control={control}
+              name={`objectives.${index}.target`}
+              label={t('quest.create.target')}
+              inputProps={{ placeholder: '1', keyboardType: 'numeric' }}
+            />
+          </View>
           <Pressable
             accessibilityRole="button"
+            disabled={fields.length === 1}
             accessibilityLabel={t('quest.create.removeObjective')}
             onPress={() => remove(index)}
-            className="mb-1 h-12 w-10 items-center justify-center rounded-xl border border-line"
+            className="h-12 w-10 items-center justify-center rounded-xl border border-line"
           >
-            <Trash2 size={16} color={colors.danger} />
+            <Trash2 size={16} color={fields.length === 1 ? colors.contentMuted : colors.danger} />
           </Pressable>
         </View>
       ))}

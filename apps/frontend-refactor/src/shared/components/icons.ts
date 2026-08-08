@@ -12,6 +12,7 @@ export {
   User,
   CircleUser,
   Plus,
+  Minus,
   Check,
   X,
   ChevronLeft,

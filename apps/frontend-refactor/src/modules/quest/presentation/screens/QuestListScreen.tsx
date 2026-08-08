@@ -15,9 +15,10 @@ import {
 import { Plus, ScrollText } from '@/shared/components/icons'
 import { getErrorMessage } from '@/shared/api/api-error'
 import { colors } from '@/shared/theme/colors'
-import { useFilteredQuests, type QuestTab } from '../../application/useFilteredQuests'
+import { type QuestTab } from '../../application/useFilteredQuests'
 import { useQuests } from '../../application/useQuests'
 import { QuestCard } from '../components/QuestCard'
+import type { QuestInstance } from '../../domain/quest-instance.types'
 
 const FILTERS: QuestTab[] = ['all', 'daily', 'weekly', 'history']
 
@@ -26,7 +27,6 @@ export function QuestListScreen() {
   const router = useRouter()
   const [filter, setFilter] = useState<QuestTab>('daily')
   const { data: quests, isLoading, isError, error, refetch, isRefetching } = useQuests()
-  // const { quests } = useFilteredQuests(filter)
 
   const createButton = (
     <TabButton
@@ -42,7 +42,7 @@ export function QuestListScreen() {
       return (
         <View className="gap-4">
           <SystemNotice variant="error" message={getErrorMessage(error)} />
-          {/* <Button label={t('common.retry')} variant="secondary" onPress={refetch} /> */}
+          <Button label={t('common.retry')} variant="secondary" onPress={() => refetch()} />
         </View>
       )
     }
@@ -59,11 +59,11 @@ export function QuestListScreen() {
     return (
       <FlatList
         data={quests}
-        keyExtractor={(quest) => quest.id}
+        keyExtractor={(quest) => (quest.instance as QuestInstance).id}
         renderItem={({ item }) => (
           <QuestCard
             quest={item}
-            instance={item.instance}
+            instance={item.instance as QuestInstance}
             onPress={() =>
               router.push({
                 pathname: '/quests/[id]',

@@ -15,7 +15,7 @@ export function useUpdateObjective() {
 
   return useMutation({
     mutationFn: (input: UpdateQuestObjectiveInput) => updateQuestObjective(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: questKeys.today() }),
+    onSuccess: (result) => queryClient.invalidateQueries({ queryKey: questKeys.byId(result.instance.id) }),
     onError: (error) => notifyError(t('quest.detail.objectiveErrorTitle'), getErrorMessage(error)),
   })
 }

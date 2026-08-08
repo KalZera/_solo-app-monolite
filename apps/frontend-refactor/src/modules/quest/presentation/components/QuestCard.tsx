@@ -16,14 +16,16 @@ const rankTone: Record<string, BadgeTone> = {
 
 interface QuestCardProps {
   quest: Quest
-  instance?: QuestInstance | null
+  instance: QuestInstance
   onPress?: () => void
 }
 
 export function QuestCard({ quest, instance, onPress }: QuestCardProps) {
   const { t } = useTranslation()
   const objectivesCount = (quest.objectiveTemplates ?? []).length
-
+  const deadLineDate = instance
+    ? new Date(instance.deadline as string).toLocaleDateString('pt-br')
+    : 'N/A'
   const card = (
     <Panel className="gap-3">
       <View className="flex-row items-start justify-between gap-3">
@@ -31,15 +33,19 @@ export function QuestCard({ quest, instance, onPress }: QuestCardProps) {
           <Text weight="semibold" className="text-lg text-content">
             {quest.title}
           </Text>
-          <Text numberOfLines={2} className="text-sm text-content-muted">
+          {/* <Text numberOfLines={2} className="text-sm text-content-muted">
             {quest.description}
-          </Text>
+          </Text> */}
         </View>
         <Badge label={quest.rank} tone={rankTone[quest.rank] ?? 'primary'} />
       </View>
 
       <View className="flex-row flex-wrap items-center gap-2">
         <Badge label={t(`quest.recurrence.${quest.recurrence}`)} tone="muted" />
+        <Badge
+          label={`${t('quest.detail.completeBy').toUpperCase()} ${deadLineDate}`}
+          tone="muted"
+        />
         {instance ? <QuestStatusBadge status={instance.status} /> : null}
         <View className="flex-1" />
         {objectivesCount > 0 ? (
