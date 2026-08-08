@@ -4,7 +4,7 @@ import { hashPassword } from '../src/shared/security/password'
 
 const prisma = new PrismaClient()
 
-const CATEGORY_NAMES = ['Estudo', 'Saúde', 'Carreira', 'Pessoal']
+const CATEGORY_NAMES = ['Estudo', 'Saúde', 'Carreira', 'Pessoal', 'Trabalho', 'Social', 'Hobby']
 
 async function main() {
   const admin = await prisma.user.upsert({

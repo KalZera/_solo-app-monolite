@@ -19,6 +19,7 @@ import {
   updateCharacterBodySchema,
 } from './character.schemas'
 import '../../../infrastructure/jwt/types.js'
+import { GetProgressionUseCase } from '../../progression/application/get-progression'
 
 export const characterRoutes: FastifyPluginAsync = async (app) => {
   const repository = new PrismaCharacterRepository(app.prisma)
@@ -26,7 +27,8 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   const historyRepository = new PrismaCharacterHistoryRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
-    const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository)
+    const getProgressioh = new GetProgressionUseCase(repository)
+    const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository, getProgressioh)
     return getCharacterProfile.execute({ userId: req.user.sub })
   })
 
