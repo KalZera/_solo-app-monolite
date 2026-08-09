@@ -1,5 +1,6 @@
 import type { ID } from '../../../shared/types/index'
 import type { CharacterRepository } from '../../character/domain/character'
+import type { CharacterRestPointRepository } from '../../character/domain/character-rest-point'
 import { NotFoundError } from '../../../shared/errors/app-error'
 import { ProgressionEngine } from '../engines/progression.engine'
 import type { ProgressionResponse } from '../domain/progression'
@@ -26,6 +27,7 @@ interface GetProgressionInput {
 export class GetProgressionUseCase {
   constructor (
     private readonly characterRepository: CharacterRepository,
+    private readonly characterRestPointRepository: CharacterRestPointRepository,
     private readonly engine: ProgressionEngine = new ProgressionEngine()
   ) {}
 
@@ -38,7 +40,8 @@ export class GetProgressionUseCase {
     }
 
     const totalXp = this.engine.calculateTotalXpForLevel(character.level) + character.experience
+    const restPoints = await this.characterRestPointRepository.findByCharacterId(character.id)
 
-    return this.engine.getProgress(totalXp)
+    return this.engine.getProgress(totalXp, restPoints?.restPoints ?? 0)
   }
 }

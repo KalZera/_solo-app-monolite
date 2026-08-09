@@ -98,7 +98,7 @@ export class ProgressionEngine {
   }
 
   // Complete analytical snapshot, ready to serialise straight to a client.
-  getProgress (totalXp: number): LevelProgress {
+  getProgress (totalXp: number, restPoints : number): LevelProgress {
     const xp = this.normalizeXp(totalXp)
     const level = this.calculateLevel(xp)
     const currentLevelXp = this.getCurrentLevelXp(level)
@@ -114,7 +114,7 @@ export class ProgressionEngine {
       xpIntoCurrentLevel,
       xpRemaining: nextLevelXp - xp,
       progress: levelSpan === 0 ? 0 : this.roundPercent((xpIntoCurrentLevel / levelSpan) * PERCENT),
-      attributePointsAvailable: this.getAvailableAttributePoints(level),
+      attributePointsAvailable: restPoints
     }
   }
 

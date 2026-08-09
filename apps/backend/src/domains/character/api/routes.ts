@@ -27,8 +27,8 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   const historyRepository = new PrismaCharacterHistoryRepository(app.prisma)
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
-    const getProgressioh = new GetProgressionUseCase(repository)
-    const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository, getProgressioh)
+    const getProgression = new GetProgressionUseCase(repository, restPointRepository)
+    const getCharacterProfile = new GetCharacterProfileUseCase(repository, restPointRepository, getProgression)
     return getCharacterProfile.execute({ userId: req.user.sub })
   })
 

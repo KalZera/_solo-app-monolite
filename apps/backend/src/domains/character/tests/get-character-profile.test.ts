@@ -3,6 +3,7 @@ import { GetCharacterProfileUseCase } from '../application/get-character-profile
 import { NotFoundError } from '../../../shared/errors/app-error'
 import { InMemoryCharacterRepository } from '../infrastructure/in-memory-character-repository'
 import { InMemoryCharacterRestPointRepository } from '../infrastructure/in-memory-character-rest-point-repository'
+import { GetProgressionUseCase } from '../../progression/application/get-progression'
 
 describe('GetCharacterProfileUseCase', () => {
   let repository: InMemoryCharacterRepository
@@ -14,7 +15,8 @@ describe('GetCharacterProfileUseCase', () => {
   })
 
   function buildUseCase () {
-    return new GetCharacterProfileUseCase(repository, restPointRepository)
+    const progression = new GetProgressionUseCase(repository, restPointRepository)
+    return new GetCharacterProfileUseCase(repository, restPointRepository, progression)
   }
 
   it('returns the character profile with computed power score and rank', async () => {
