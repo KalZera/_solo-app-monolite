@@ -4,7 +4,7 @@ import { cn } from '../utils/cn'
 interface ProgressBarProps {
   value: number
   max?: number
-  tone?: 'primary' | 'success' | 'legendary'
+  tone?: 'primary' | 'success' | 'legendary' | 'danger' | 'epic'
   className?: string
 }
 
@@ -13,12 +13,15 @@ const borderClass = {
   success: 'border-success/70',
   epic: 'border-epic/15',
   legendary: 'border-legendary/70',
+  danger: 'border-danger/70',
 } as const
 
 const fillClass = {
   primary: 'bg-primary',
   success: 'bg-success',
+  epic: 'bg-epic',
   legendary: 'bg-legendary',
+  danger: 'bg-danger',
 } as const
 
 export function ProgressBar({ value, max = 100, tone = 'primary', className }: ProgressBarProps) {

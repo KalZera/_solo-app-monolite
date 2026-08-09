@@ -26,16 +26,16 @@ export function AttributeBars({ stats }: { stats?: CharacterStats }) {
       {DISPLAY_ORDER.map((key, index) => {
         const Icon = statIcon[key]
         return (
-          <View key={key} className="flex-row items-center gap-3">
+          <View key={key} className="flex-row items-center gap-2">
             <Icon size={16} color={colors.primary} />
             <Text
               numberOfLines={1}
-              className="w-24 text-[11px] uppercase tracking-wide text-content-muted"
+              className="w-24 text-[11px] uppercase tracking-wide text-primary-hover font-semibold"
             >
               {t(`character.stats.${key}`)}
             </Text>
-            <ProgressBar value={values[index]} max={max} className="flex-1" />
-            <Text weight="bold" className="w-8 text-right text-xs text-content">
+            <ProgressBar value={values[index]} max={values[index]} className="flex-1" />
+            <Text weight="bold" className="w-7 text-right text-xs text-content">
               {values[index]}
             </Text>
           </View>

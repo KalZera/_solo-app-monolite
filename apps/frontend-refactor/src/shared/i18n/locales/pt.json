@@ -105,12 +105,18 @@
       "xp": "{{current}} / {{max}} XP",
       "titleLabel": "Título",
       "noTitle": "Nenhum título equipado",
-      "information": "Informações",
+      "information": "Informações Básicas",
       "hunterId": "ID do Caçador",
       "affiliation": "Afiliação",
       "affiliationNone": "Nenhuma",
       "ranking": "Ranking",
-      "powerScore": "Power Score"
+      "powerScore": "Power Score",
+      "HP": "HP",
+      "MP": "MP",
+      "fatigue": "Fadiga",
+      "condition": "Condição",
+      "healthy": "Saudavel",
+      "poisoned": "Envenenado"
     },
     "status": {
       "title": "Status",

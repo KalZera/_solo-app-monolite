@@ -18,30 +18,16 @@ export function StatusView({ profile }: { profile: CharacterProfile }) {
   return (
     <View className="relative overflow-hidden rounded-2xl border border-line bg-surface/40">
       <View className="flex-row items-center justify-center px-4 pb-2 pt-3">
-        <View className="absolute left-3">
-          <LayoutGrid size={18} color={colors.contentMuted} />
-        </View>
         <Text weight="bold" className="text-base uppercase tracking-[6px] text-content">
           {t('character.status.title')}
         </Text>
-        <View className="absolute right-3">
-          <Menu size={18} color={colors.contentMuted} />
-        </View>
       </View>
       <View className="h-px bg-line" />
 
       <View className="relative h-64 bg-surface-raised">
-        {profile.avatar ? (
-          <Image
-            source={{ uri: profile.avatar }}
-            resizeMode="cover"
-            style={{ width: '100%', height: '100%' }}
-          />
-        ) : (
-          <View className="flex-1 items-center justify-center">
-            <User size={80} color={colors.line} />
-          </View>
-        )}
+        <View className="flex-1 items-center justify-center">
+          <User size={80} color={colors.line} />
+        </View>
         <LinearGradient
           colors={['transparent', 'transparent', 'rgba(11,23,32,0.94)']}
           locations={[0, 0.35, 1]}
