@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import {
-  Button,
+  Collapsable,
   HexagonBadge,
   Loading,
   Panel,
@@ -16,10 +17,10 @@ import { getErrorMessage } from '@/shared/api/api-error'
 import { useCharacterProfile } from '../../application/useCharacterProfile'
 import { CharacterIdentity } from '../components/CharacterIdentity'
 import { CharacterInfoPanel } from '../components/CharacterInfoPanel'
-import { StatusView } from '../components/StatusView'
 import { Section } from '@/shared/components/Section'
 import { AttributeBars } from '../components/AttributeBars'
-import { CircleCheckBig, Plus, User } from 'lucide-react-native'
+import { AttributePointsForm } from '../components/AttributePointsForm'
+import { User } from 'lucide-react-native'
 import { colors } from '@/shared/theme/colors'
 import { StatusBar } from '../components/StatusBar'
 
@@ -32,6 +33,7 @@ export function CharacterScreen() {
   const { t } = useTranslation()
   const router = useRouter()
   const { data, isLoading, isError, error, refetch } = useCharacterProfile()
+  const [pointsOpen, setPointsOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -113,13 +115,30 @@ export function CharacterScreen() {
             <AttributeBars stats={data.stats} />
           </View>
         </Panel>
-        {/* <Panel> */}
-        <Button
-          icon={<Plus size={20} color={colors.primary} />}
-          label={'Distribuir Pontos Extras'}
-          classNameLabel={`text-[${colors.success}]`}
-        />
-        {/* </Panel> */}
+        <Collapsable
+          title={
+            <View className="flex flex-1 flex-row justify-between">
+              <Text
+                weight="semibold"
+                className="flex-1 text-sm uppercase tracking-wide text-warning"
+              >
+                Distribuir pontos
+              </Text>
+              <Text weight="semibold" className=" text-sm uppercase tracking-wide text-warning">
+                {data.progression.attributePointsAvailable}
+              </Text>
+            </View>
+          }
+          open={pointsOpen}
+          onOpenChange={setPointsOpen}
+          className="mt-2"
+        >
+          <AttributePointsForm
+            stats={data.stats}
+            available={data.progression.attributePointsAvailable}
+            onApplied={() => setPointsOpen(false)}
+          />
+        </Collapsable>
         <StatusBar />
       </SystemCard>
     </Screen>

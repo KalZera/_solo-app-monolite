@@ -91,6 +91,15 @@
       "vitality": "Vitality",
       "luck": "Luck"
     },
+    "attributes": {
+      "distribute": "Distribute Points",
+      "remaining": "Points remaining",
+      "save": "Apply Points",
+      "saving": "Saving…",
+      "successTitle": "Points allocated",
+      "successMessage": "Your attributes have been updated.",
+      "errorTitle": "Could not allocate points"
+    },
     "validation": {
       "nameMin": "Name must be at least 1 character",
       "nameMax": "Name is too long (max 40)",

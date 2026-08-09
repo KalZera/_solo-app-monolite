@@ -33,9 +33,9 @@ export interface ProgressionSnapshot {
   restPoints: number
 }
 
-export interface AllocateAttributePointInput {
-  attribute: AllocatableAttribute
-  amount: number
+// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, luck: 1 }).
+export interface AllocateAttributePointsInput {
+  allocations: Partial<Record<AllocatableAttribute, number>>
 }
 
 /**

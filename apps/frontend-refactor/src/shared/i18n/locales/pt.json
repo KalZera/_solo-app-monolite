@@ -91,6 +91,15 @@
       "vitality": "Vitalidade",
       "luck": "Sorte"
     },
+    "attributes": {
+      "distribute": "Distribuir Pontos",
+      "remaining": "Pontos restantes",
+      "save": "Aplicar Pontos",
+      "saving": "Salvando…",
+      "successTitle": "Pontos distribuídos",
+      "successMessage": "Seus atributos foram atualizados.",
+      "errorTitle": "Não foi possível distribuir os pontos"
+    },
     "validation": {
       "nameMin": "O nome deve ter pelo menos 1 caractere",
       "nameMax": "O nome é muito longo (máx. 40)",

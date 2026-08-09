@@ -1,7 +1,7 @@
 import { httpClient } from '../api/http-client'
 import type {
-  AllocateAttributePointInput,
   AllocateAttributePointResult,
+  AllocateAttributePointsInput,
   CharacterAttributes,
   CharacterRank,
   ProgressionSnapshot,
@@ -37,7 +37,7 @@ export function getProgression(): Promise<ProgressionSnapshot> {
   return httpClient.get<CharacterProfileResponse>('/characters/').then(toProgressionSnapshot)
 }
 
-// Shape returned by POST /characters/attributes/allocate (AllocateAttributePointUseCase).
+// Shape returned by POST /characters/attributes/allocate (AllocateAttributePointsUseCase).
 interface AllocateAttributePointResponse {
   character: {
     id: string
@@ -61,12 +61,13 @@ function toAllocateResult(response: AllocateAttributePointResponse): AllocateAtt
 }
 
 /**
- * Spends rest points on one attribute. The response has no `rank` (see
+ * Spends rest points across one or more attributes in a single call (e.g.
+ * { allocations: { strength: 2, luck: 1 } }). The response has no `rank` (see
  * AllocateAttributePointResult) — refetch `getProgression()` afterwards to get the
  * authoritative post-allocation snapshot.
  */
-export function allocateAttributePoint(
-  input: AllocateAttributePointInput,
+export function allocateAttributePoints(
+  input: AllocateAttributePointsInput,
 ): Promise<AllocateAttributePointResult> {
   return httpClient
     .post<AllocateAttributePointResponse>('/characters/attributes/allocate', input)
