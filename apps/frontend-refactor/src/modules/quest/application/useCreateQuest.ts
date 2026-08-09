@@ -18,7 +18,7 @@ export function useCreateQuest() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: questKeys.all })
       success(t('quest.create.successTitle'), t('quest.create.successMessage'))
-      router.back()
+      router.push("/quests")
     },
     onError: (error) => notifyError(t('quest.create.errorTitle'), getErrorMessage(error)),
   })

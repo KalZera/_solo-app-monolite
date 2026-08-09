@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import {
   Badge,
+  BottomSheet,
   Button,
   EmptyState,
   Loading,
@@ -43,6 +45,7 @@ export function QuestDetailScreen() {
   const startQuest = useStartQuest()
   const completeQuest = useCompleteQuest(quest?.rewardXp ?? 0)
   const updateObjective = useUpdateObjective()
+  const [showRecreateConfirm, setShowRecreateConfirm] = useState(false)
 
   const header = (
     <ScreenHeader
@@ -258,8 +261,37 @@ export function QuestDetailScreen() {
             />
           ) : null}
         </View>
-        <Button label="Recriar Quest" />
+        <Button
+          label={t('quest.detail.recreateTitle')}
+          onPress={() => setShowRecreateConfirm(true)}
+        />
       </View>
+
+      <BottomSheet
+        visible={showRecreateConfirm}
+        onClose={() => setShowRecreateConfirm(false)}
+        title={t('quest.detail.recreateTitle')}
+        message={t('quest.detail.recreateMessage')}
+        onConfirm={() => {
+          setShowRecreateConfirm(false)
+          router.push({
+            pathname: '/quests/new',
+            params: {
+              title: quest.title,
+              description: quest.description,
+              rank: quest.rank,
+              recurrence: quest.recurrence,
+              categoryId: quest.categoryId ?? '',
+              objectives: JSON.stringify(
+                (quest.objectiveTemplates ?? []).map((objective) => ({
+                  description: objective.description,
+                  target: objective.target,
+                })),
+              ),
+            },
+          })
+        }}
+      />
     </Screen>
   )
 }

@@ -218,7 +218,9 @@
       "objectiveErrorTitle": "Não foi possível atualizar o objetivo",
       "completeSuccessTitle": "Missão concluída",
       "completeSuccessMessage": "+{{xp}} XP ganhos",
-      "levelUpMessage": "Subiu de nível! Você alcançou o nível {{level}}."
+      "levelUpMessage": "Subiu de nível! Você alcançou o nível {{level}}.",
+      "recreateTitle": "Recriar Missão",
+      "recreateMessage": "Gostaria de recriar da mesma forma?"
     },
     "create": {
       "title": "Nova Missão",

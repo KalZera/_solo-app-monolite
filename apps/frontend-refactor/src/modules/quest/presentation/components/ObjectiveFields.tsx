@@ -17,8 +17,12 @@ export function ObjectiveFields({ control }: ObjectiveFieldsProps) {
   const { fields, append, remove } = useFieldArray({ control, name: 'objectives' })
 
   useEffect(() => {
+    // Skip when the form already starts with objectives (e.g. the "recreate quest" prefill) —
+    // only nudge with a default one when the list is genuinely empty.
+    if (fields.length > 0) return
     const initial = { description: 'Concluir no prazo', target: 1 }
     append(initial)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

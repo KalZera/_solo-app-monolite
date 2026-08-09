@@ -218,7 +218,9 @@
       "objectiveErrorTitle": "Could not update objective",
       "completeSuccessTitle": "Quest completed",
       "completeSuccessMessage": "+{{xp}} XP earned",
-      "levelUpMessage": "Level up! You reached level {{level}}."
+      "levelUpMessage": "Level up! You reached level {{level}}.",
+      "recreateTitle": "Recreate Quest",
+      "recreateMessage": "Would you like to recreate it the same way?"
     },
     "create": {
       "title": "New Quest",

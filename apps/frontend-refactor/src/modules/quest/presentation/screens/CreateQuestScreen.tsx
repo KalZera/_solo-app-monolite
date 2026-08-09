@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -25,22 +25,44 @@ import {
 } from '../../schemas/create-quest.schema'
 import { ObjectiveFields } from '../components/ObjectiveFields'
 
+// Recreate flow (QuestDetailScreen "recreate quest" confirmation) pushes here with the
+// original quest's data as string params, pre-filling the form as if the user retyped it.
+type RecreateQuestParams = {
+  title?: string
+  description?: string
+  rank?: string
+  recurrence?: string
+  categoryId?: string
+  objectives?: string
+}
+
+function parsePrefillObjectives(raw?: string): CreateQuestFormInput['objectives'] {
+  if (!raw) return undefined
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export function CreateQuestScreen() {
   const { t } = useTranslation()
   const router = useRouter()
   const createQuest = useCreateQuest()
   const { data: categories } = useQuestCategories()
   const schema = useMemo(() => createQuestSchema(t), [t])
+  const prefill = useLocalSearchParams<RecreateQuestParams>()
 
   const { control, handleSubmit } = useForm<CreateQuestFormInput, unknown, CreateQuestFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: '',
-      description: '',
-      rank: 'E',
-      recurrence: 'NONE',
-      categoryId: null,
-      objectives: [],
+      title: prefill.title ?? '',
+      description: prefill.description ?? '',
+      rank: (prefill.rank as CreateQuestFormInput['rank']) ?? 'E',
+      recurrence: (prefill.recurrence as CreateQuestFormInput['recurrence']) ?? 'NONE',
+      categoryId: prefill.categoryId || null,
+      objectives: parsePrefillObjectives(prefill.objectives) ?? [],
     },
   })
 
