@@ -4,7 +4,7 @@ import { parseInput } from './validate'
 import { ValidationError } from '../../shared/errors/app-error'
 import { createQuestBodySchema } from '../../domains/quest/api/quest.schemas'
 import { registerBodySchema } from '../../domains/identity/api/identity.schemas'
-import { allocateAttributeBodySchema } from '../../domains/character/api/character.schemas'
+import { allocateAttributesBodySchema } from '../../domains/character/api/character.schemas'
 
 describe('parseInput', () => {
   it('returns the parsed data for valid input', () => {
@@ -50,11 +50,13 @@ describe('identity + character schemas', () => {
   })
 
   it('rejects an unknown attribute on allocate', () => {
-    expect(() => parseInput(allocateAttributeBodySchema, { attribute: 'wisdom', amount: 1 })).toThrow(ValidationError)
+    expect(() =>
+      parseInput(allocateAttributesBodySchema, { allocations: { wisdom: 1 } }),
+    ).toThrow(ValidationError)
   })
 
   it('coerces a numeric attribute amount provided as a string', () => {
-    const result = parseInput(allocateAttributeBodySchema, { attribute: 'strength', amount: '3' })
-    expect(result.amount).toBe(3)
+    const result = parseInput(allocateAttributesBodySchema, { allocations: { strength: '3' } })
+    expect(result.allocations.strength).toBe(3)
   })
 })

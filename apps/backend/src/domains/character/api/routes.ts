@@ -3,7 +3,7 @@ import { CreateCharacterUseCase } from '../application/create-character'
 import { GetCharacterProfileUseCase } from '../application/get-character-profile'
 import { UpdateCharacterUseCase } from '../application/update-character'
 import { DeleteCharacterUseCase } from '../application/delete-character'
-import { AllocateAttributePointUseCase } from '../application/allocate-attribute-point'
+import { AllocateAttributePointsUseCase } from '../application/allocate-attribute-points'
 import { GetCharacterHistoryUseCase } from '../application/get-character-history'
 import { UploadCharacterAvatarUseCase } from '../application/upload-character-avatar'
 import { PrismaCharacterRepository } from '../infrastructure/prisma-character-repository'
@@ -13,7 +13,7 @@ import { R2AvatarStorage } from '../../../infrastructure/storage/r2-avatar-stora
 import { ValidationError } from '../../../shared/errors/app-error'
 import { parseInput } from '../../../infrastructure/http/validate'
 import {
-  allocateAttributeBodySchema,
+  allocateAttributesBodySchema,
   characterHistoryQuerySchema,
   createCharacterBodySchema,
   updateCharacterBodySchema,
@@ -52,9 +52,9 @@ export const characterRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.post('/attributes/allocate', { preHandler: [app.authenticate] }, async (req) => {
-    const body = parseInput(allocateAttributeBodySchema, req.body)
-    const allocateAttributePoint = new AllocateAttributePointUseCase(repository, restPointRepository)
-    return allocateAttributePoint.execute({ ...body, userId: req.user.sub })
+    const body = parseInput(allocateAttributesBodySchema, req.body)
+    const allocateAttributePoints = new AllocateAttributePointsUseCase(repository, restPointRepository)
+    return allocateAttributePoints.execute({ ...body, userId: req.user.sub })
   })
 
   app.get('/history', { preHandler: [app.authenticate] }, async (req) => {

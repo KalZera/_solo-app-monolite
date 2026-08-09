@@ -8,7 +8,7 @@ import { RegisterUserUseCase } from '../domains/identity/application/register-us
 import { LoginUserUseCase } from '../domains/identity/application/login-user'
 import { InMemoryPrisma } from '../domains/identity/infrastructure/in-memory-prisma'
 import { CreateCharacterUseCase } from '../domains/character/application/create-character'
-import { AllocateAttributePointUseCase } from '../domains/character/application/allocate-attribute-point'
+import { AllocateAttributePointsUseCase } from '../domains/character/application/allocate-attribute-points'
 import { InMemoryCharacterRepository } from '../domains/character/infrastructure/in-memory-character-repository'
 import { InMemoryCharacterRestPointRepository } from '../domains/character/infrastructure/in-memory-character-rest-point-repository'
 import { CreateQuestUseCase } from '../domains/quest/application/create-quest'
@@ -57,7 +57,7 @@ describe('MVP user journey', () => {
     grantExperience,
     publishEvent
   )
-  const allocateAttributePoint = new AllocateAttributePointUseCase(characterRepository, restPointRepository, publishEvent)
+  const allocateAttributePoints = new AllocateAttributePointsUseCase(characterRepository, restPointRepository, publishEvent)
   const expireQuests = new ExpireQuestsUseCase(questInstanceRepository, questRepository, publishEvent)
 
   const HUNTER = { email: 'jinwoo@solo.com', username: 'jinwoo', password: 'arise-1234' }
@@ -156,7 +156,10 @@ describe('MVP user journey', () => {
   it('lets the hunter spend all 5 level-up points on a single attribute', async () => {
     const beforeStrength = (await characterRepository.findById(characterId))!.stats.strength
 
-    const { character, restPoints } = await allocateAttributePoint.execute({ userId, attribute: 'strength', amount: 5 })
+    const { character, restPoints } = await allocateAttributePoints.execute({
+      userId,
+      allocations: { strength: 5 },
+    })
 
     expect(character.stats.strength).toBe(beforeStrength + 5)
     expect(restPoints).toBe(0)

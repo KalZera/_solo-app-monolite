@@ -2,7 +2,7 @@ import type { CharacterClass, CharacterRepository } from '../domain/character'
 import { NotFoundError } from '../../../shared/errors/app-error'
 
 // Only cosmetic/profile fields are editable here. Name is immutable after creation
-// (Decisão #4) and attributes change exclusively through AllocateAttributePointUseCase
+// (Decisão #4) and attributes change exclusively through AllocateAttributePointsUseCase
 // (Decisão CARD-101) — never mass-assigned from the request body. Title stays editable
 // (Decisão #3).
 interface UpdateCharacterInput {

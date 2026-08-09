@@ -18,9 +18,10 @@ export const updateCharacterBodySchema = z.object({
   avatar: z.string().nullish(),
 })
 
-export const allocateAttributeBodySchema = z.object({
-  attribute: z.enum(ALLOCATABLE_ATTRIBUTES),
-  amount: z.coerce.number().int().positive(),
+// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, luck: 1 }).
+// z.record with an enum key rejects unknown attributes while still allowing any subset of them.
+export const allocateAttributesBodySchema = z.object({
+  allocations: z.record(z.enum(ALLOCATABLE_ATTRIBUTES), z.coerce.number().int().nonnegative()),
 })
 
 export const characterHistoryQuerySchema = z.object({
