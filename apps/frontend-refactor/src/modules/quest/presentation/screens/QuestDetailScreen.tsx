@@ -182,8 +182,7 @@ export function QuestDetailScreen() {
                 <QuestObjectiveRow
                   key={objective.id}
                   objective={objective}
-                  // disabled={instance.status !== 'STARTED'}
-                  disabled={false}
+                  disabled={instance.status !== 'STARTED'}
                   onComplete={() =>
                     updateObjective.mutate({ instanceId: instance.id, objectiveId: objective.id })
                   }
