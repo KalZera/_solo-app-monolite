@@ -6,11 +6,7 @@ import type { DashboardSummary } from '../../domain/dashboard.types'
 export function HunterCard({ summary }: { summary: DashboardSummary }) {
   const { t } = useTranslation()
   const remainingToLevel = Math.max(0, summary.xpToNext - summary.xp)
-  console.log({
-    cond: summary.xpToNext - summary.xpCurrentLevel,
-    remainingToLevel,
-    rem: summary.xpRemaining,
-  })
+
   return (
     <Panel className="gap-4">
       <View className="flex-row items-center gap-4">
