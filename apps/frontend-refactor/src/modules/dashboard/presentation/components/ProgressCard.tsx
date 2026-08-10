@@ -8,7 +8,7 @@ export function ProgressCard({ level, experience }: { level: number; experience:
   const max = calculateXpToNextLevel(level)
 
   return (
-    <View className="rounded-xl border border-line bg-black/15 px-4 py-3">
+    <View className="rounded-xl border border-line bg-surface px-4 py-3">
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-baseline gap-2">
           <Text className="text-[11px] uppercase tracking-wider text-content-muted">

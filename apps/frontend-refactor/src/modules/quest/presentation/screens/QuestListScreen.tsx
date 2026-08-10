@@ -25,7 +25,7 @@ const FILTERS: QuestTab[] = ['all', 'daily', 'weekly', 'history']
 export function QuestListScreen() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [filter, setFilter] = useState<QuestTab>('daily')
+  // const [filter, setFilter] = useState<QuestTab>('daily')
   const { data: quests, isLoading, isError, error, refetch, isRefetching } = useQuests()
 
   const createButton = (
@@ -89,13 +89,13 @@ export function QuestListScreen() {
         eyebrow={t('common.systemLabel')}
         right={createButton}
       />
-      <View className="pb-4">
+      {/* <View className="pb-4">
         <SegmentedTabs
           options={FILTERS.map((value) => ({ label: t(`quest.list.filters.${value}`), value }))}
           value={filter}
           onChange={setFilter}
         />
-      </View>
+      </View> */}
       {renderBody()}
     </Screen>
   )

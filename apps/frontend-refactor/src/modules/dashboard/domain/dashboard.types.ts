@@ -1,8 +1,11 @@
-export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'perception'
+export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'luck'
 
 export interface HunterAttribute {
-  key: AttributeKey
-  value: number
+  strength: number
+  intelligence: number
+  agility: number
+  vitality: number
+  luck: number
 }
 
 export interface DashboardSummary {
@@ -12,7 +15,11 @@ export interface DashboardSummary {
   power: number
   xp: number
   xpToNext: number
+  xpCurrentLevel: number
+  xpRemaining: number
+  xpToday: number
   streakDays: number
-  attributes: HunterAttribute[]
+  attributes: HunterAttribute
   dailyQuests: { completed: number; total: number }
+  questsCompletedToday: number
 }

@@ -9,6 +9,7 @@ export const dashboardMock: DashboardSummary = {
   power: 9840,
   xp: 3200,
   xpToNext: 5000,
+  xpToday: 180,
   streakDays: 12,
   attributes: [
     { key: 'strength', value: 128 },
@@ -18,4 +19,5 @@ export const dashboardMock: DashboardSummary = {
     { key: 'perception', value: 88 },
   ],
   dailyQuests: { completed: 3, total: 5 },
+  questsCompletedToday: 3,
 }

@@ -8,6 +8,7 @@ import { characterKeys } from '@/modules/profile/application/character.keys'
 import { STAT_KEYS, type CharacterProfile } from '@/modules/profile/domain/character.types'
 import { completeQuestInstance, type CompleteQuestResult } from '../infrastructure/quest.requests'
 import { questKeys } from './quest.keys'
+import { useRouter } from 'expo-router'
 
 function buildStatChanges(
   previous: CharacterProfile | undefined,
@@ -22,6 +23,7 @@ function buildStatChanges(
 
 export function useCompleteQuest(rewardXp: number) {
   const { t } = useTranslation()
+    const router = useRouter()
   const queryClient = useQueryClient()
   const { success, error: notifyError } = useNotify()
 
@@ -34,6 +36,8 @@ export function useCompleteQuest(rewardXp: number) {
       // Completing grants XP, so the character/profile is now stale too.
       queryClient.invalidateQueries({ queryKey: characterKeys.all })
 
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+
       if (result.character.level > (previous?.level ?? 0)) {
         showLevelUp({
           fromLevel: previous?.level ?? result.character.level - 1,
@@ -42,7 +46,7 @@ export function useCompleteQuest(rewardXp: number) {
         })
         return
       }
-
+      router.push('/quests')
       success(
         t('quest.detail.completeSuccessTitle'),
         t('quest.detail.completeSuccessMessage', { xp: rewardXp }),

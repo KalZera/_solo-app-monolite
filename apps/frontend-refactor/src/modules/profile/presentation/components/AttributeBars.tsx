@@ -20,7 +20,7 @@ export function AttributeBars({ stats }: { stats?: CharacterStats }) {
   const { t } = useTranslation()
   const values = DISPLAY_ORDER.map((key) => stats?.[key] ?? 0)
   const max = Math.max(...values, 1)
-
+  console.log({ max })
   return (
     <View className="gap-2.5">
       {DISPLAY_ORDER.map((key, index) => {
@@ -34,7 +34,7 @@ export function AttributeBars({ stats }: { stats?: CharacterStats }) {
             >
               {t(`character.stats.${key}`)}
             </Text>
-            <ProgressBar value={values[index]} max={values[index]} className="flex-1" />
+            <ProgressBar value={values[index]} max={max} className="flex-1" />
             <Text weight="bold" className="w-7 text-right text-xs text-content">
               {values[index]}
             </Text>
