@@ -2,8 +2,24 @@ import { randomUUID } from 'crypto'
 import type { CharacterRestPoint, CharacterRestPointRepository } from '../domain/character-rest-point'
 import type { ID } from '../../../shared/types/index'
 
+
+type SeedInput = Pick<CharacterRestPoint, "characterId"> & Partial<Omit<CharacterRestPoint, 'characterId'>>
+
 export class InMemoryCharacterRestPointRepository implements CharacterRestPointRepository {
   private restPoints: CharacterRestPoint[] = []
+
+    seed (data: SeedInput): CharacterRestPoint {
+      const characterRestPoint: CharacterRestPoint = {
+        id: data.id ?? randomUUID(),
+        characterId:data.characterId,
+        restPoints:data.restPoints ?? 0,
+        createdAt: data.createdAt ?? new Date(),
+        updatedAt: data.updatedAt ?? new Date(),
+      }
+      this.restPoints.push(characterRestPoint)
+      return characterRestPoint
+    }
+  
 
   async create (characterId: ID): Promise<CharacterRestPoint> {
     const record: CharacterRestPoint = {

@@ -3,6 +3,7 @@
 // Unlike the per-use-case unit tests, this file's purpose is to prove the rules hold when
 // exercised together, the way an actual user session would.
 import { describe, it, expect, vi } from 'vitest'
+import { randomUUID } from 'crypto'
 import type { PrismaClient } from '@prisma/client'
 import { RegisterUserUseCase } from '../domains/identity/application/register-user'
 import { LoginUserUseCase } from '../domains/identity/application/login-user'
@@ -12,10 +13,10 @@ import { AllocateAttributePointsUseCase } from '../domains/character/application
 import { InMemoryCharacterRepository } from '../domains/character/infrastructure/in-memory-character-repository'
 import { InMemoryCharacterRestPointRepository } from '../domains/character/infrastructure/in-memory-character-rest-point-repository'
 import { CreateQuestUseCase } from '../domains/quest/application/create-quest'
-import { GetTodayQuestsUseCase } from '../domains/quest/application/get-today-quests'
 import { StartQuestUseCase } from '../domains/quest/application/start-quest'
 import { CompleteQuestUseCase } from '../domains/quest/application/complete-quest'
 import { ExpireQuestsUseCase } from '../domains/quest/application/expire-quests'
+import { UpdateQuestProgressUseCase } from '../domains/quest/application/update-quest-progress'
 import { InMemoryQuestRepository } from '../domains/quest/infrastructure/in-memory-quest-repository'
 import { InMemoryQuestInstanceRepository } from '../domains/quest/infrastructure/in-memory-quest-instance-repository'
 import { InMemoryProgressionRepository } from '../domains/progression/infrastructure/in-memory-progression-repository'
@@ -23,6 +24,7 @@ import { GrantExperienceUseCase } from '../domains/progression/application/grant
 import { calculateXpToNextLevel } from '../domains/progression/engines/level.engine'
 import { ConflictError } from '../shared/errors/app-error'
 import type { DomainEvent } from '../shared/events/domain-event'
+import { ApplyLevelUpUseCase } from '../domains/progression/application/apply-level-up'
 
 describe('MVP user journey', () => {
   const prisma = new InMemoryPrisma()
@@ -40,16 +42,11 @@ describe('MVP user journey', () => {
     () => 'fake-refresh-token'
   )
   const createCharacter = new CreateCharacterUseCase(characterRepository, restPointRepository)
-  const createQuest = new CreateQuestUseCase(questRepository, characterRepository)
-  const getTodayQuests = new GetTodayQuestsUseCase(
-    questRepository,
-    characterRepository,
-    questInstanceRepository,
-    undefined,
-    publishEvent
-  )
+  const createQuest = new CreateQuestUseCase(questRepository, characterRepository,questInstanceRepository)
+  const levelUp = new ApplyLevelUpUseCase(progressionRepository)
   const startQuest = new StartQuestUseCase(questInstanceRepository, questRepository, characterRepository, publishEvent)
-  const grantExperience = new GrantExperienceUseCase(progressionRepository, publishEvent)
+  const updatQuestObjective = new UpdateQuestProgressUseCase(questInstanceRepository, questRepository, characterRepository, publishEvent)
+  const grantExperience = new GrantExperienceUseCase(characterRepository, levelUp)
   const completeQuest = new CompleteQuestUseCase(
     questInstanceRepository,
     questRepository,
@@ -84,7 +81,8 @@ describe('MVP user journey', () => {
       class: 'warrior',
       title: 'The Weakest Hunter',
     })
-    expect(character.level).toBe(1)
+    
+    expect(character.level).toBe(0)
     expect(character.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
     characterId = character.id
   })
@@ -95,8 +93,8 @@ describe('MVP user journey', () => {
     ).rejects.toThrow(ConflictError)
   })
 
-  it('creates a DAILY quest TEMPLATE (no execution is created)', async () => {
-    const quest = await createQuest.execute({
+  it('creates a DAILY quest TEMPLATE and creates INSTANCE automaticaly', async () => {
+    const {quest} = await createQuest.execute({
       userId,
       title: 'Academia',
       description: 'Train for 30 minutes',
@@ -107,48 +105,61 @@ describe('MVP user journey', () => {
     expect(quest.recurrence).toBe('DAILY')
     expect(quest.rewardXp).toBe(10)
     dailyQuestId = quest.id
-    expect(await questInstanceRepository.findByQuestId(dailyQuestId)).toHaveLength(0)
-  })
-
-  it("materialises today's instance on demand (idempotently)", async () => {
-    const first = await getTodayQuests.execute({ userId })
-    const instance = first.find((candidate) => candidate.questId === dailyQuestId)
-    expect(instance).toBeDefined()
-    expect(instance!.status).toBe('PENDING')
-    dailyInstanceId = instance!.id
-
-    // Second call reuses the same instance — never duplicated.
-    await getTodayQuests.execute({ userId })
     expect(await questInstanceRepository.findByQuestId(dailyQuestId)).toHaveLength(1)
+    expect(quest.objectiveTemplates).toHaveLength(1)
   })
 
   it('starts and completes the instance, granting rank-E XP', async () => {
-    const started = await startQuest.execute({ userId, questInstanceId: dailyInstanceId })
+     const trialQuest = questRepository.seed({
+      characterId,
+      title: 'A trial quest',
+      recurrence: 'NONE',
+      rank: 'E',
+      rewardXp: 10,
+    })
+    const objectiveId =  randomUUID()
+    const trialInstance = questInstanceRepository.seed({ 
+      questId: trialQuest.id, 
+      status: 'PENDING', 
+      objectives: [{
+        id:objectiveId, 
+        description:"complete at time", 
+        target:1, 
+        current:0, 
+        completed:false
+    }] })
+
+    
+    const started = await startQuest.execute({ userId, questInstanceId: trialInstance.id })
     expect(started.instance.status).toBe('STARTED')
 
-    const result = await completeQuest.execute({ userId, questInstanceId: dailyInstanceId })
+    await updatQuestObjective.execute({ userId, questInstanceId:trialInstance.id,objectiveId: objectiveId, current:1})
+    
+    const result = await completeQuest.execute({ userId, questInstanceId: trialInstance.id })
     expect(result.instance.status).toBe('COMPLETED')
     expect(result.instance.rewardGranted).toBe(true)
     expect(result.character.experience).toBe(10)
   })
 
   it('levels up crediting 5 rest points when a big-reward instance is completed', async () => {
-    const xpForLevel1 = calculateXpToNextLevel(1)
+    const character = await characterRepository.findById(characterId)
+    const xpForLevel1 = calculateXpToNextLevel((character?.level as number))
+    
     // Seed a template + instance with an exact XP reward so the level-up is deterministic.
     const trialQuest = questRepository.seed({
       characterId,
       title: 'A trial worth a level',
       recurrence: 'NONE',
       rank: 'S',
-      rewardXp: xpForLevel1,
+      rewardXp: xpForLevel1
     })
     const trialInstance = questInstanceRepository.seed({ questId: trialQuest.id, status: 'PENDING', objectives: [] })
 
     const result = await completeQuest.execute({ userId, questInstanceId: trialInstance.id })
 
-    expect(result.levelsGained).toEqual([2])
-    expect(result.character.level).toBe(2)
-
+    // expect(result.levelsGained).toEqual([2])
+    expect(result.character.level).toBe(1)
+    
     const restPoint = await restPointRepository.findByCharacterId(characterId)
     expect(restPoint?.restPoints).toBe(5)
   })

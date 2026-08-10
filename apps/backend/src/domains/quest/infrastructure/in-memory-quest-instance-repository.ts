@@ -6,6 +6,7 @@ import type {
   QuestInstanceRepository,
 } from '../domain/quest-instance'
 import type { ID } from '../../../shared/types/index'
+import type { Quest } from '../domain/quest'
 
 type SeedInput = Pick<QuestFullInstance, 'questId'> & Partial<Omit<QuestFullInstance, 'questId'>>
 
@@ -26,6 +27,7 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
       objectives: data.objectives ?? [],
       createdAt: data.createdAt ?? new Date(),
       updatedAt: data.updatedAt ?? new Date(),
+      quest: data.quest ?? {} as Quest,
     }
     this.instances.push(instance)
     return instance
@@ -41,6 +43,14 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
         (instance) => instance.questId === questId && instance.scheduledDate.getTime() === scheduledDate.getTime()
       ) ?? null
     )
+  }
+
+  async findByCharacterId(characterId: ID): Promise<QuestFullInstance[]> {
+    return this.instances.filter((instance) => instance.quest?.characterId === characterId)
+  }
+
+  async findByQuestActive(active: boolean): Promise<QuestFullInstance[]> {
+    return this.instances.filter((instance) => instance.quest?.active === active)
   }
 
   async findByQuestId (questId: ID): Promise<QuestFullInstance[]> {

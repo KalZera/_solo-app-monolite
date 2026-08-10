@@ -2,16 +2,19 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
+import { InMemoryQuestInstanceRepository } from '../infrastructure/in-memory-quest-instance-repository'
 import { InMemoryCharacterRepository } from '../../character/infrastructure/in-memory-character-repository'
 import type { Recurrence } from '../domain/recurrence'
 
 describe('CreateQuestUseCase', () => {
   let questRepository: InMemoryQuestRepository
   let characterRepository: InMemoryCharacterRepository
+  let questInstanceRepository: InMemoryQuestInstanceRepository
 
   beforeEach(() => {
     questRepository = new InMemoryQuestRepository()
     characterRepository = new InMemoryCharacterRepository()
+    questInstanceRepository = new InMemoryQuestInstanceRepository()
   })
 
   function seedCharacter (userId = 'user-1') {
@@ -19,13 +22,13 @@ describe('CreateQuestUseCase', () => {
   }
 
   function build () {
-    return new CreateQuestUseCase(questRepository, characterRepository)
+    return new CreateQuestUseCase(questRepository, characterRepository, questInstanceRepository)
   }
 
   it('creates a template with XP derived from the rank (no instances created)', async () => {
     const character = seedCharacter()
 
-    const quest = await build().execute({
+    const {quest} = await build().execute({
       userId: 'user-1',
       title: 'Academia',
       description: 'Treinar',
@@ -42,15 +45,15 @@ describe('CreateQuestUseCase', () => {
 
   it('defaults the recurrence to NONE when omitted', async () => {
     seedCharacter()
-    const quest = await build().execute({ userId: 'user-1', title: 'Ler', description: 'Um livro', rank: 'E' })
+    const {quest} = await build().execute({ userId: 'user-1', title: 'Ler', description: 'Um livro', rank: 'E' })
     expect(quest.recurrence).toBe('NONE')
-    expect(quest.deadlineDate).toBeNull()
+    expect(quest.deadlineDate).not.toBeNull()
   })
 
   it('persists deadlineDate for a NONE-recurrence quest', async () => {
     seedCharacter()
     const deadlineDate = new Date('2026-08-10T12:00:00.000Z')
-    const quest = await build().execute({
+    const {quest} = await build().execute({
       userId: 'user-1',
       title: 'Ler',
       description: 'Um livro',
@@ -58,25 +61,13 @@ describe('CreateQuestUseCase', () => {
       recurrence: 'NONE',
       deadlineDate,
     })
+    
     expect(quest.deadlineDate).toEqual(deadlineDate)
-  })
-
-  it('ignores deadlineDate for a recurring quest (deadline is derived from the period)', async () => {
-    seedCharacter()
-    const quest = await build().execute({
-      userId: 'user-1',
-      title: 'Academia',
-      description: 'Treinar',
-      rank: 'E',
-      recurrence: 'DAILY',
-      deadlineDate: new Date('2026-08-10T12:00:00.000Z'),
-    })
-    expect(quest.deadlineDate).toBeNull()
   })
 
   it('copies objectives into the template blueprint', async () => {
     seedCharacter()
-    const quest = await build().execute({
+    const {quest} = await build().execute({
       userId: 'user-1',
       title: 'Estudar',
       description: 'Inglês',

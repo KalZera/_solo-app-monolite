@@ -4,7 +4,7 @@ import { QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
 import { isRecurrence, type Recurrence } from '../domain/recurrence'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import type { QuestInstanceRepository } from '../domain/quest-instance'
-import { getDateFilter } from '@shared/utils/date-filter'
+import { getDateFilter } from '../../../shared/utils/date-filter'
 
 interface CreateQuestInput {
   userId: string

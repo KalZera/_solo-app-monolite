@@ -40,7 +40,7 @@ export class CreateCharacterUseCase {
       avatar: input.avatar ?? null,
       class: input.class,
       title: input.title,
-      level: 1,
+      level: 0,
       experience: 0,
       powerScore: calculatePowerScore(stats),
       stats,

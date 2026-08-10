@@ -32,7 +32,7 @@ describe('CreateCharacterUseCase', () => {
     expect(result.name).toBe('Sung Jinwoo')
     expect(result.class).toBe('warrior')
     expect(result.title).toBe('The Weakest Hunter')
-    expect(result.level).toBe(1)
+    expect(result.level).toBe(0)
     expect(result.experience).toBe(0)
     expect(result.stats).toEqual({
       strength: 1,

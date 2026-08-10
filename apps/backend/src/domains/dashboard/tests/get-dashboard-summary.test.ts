@@ -38,28 +38,31 @@ describe('GetDashboardSummaryUseCase', () => {
   })
 
   it('returns the hunter summary shape for a character with no quests yet', async () => {
-    characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 1, experience: 0 })
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 0, experience: 0 })
+    const restPoint = restPointRepository.seed({characterId:character.id, restPoints:0})
 
     const summary = await build().execute({ userId: 'user-1' }, NOW)
 
-    const expectedProgress = engine.getProgress(engine.calculateTotalXpForLevel(1))
+    const expectedProgress = engine.getProgress(character.experience, restPoint.restPoints)
 
     expect(summary).toEqual({
       name: 'Hero',
       rank: 'E',
-      level: 1,
+      level: 0,
       power: 5,
-      xp: expectedProgress.xpIntoCurrentLevel,
+      xp: expectedProgress.totalXp,
       xpToNext: expectedProgress.nextLevelXp - expectedProgress.currentLevelXp,
       xpToday: 0,
       streakDays: 0,
-      attributes: [
-        { key: 'strength', value: 1 },
-        { key: 'agility', value: 1 },
-        { key: 'intelligence', value: 1 },
-        { key: 'vitality', value: 1 },
-        { key: 'perception', value: 1 },
-      ],
+      xpCurrentLevel:expectedProgress.currentLevelXp,
+      xpRemaining:expectedProgress.xpRemaining,
+      attributes: {
+        strength: 1,
+        agility: 1,
+        intelligence: 1,
+        vitality: 1,
+        luck: 1,
+      },
       dailyQuests: { completed: 0, total: 0 },
       questsCompletedToday: 0,
     })
@@ -74,31 +77,31 @@ describe('GetDashboardSummaryUseCase', () => {
 
     const summary = await build().execute({ userId: 'user-1' }, NOW)
 
-    expect(summary.attributes).toEqual([
-      { key: 'strength', value: 10 },
-      { key: 'agility', value: 20 },
-      { key: 'intelligence', value: 30 },
-      { key: 'vitality', value: 40 },
-      { key: 'perception', value: 50 },
-    ])
+    expect(summary.attributes).toEqual({
+      strength: 10,
+      agility: 20,
+      intelligence: 30,
+      vitality: 40,
+      luck: 50,
+    })
   })
 
   it('derives xp/xpToNext/level/power from the progression snapshot and power score', async () => {
-    characterRepository.seed({
+    const character = characterRepository.seed({
       userId: 'user-1',
       name: 'Hero',
       level: 3,
-      experience: 100,
+      experience: engine.calculateTotalXpForLevel(3) + 100,
       stats: { strength: 10, agility: 10, intelligence: 10, vitality: 10, luck: 10 },
     })
 
     const summary = await build().execute({ userId: 'user-1' }, NOW)
 
-    const totalXp = engine.calculateTotalXpForLevel(3) + 100
-    const expected = engine.getProgress(totalXp)
+    // const totalXp = engine.calculateTotalXpForLevel(3) + 100
+    const expected = engine.getProgress(character.experience, 0)
     expect(summary.level).toBe(expected.level)
-    expect(summary.xp).toBe(expected.xpIntoCurrentLevel)
-    expect(summary.xpToNext).toBe(expected.nextLevelXp - expected.currentLevelXp)
+    expect(summary.xp).toBe(character.experience)
+    expect(summary.xpToNext).toBe(expected.nextLevelXp)
     expect(summary.power).toBe(50)
     expect(summary.rank).toBe('E')
   })

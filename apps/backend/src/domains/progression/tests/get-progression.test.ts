@@ -24,7 +24,7 @@ describe('GetProgressionUseCase', () => {
   })
 
   it('anchors the snapshot on the stored level and layers the in-level experience on top', async () => {
-    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 3, experience: 100 })
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 3, experience: engine.calculateTotalXpForLevel(3) + 100 })
     await restPointRepository.incrementRestPoints(character.id, 7)
 
     const result = await build().execute({ userId: 'user-1' })
@@ -35,11 +35,11 @@ describe('GetProgressionUseCase', () => {
   })
 
   it('reports 0% progress for a fresh character with no in-level experience yet', async () => {
-    characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 1, experience: 0 })
+    characterRepository.seed({ userId: 'user-1', name: 'Hero', level: 0, experience: 0 })
 
     const result = await build().execute({ userId: 'user-1' })
 
-    expect(result.level).toBe(1)
+    expect(result.level).toBe(0)
     expect(result.xpIntoCurrentLevel).toBe(0)
     expect(result.progress).toBe(0)
   })

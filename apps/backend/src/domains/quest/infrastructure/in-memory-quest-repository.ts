@@ -38,6 +38,9 @@ export class InMemoryQuestRepository implements QuestRepository {
   async findActiveByCharacterId (characterId: ID): Promise<Quest[]> {
     return this.quests.filter((quest) => quest.characterId === characterId && quest.active)
   }
+  async findManyByActive(active: boolean): Promise<Quest[]> {
+    return this.quests.filter((quest) => quest.active === active)
+  }
 
   async create (data: CreateQuestData): Promise<Quest> {
     const quest: Quest = {

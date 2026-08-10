@@ -42,7 +42,7 @@ export class CompleteQuestUseCase {
     }
 
     // Instances WITH objectives need > 70% done (empty objectives → ratio 1, always allowed).
-    if (objectivesCompletionRatio(instance.objectives?? []) <= OBJECTIVE_COMPLETION_THRESHOLD) {
+    if (objectivesCompletionRatio(instance.objectives) <= OBJECTIVE_COMPLETION_THRESHOLD) {
       throw new ValidationError('A quest requires more than 70% of its objectives to be completed')
     }
 

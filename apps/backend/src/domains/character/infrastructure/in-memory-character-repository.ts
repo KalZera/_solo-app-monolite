@@ -21,7 +21,7 @@ export class InMemoryCharacterRepository implements CharacterRepository {
       userId: data.userId,
       name: data.name,
       avatar: data.avatar ?? null,
-      level: data.level ?? 1,
+      level: data.level ?? 0,
       experience: data.experience ?? 0,
       powerScore: data.powerScore ?? 5,
       title: data.title ?? 'Novice',
