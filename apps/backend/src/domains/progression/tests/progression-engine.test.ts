@@ -34,6 +34,29 @@ describe('ProgressionEngine', () => {
         )
       }
     })
+
+    describe('level-20 rule', () => {
+      it('still uses the power curve for level 20 itself', () => {
+        const { baseXp, exponent, multiplier } = DEFAULT_PROGRESSION_CONFIG
+        const expected = Math.round(multiplier * Math.pow(20, exponent) + (baseXp - multiplier) * 20)
+        expect(engine.calculateTotalXpForLevel(20)).toBe(expected)
+      })
+
+      it('switches to compounding at 1.15x per level once past level 20', () => {
+        const atTwenty = engine.calculateTotalXpForLevel(20)
+        const atTwentyOne = engine.calculateTotalXpForLevel(21)
+        const atTwentyTwo = engine.calculateTotalXpForLevel(22)
+
+        // Matches level.engine.ts's own post-20 per-level cost (500 * 1.15^L), applied on
+        // top of the level-20 total instead of the power curve continuing forever.
+        expect(atTwentyOne - atTwenty).toBe(Math.round(500 * Math.pow(1.15, 21)))
+        expect(atTwentyTwo - atTwentyOne).toBe(Math.round(500 * Math.pow(1.15, 22)))
+      })
+
+      it('remains strictly increasing across the level-20 boundary', () => {
+        expect(engine.calculateTotalXpForLevel(21)).toBeGreaterThan(engine.calculateTotalXpForLevel(20))
+      })
+    })
   })
 
   describe('calculateLevel', () => {
@@ -126,8 +149,12 @@ describe('ProgressionEngine', () => {
   })
 
   describe('getProgress', () => {
+    // restPoints is a required, pass-through argument: getProgress no longer derives
+    // attributePointsAvailable from the level — the caller (GetProgressionUseCase) supplies
+    // the character's actual rest points from the DB. See getAvailableAttributePoints below
+    // for the (now separate, level-based) helper.
     it('matches the authoritative spec example for 750 XP', () => {
-      expect(engine.getProgress(750)).toEqual<LevelProgress>({
+      expect(engine.getProgress(750, 5)).toEqual<LevelProgress>({
         level: 1,
         totalXp: 750,
         currentLevelXp: 500,
@@ -140,7 +167,7 @@ describe('ProgressionEngine', () => {
     })
 
     it('reports a fresh level-0 character for negative XP', () => {
-      expect(engine.getProgress(-100)).toEqual<LevelProgress>({
+      expect(engine.getProgress(-100, 0)).toEqual<LevelProgress>({
         level: 0,
         totalXp: 0,
         currentLevelXp: 0,
@@ -153,14 +180,14 @@ describe('ProgressionEngine', () => {
     })
 
     it('reports 0% progress right after a level up', () => {
-      const snapshot = engine.getProgress(500)
+      const snapshot = engine.getProgress(500, 0)
       expect(snapshot.level).toBe(1)
       expect(snapshot.progress).toBe(0)
       expect(snapshot.xpIntoCurrentLevel).toBe(0)
     })
 
     it('reports near-full progress on the last XP before a level up', () => {
-      const snapshot = engine.getProgress(engine.calculateTotalXpForLevel(2) - 1)
+      const snapshot = engine.getProgress(engine.calculateTotalXpForLevel(2) - 1, 0)
       expect(snapshot.level).toBe(1)
       expect(snapshot.xpRemaining).toBe(1)
       expect(snapshot.progress).toBeGreaterThan(99)
@@ -169,12 +196,13 @@ describe('ProgressionEngine', () => {
 
     it('keeps every derived field internally consistent', () => {
       for (const totalXp of [0, 250, 500, 750, 1161, 5000, 12500, 250_000]) {
-        const s = engine.getProgress(totalXp)
+        const restPoints = totalXp % 17
+        const s = engine.getProgress(totalXp, restPoints)
         expect(s.xpIntoCurrentLevel).toBe(s.totalXp - s.currentLevelXp)
         expect(s.xpRemaining).toBe(s.nextLevelXp - s.totalXp)
         expect(s.progress).toBeGreaterThanOrEqual(0)
         expect(s.progress).toBeLessThanOrEqual(100)
-        expect(s.attributePointsAvailable).toBe(s.level * 5)
+        expect(s.attributePointsAvailable).toBe(restPoints)
       }
     })
   })
@@ -200,7 +228,7 @@ describe('ProgressionEngine', () => {
 
       expect(flatEngine.calculateTotalXpForLevel(3)).toBe(1500)
       expect(flatEngine.calculateLevel(1500)).toBe(3)
-      expect(flatEngine.getProgress(750).progress).toBe(50)
+      expect(flatEngine.getProgress(750, 0).progress).toBe(50)
     })
 
     it('allows tuning the attribute-point reward (e.g. prestige multipliers)', () => {

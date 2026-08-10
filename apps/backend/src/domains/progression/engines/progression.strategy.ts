@@ -5,6 +5,12 @@
 // different pacing can be introduced by providing another strategy, without
 // touching the engine or any consumer.
 
+import {
+  MAX_QUADRATIC_CURVE_LEVEL,
+  POST_LEVEL_20_BASE_XP,
+  POST_LEVEL_20_GROWTH_RATE,
+} from './level.engine'
+
 // Tunable parameters of the default continuous curve. Centralised here so there
 // are no magic numbers scattered through the math, and so a curve can be
 // reshaped purely through configuration.
@@ -49,6 +55,12 @@ export interface ProgressionStrategy {
 //   f(0) = 0                         (level 0 costs nothing)
 //   f(1) = multiplier + baseXp - multiplier = baseXp   (level 1 costs baseXp)
 // so re-tuning the curve can never accidentally break "level 1 === 500 XP".
+//
+// Business rule (level 20): beyond MAX_QUADRATIC_CURVE_LEVEL the curve stops following
+// the smooth power formula above and instead keeps compounding at
+// POST_LEVEL_20_GROWTH_RATE per level (mirroring level.engine.ts's per-level rule), so
+// the accumulated total genuinely reflects "a bit different" growth past level 20 rather
+// than just extrapolating the same formula forever.
 export class ContinuousCurveStrategy implements ProgressionStrategy {
   constructor (private readonly config: ProgressionConfig = DEFAULT_PROGRESSION_CONFIG) {}
 
@@ -56,10 +68,34 @@ export class ContinuousCurveStrategy implements ProgressionStrategy {
     const normalizedLevel = Math.max(0, Math.floor(level))
     if (normalizedLevel === 0) return 0
 
+    if (normalizedLevel <= MAX_QUADRATIC_CURVE_LEVEL) {
+      return this.powerCurveXp(normalizedLevel)
+    }
+
+    return this.postLevel20Xp(normalizedLevel)
+  }
+
+  private powerCurveXp (level: number): number {
     const { baseXp, exponent, multiplier } = this.config
-    const exponentialTerm = multiplier * Math.pow(normalizedLevel, exponent)
-    const linearTerm = (baseXp - multiplier) * normalizedLevel
+    const exponentialTerm = multiplier * Math.pow(level, exponent)
+    const linearTerm = (baseXp - multiplier) * level
 
     return Math.round(exponentialTerm + linearTerm)
+  }
+
+  // Closed-form geometric series sum (no loop/recursion): anchors on the power-curve
+  // value at level 20, then adds Σ (POST_LEVEL_20_BASE_XP * rate^L) for L = 21..level.
+  private postLevel20Xp (level: number): number {
+    const baseAtBoundary = this.powerCurveXp(MAX_QUADRATIC_CURVE_LEVEL)
+    const levelsBeyondBoundary = level - MAX_QUADRATIC_CURVE_LEVEL
+    const firstTermExponent = MAX_QUADRATIC_CURVE_LEVEL + 1
+
+    const geometricSum =
+      (POST_LEVEL_20_BASE_XP *
+        Math.pow(POST_LEVEL_20_GROWTH_RATE, firstTermExponent) *
+        (Math.pow(POST_LEVEL_20_GROWTH_RATE, levelsBeyondBoundary) - 1)) /
+      (POST_LEVEL_20_GROWTH_RATE - 1)
+
+    return Math.round(baseAtBoundary + geometricSum)
   }
 }

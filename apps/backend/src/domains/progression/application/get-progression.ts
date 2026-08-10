@@ -38,8 +38,7 @@ export class GetProgressionUseCase {
     if (!character) {
       throw new NotFoundError('Character', input.userId)
     }
-
-    const totalXp = this.engine.calculateTotalXpForLevel(character.level) + character.experience
+    const totalXp = character.experience
     const restPoints = await this.characterRestPointRepository.findByCharacterId(character.id)
 
     return this.engine.getProgress(totalXp, restPoints?.restPoints ?? 0)

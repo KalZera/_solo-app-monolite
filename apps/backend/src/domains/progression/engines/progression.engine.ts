@@ -39,6 +39,9 @@ export class ProgressionEngine {
   ) {}
 
   // Accumulated XP required to be at `level` (level 0 → 0, level 1 → baseXp).
+  // Delegates to the strategy's closed-form curve (a direct formula — see
+  // ContinuousCurveStrategy.totalXpForLevel) rather than summing per-level costs in a
+  // loop/recursion, so it stays O(1) regardless of how high `level` is.
   calculateTotalXpForLevel (level: number): number {
     return this.strategy.totalXpForLevel(level)
   }

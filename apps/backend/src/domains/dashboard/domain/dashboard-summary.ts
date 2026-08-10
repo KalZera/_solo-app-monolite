@@ -1,9 +1,47 @@
-// Read-model shapes + pure aggregation logic for the dashboard summary. No I/O:
-// the use case supplies already-loaded data so this stays trivially testable.
+import type { CharacterStats } from '../../character/domain/character'
+import type { CharacterRank } from '../../progression/engines/rank.engine'
+
+// Mirrors frontend-refactor/src/modules/dashboard/domain/dashboard.types.ts — this endpoint
+// is the real data source for that screen (dashboardMock/useDashboard.fetchDashboard were the
+// placeholder until this existed).
+//
+// NOTE: `perception` has no dedicated column — the character model's 5th stat is `luck`
+// (see CharacterStats). The dashboard screen labels it "Perception"; the profile screen
+// labels the same value "Luck". Both read the same underlying stat.
+export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'perception'
+
+export interface HunterAttribute {
+  strength: number
+  intelligence: number
+  agility: number
+  vitality: number
+  luck: number
+}
+
 export interface DashboardSummary {
-  completedQuests: number
+  name: string
+  rank: CharacterRank
+  level: number
+  power: number
+  xp: number
+  xpToNext: number
+  xpCurrentLevel: number
+  xpRemaining: number
+  xpToday: number
   streakDays: number
-  pointsToday: number
+  attributes: HunterAttribute
+  dailyQuests: { completed: number; total: number }
+  questsCompletedToday: number
+}
+
+export function toHunterAttributes (stats: CharacterStats): HunterAttribute {
+  return {
+    strength: stats.strength,
+    agility: stats.agility,
+    intelligence: stats.intelligence,
+    vitality: stats.vitality,
+    luck: stats.luck,
+  }
 }
 
 // One completed quest execution: when it was completed and the XP its template rewards.
@@ -20,12 +58,20 @@ function startOfUTCDay (date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
 }
 
-// XP earned from quests completed on `now`'s (UTC) day.
-export function pointsEarnedToday (records: CompletedQuestRecord[], now: Date): number {
-  const todayKey = toDayKey(now)
-  return records
-    .filter((record) => toDayKey(record.completedAt) === todayKey)
-    .reduce((total, record) => total + record.rewardXp, 0)
+export function isSameUTCDay (a: Date, b: Date): boolean {
+  return toDayKey(a) === toDayKey(b)
+}
+
+// XP earned and quest count from completions on `now`'s (UTC) day.
+export function summarizeToday (
+  records: CompletedQuestRecord[],
+  now: Date
+): { xp: number; questsCompleted: number } {
+  const today = records.filter((record) => isSameUTCDay(record.completedAt, now))
+  return {
+    xp: today.reduce((total, record) => total + record.rewardXp, 0),
+    questsCompleted: today.length,
+  }
 }
 
 // Consecutive-day streak of completions, counting back from today. A streak is only
