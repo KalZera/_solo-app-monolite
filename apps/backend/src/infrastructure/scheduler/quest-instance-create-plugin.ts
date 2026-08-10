@@ -8,9 +8,9 @@ import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructur
 // Runs every 30 minutes for dev.
 const CREATE_QUEST_INSTANCE_CRON_EXPRESSION = '*/30 * * * *'
 
-// Business rule (business_rules.md): quest deadlines are GMT-3. Pin the schedule explicitly
+// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
 // rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'America/Sao_Paulo'
+const QUEST_TIMEZONE = 'UTC'
 
 const questInstanceCreateSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const createQuestInstance = new CreateQuestInstanceUseCase(

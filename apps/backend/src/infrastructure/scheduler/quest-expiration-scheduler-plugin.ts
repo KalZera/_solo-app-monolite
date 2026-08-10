@@ -15,9 +15,9 @@ const EXPIRE_QUESTS_CRON_EXPRESSION = '0 */2 * * *'
 // costs nothing here and only a genuinely stuck/frozen process would still exceed it.
 const MISSED_EXECUTION_TOLERANCE_MS = 5 * 60 * 1000
 
-// Business rule (business_rules.md): quest deadlines are GMT-3. Pin the schedule explicitly
+// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
 // rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'America/Sao_Paulo'
+const QUEST_TIMEZONE = 'UTC'
 
 const questExpirationSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const expireQuests = new ExpireQuestsUseCase(

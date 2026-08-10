@@ -1,14 +1,12 @@
-// Period boundaries for each recurrence, computed in GMT-3 (business_rules.md NFR: quest
-// timezone is GMT-3) independent of the server's local timezone. We shift the instant into
-// GMT-3 wall-clock time (manipulating it via UTC getters/setters), snap to the boundary, then
-// shift back to a real UTC instant. Brazil has no DST, so a fixed -3h offset is exact.
+// Period boundaries for each recurrence, computed in UTC — independent of the server's
+// local timezone (no wall-clock shifting needed; UTC getters/setters snap directly to
+// the boundary).
 //
 // Each recurrence is a small strategy object (Strategy/OCP) — new recurrences are added by
 // providing another strategy, never by editing a conditional.
 
 import type { Quest } from '../domain/quest'
 
-const GMT_MINUS_3_OFFSET_MS = 3 * 60 * 60 * 1000
 const DAY_MS = 24 * 60 * 60 * 1000
 const DAYS_IN_WEEK = 7
 
@@ -17,45 +15,37 @@ const DAYS_IN_WEEK = 7
 // recurrence). Mirrors the pre-ADR-004 "main quest" default window.
 export const DEFAULT_NONE_DEADLINE_DAYS = 28
 
-function toWall (instant: Date): Date {
-  return new Date(instant.getTime() - GMT_MINUS_3_OFFSET_MS)
-}
-
-function fromWall (wall: Date): Date {
-  return new Date(wall.getTime() + GMT_MINUS_3_OFFSET_MS)
-}
-
 function startOfDay (instant: Date): Date {
-  const wall = toWall(instant)
-  wall.setUTCHours(0, 0, 0, 0)
-  return fromWall(wall)
+  const start = new Date(instant)
+  start.setUTCHours(0, 0, 0, 0)
+  return start
 }
 
 function endOfDay (periodStart: Date): Date {
-  const wall = toWall(periodStart)
-  wall.setUTCHours(23, 59, 59, 999)
-  return fromWall(wall)
+  const end = new Date(periodStart)
+  end.setUTCHours(23, 59, 59, 999)
+  return end
 }
 
 function startOfWeek (instant: Date): Date {
-  const wall = toWall(instant)
-  wall.setUTCHours(0, 0, 0, 0)
-  const daysSinceMonday = (wall.getUTCDay() + 6) % 7 // getUTCDay: 0=Sun..6=Sat → 0=Mon..6=Sun
-  wall.setUTCDate(wall.getUTCDate() - daysSinceMonday)
-  return fromWall(wall)
+  const start = new Date(instant)
+  start.setUTCHours(0, 0, 0, 0)
+  const daysSinceMonday = (start.getUTCDay() + 6) % 7 // getUTCDay: 0=Sun..6=Sat → 0=Mon..6=Sun
+  start.setUTCDate(start.getUTCDate() - daysSinceMonday)
+  return start
 }
 
 function startOfMonth (instant: Date): Date {
-  const wall = toWall(instant)
-  wall.setUTCHours(0, 0, 0, 0)
-  wall.setUTCDate(1)
-  return fromWall(wall)
+  const start = new Date(instant)
+  start.setUTCHours(0, 0, 0, 0)
+  start.setUTCDate(1)
+  return start
 }
 
 function startOfNextMonth (periodStart: Date): Date {
-  const wall = toWall(periodStart)
-  wall.setUTCMonth(wall.getUTCMonth() + 1)
-  return fromWall(wall)
+  const start = new Date(periodStart)
+  start.setUTCMonth(start.getUTCMonth() + 1)
+  return start
 }
 
 export interface RecurrenceStrategy {
@@ -74,8 +64,8 @@ export class NoneStrategy implements RecurrenceStrategy {
   }
 
   // Single lifetime instance, but it still expires — every quest does, regardless of
-  // recurrence (business_rules.md). The deadline is always 23:59:59.999 GMT-3 of the last
-  // day: the quest's own `deadlineDate` (normalised to its GMT-3 calendar day) when set,
+  // recurrence (business_rules.md). The deadline is always 23:59:59.999 UTC of the last
+  // day: the quest's own `deadlineDate` (normalised to its UTC calendar day) when set,
   // otherwise DEFAULT_NONE_DEADLINE_DAYS after creation.
   periodEnd (periodStart: Date, quest: Quest): Date {
     if (quest.deadlineDate) return endOfDay(startOfDay(quest.deadlineDate))
