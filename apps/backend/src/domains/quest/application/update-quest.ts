@@ -39,7 +39,7 @@ export class UpdateQuestUseCase {
       throw new ValidationError(`A quest rank must be one of: ${QUEST_RANKS.join(', ')}`)
     }
     if (input.recurrence !== undefined && !isRecurrence(input.recurrence)) {
-      throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM')
+      throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, CUSTOM')
     }
 
     // Changing the rank re-derives the server-authoritative XP reward.

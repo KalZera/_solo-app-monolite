@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const RECURRENCES = ['NONE', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM'] as const
+const RECURRENCES = ['NONE', 'DAILY', 'WEEKLY', 'CUSTOM'] as const
 
 const objectiveSchema = z.object({
   description: z.string().min(1).max(200),
@@ -10,7 +10,7 @@ const objectiveSchema = z.object({
 // `rewardXp` is never accepted — the server derives it from the rank (CARD-103); any client
 // value is stripped by Zod's default behaviour.
 // `deadlineDate` only applies to NONE-recurrence quests (every quest expires regardless of
-// recurrence — business_rules.md); it is ignored for DAILY/WEEKLY/MONTHLY/CUSTOM. It is
+// recurrence — business_rules.md); it is ignored for DAILY/WEEKLY/CUSTOM. It is
 // normalised server-side to 23:59:59.999 GMT-3 of that calendar day (see NoneStrategy).
 export const createQuestBodySchema = z.object({
   title: z.string().min(1).max(120),

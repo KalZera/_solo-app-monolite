@@ -128,7 +128,7 @@ export function shouldAutoFail (instance: QuestFullInstance, now: Date = new Dat
 }
 
 // Which executions appear in the "active" feed. Open ones always show; additionally a
-// DAILY completed today stays visible for the rest of the day (weekly/monthly completed
+// DAILY completed today stays visible for the rest of the day (weekly completed
 // executions drop out so they don't linger for the whole period).
 export function isVisibleInActiveFeed (
   recurrence: Recurrence,

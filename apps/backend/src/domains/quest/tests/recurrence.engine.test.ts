@@ -68,18 +68,6 @@ describe('RecurrenceEngine', () => {
     expect(deadline.getTime() - scheduledDate.getTime() + 1).toBe(7 * 24 * 60 * 60 * 1000)
   })
 
-  it('computes the MONTHLY period (1st..end of month) in UTC', () => {
-    const quest = buildQuest({ recurrence: 'MONTHLY' })
-    const now = new Date('2026-08-03T12:00:00.000Z')
-
-    const scheduledDate = engine.scheduledDateFor(quest, now)
-    const deadline = engine.deadlineFor(quest, scheduledDate)
-
-    expect(scheduledDate.toISOString()).toBe('2026-08-01T00:00:00.000Z')
-    expect(deadline?.toISOString()).toBe('2026-08-31T23:59:59.999Z')
-    expect(engine.nextOccurrence('MONTHLY', scheduledDate).toISOString()).toBe('2026-09-01T00:00:00.000Z')
-  })
-
   it('anchors a NONE quest to its creation day, regardless of when it is queried', () => {
     const quest = buildQuest({
       recurrence: 'NONE',

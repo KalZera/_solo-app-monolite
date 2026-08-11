@@ -98,19 +98,6 @@ export class WeeklyStrategy implements RecurrenceStrategy {
   }
 }
 
-export class MonthlyStrategy implements RecurrenceStrategy {
-  periodStart (reference: Date): Date {
-    return startOfMonth(reference)
-  }
-
-  periodEnd (periodStart: Date): Date {
-    return new Date(startOfNextMonth(periodStart).getTime() - 1)
-  }
-
-  next (periodStart: Date): Date {
-    return startOfNextMonth(periodStart)
-  }
-}
 
 export class CustomStrategy implements RecurrenceStrategy {
   private unsupported (): never {

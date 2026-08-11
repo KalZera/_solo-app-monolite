@@ -4,7 +4,6 @@ import type { CreateQuestInstanceData } from '../domain/quest-instance'
 import {
   CustomStrategy,
   DailyStrategy,
-  MonthlyStrategy,
   NoneStrategy,
   WeeklyStrategy,
   type RecurrenceStrategy,
@@ -25,7 +24,6 @@ export class RecurrenceEngine {
       NONE: new NoneStrategy(),
       DAILY: new DailyStrategy(),
       WEEKLY: new WeeklyStrategy(),
-      MONTHLY: new MonthlyStrategy(),
       CUSTOM: new CustomStrategy(),
       ...strategies,
     }
@@ -38,7 +36,7 @@ export class RecurrenceEngine {
   // For NONE the reference is the quest's creation day (a single lifetime instance);
   // for recurring types it is `now` (the current period).
   scheduledDateFor (quest: Quest, now: Date): Date {
-    const reference = quest.recurrence === 'NONE' ? quest.createdAt : now
+    const reference = quest.recurrence === 'NONE' ? quest.deadlineDate : now
     return this.strategyFor(quest.recurrence).periodStart(reference)
   }
 

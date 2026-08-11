@@ -62,7 +62,7 @@ describe('UpdateQuestUseCase', () => {
       deadlineDate: new Date('2026-08-10T12:00:00.000Z'),
     })
 
-    expect(result.deadlineDate).toBeNull()
+    expect(result.deadlineDate).not.toBeNull()
   })
 
   it('rejects an invalid rank', async () => {

@@ -46,7 +46,7 @@ export interface Quest {
   // Last day (any instant within it — normalised to its UTC calendar day) for a
   // NONE-recurrence quest's single instance — every quest expires regardless of recurrence
   // (business_rules.md, ADR-004 addendum). The actual deadline is always 23:59:59.999 UTC
-  // of that day. Ignored for DAILY/WEEKLY/MONTHLY/CUSTOM, whose deadline is derived from the
+  // of that day. Ignored for DAILY/WEEKLY/CUSTOM, whose deadline is derived from the
   // period instead. Always set — defaults to "tomorrow" at creation when the client omits it.
   deadlineDate: Date
   objectiveTemplates: QuestObjectiveTemplate[]
