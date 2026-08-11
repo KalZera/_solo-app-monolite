@@ -22,32 +22,12 @@ function endOfDay (periodStart: Date): Date {
   return end
 }
 
-function startOfWeek (instant: Date): Date {
-  const start = new Date(instant)
-  start.setUTCHours(0, 0, 0, 0)
-  const daysSinceMonday = (start.getUTCDay() + 6) % 7 // getUTCDay: 0=Sun..6=Sat → 0=Mon..6=Sun
-  start.setUTCDate(start.getUTCDate() - daysSinceMonday)
-  return start
-}
-
-function startOfMonth (instant: Date): Date {
-  const start = new Date(instant)
-  start.setUTCHours(0, 0, 0, 0)
-  start.setUTCDate(1)
-  return start
-}
-
-function startOfNextMonth (periodStart: Date): Date {
-  const start = new Date(periodStart)
-  start.setUTCMonth(start.getUTCMonth() + 1)
-  return start
-}
-
 export interface RecurrenceStrategy {
   // The canonical key of the period that `reference` falls into.
   periodStart(reference: Date): Date
-  // The last instant of the period. `quest` is only consulted by NoneStrategy (its deadline
-  // IS the quest's own deadlineDate); other strategies derive it from the period alone.
+  // The last instant of the period. `quest` is consulted by NoneStrategy (its deadline IS
+  // the quest's own deadlineDate) and WeeklyStrategy (which caps the 7-day span at it);
+  // DailyStrategy derives it from the period alone.
   periodEnd(periodStart: Date, quest: Quest): Date
   // The periodStart of the following occurrence.
   next(periodStart: Date): Date
@@ -85,12 +65,20 @@ export class DailyStrategy implements RecurrenceStrategy {
 }
 
 export class WeeklyStrategy implements RecurrenceStrategy {
+  // No calendar-week (Monday) anchor — a WEEKLY quest's period simply starts on whichever
+  // day it's first evaluated; `next()` then chains every following period exactly 7 days
+  // after the previous one.
   periodStart (reference: Date): Date {
-    return startOfWeek(reference)
+    return startOfDay(reference)
   }
 
-  periodEnd (periodStart: Date): Date {
-    return new Date(periodStart.getTime() + DAYS_IN_WEEK * DAY_MS - 1)
+  // Always 7 days after this period's start — unless the quest template's own deadlineDate
+  // falls sooner, in which case that's the hard cap (a WEEKLY instance never outlives its
+  // template).
+  periodEnd (periodStart: Date, quest: Quest): Date {
+    const sevenDaysOut = new Date(periodStart.getTime() + DAYS_IN_WEEK * DAY_MS - 1)
+    const questDeadline = endOfDay(startOfDay(quest.deadlineDate))
+    return sevenDaysOut < questDeadline ? sevenDaysOut : questDeadline
   }
 
   next (periodStart: Date): Date {

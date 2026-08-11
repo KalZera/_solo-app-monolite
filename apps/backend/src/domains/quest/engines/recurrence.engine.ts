@@ -33,7 +33,7 @@ export class RecurrenceEngine {
     return this.strategies[recurrence]
   }
 
-  // For NONE the reference is the quest's creation day (a single lifetime instance);
+  // For NONE the reference is the quest's own deadlineDate (a single lifetime instance);
   // for recurring types it is `now` (the current period).
   scheduledDateFor (quest: Quest, now: Date): Date {
     const reference = quest.recurrence === 'NONE' ? quest.deadlineDate : now

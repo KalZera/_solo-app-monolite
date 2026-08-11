@@ -27,12 +27,12 @@ describe('ExpireQuestsUseCase', () => {
   })
 
   function build () {
-    return new ExpireQuestsUseCase(questInstanceRepository, questRepository, publishEvent)
+    return new ExpireQuestsUseCase(questInstanceRepository, publishEvent)
   }
 
   it('fails PENDING instances past their deadline and publishes QuestFailed (no XP)', async () => {
     const quest = questRepository.seed({ characterId: 'character-1', title: 'Academia' })
-    const instance = questInstanceRepository.seed({ questId: quest.id, status: 'PENDING', deadline: PAST })
+    const instance = questInstanceRepository.seed({ questId: quest.id, status: 'PENDING', deadline: PAST, quest })
 
     const failed = await build().execute(NOW)
 

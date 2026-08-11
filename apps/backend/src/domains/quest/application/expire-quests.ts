@@ -1,5 +1,5 @@
 import { eventBus, type DomainEvent } from '../../../shared/events/domain-event'
-import type { QuestRepository } from '../domain/quest'
+import type { Quest } from '../domain/quest'
 import type { QuestFullInstance, QuestInstanceRepository } from '../domain/quest-instance'
 import { shouldAutoFail } from '../domain/quest-instance'
 import { createQuestFailedEvent } from '../domain/events'
@@ -29,7 +29,7 @@ export class ExpireQuestsUseCase {
       toFail.map(async (instance) => {
         const updated = await this.questInstanceRepository.save(instance.id, { status: 'FAILED' })
         await this.publishEvent(
-          createQuestFailedEvent(updated.id, updated.questId, updated?.quest?.characterId ?? '', updated?.quest?.title ?? 'Quest')
+          createQuestFailedEvent(updated.id, updated.questId, (updated?.quest as Quest).characterId, (updated?.quest as Quest).title)
         )
         return updated
       })

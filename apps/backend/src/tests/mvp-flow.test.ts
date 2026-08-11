@@ -55,7 +55,7 @@ describe('MVP user journey', () => {
     publishEvent
   )
   const allocateAttributePoints = new AllocateAttributePointsUseCase(characterRepository, restPointRepository, publishEvent)
-  const expireQuests = new ExpireQuestsUseCase(questInstanceRepository, questRepository, publishEvent)
+  const expireQuests = new ExpireQuestsUseCase(questInstanceRepository, publishEvent)
 
   const HUNTER = { email: 'jinwoo@solo.com', username: 'jinwoo', password: 'arise-1234' }
   let userId: string
@@ -181,14 +181,13 @@ describe('MVP user journey', () => {
     const overdueInstance = questInstanceRepository.seed({
       questId: overdueQuest.id,
       status: 'PENDING',
-      deadline: new Date(Date.now() - 60 * 60 * 1000),
+      deadline: new Date(Date.now() - 24 * 60 * 60 * 1000 * 4),
+      quest:overdueQuest
     })
     publishEvent.mockClear()
 
     const failed = await expireQuests.execute()
-
     expect(failed.find((instance) => instance.id === overdueInstance.id)?.status).toBe('FAILED')
-
     const events = publishEvent.mock.calls.map((call) => call[0] as DomainEvent)
     expect(events).toContainEqual(
       expect.objectContaining({ eventType: 'QuestFailed', questInstanceId: overdueInstance.id, characterId })

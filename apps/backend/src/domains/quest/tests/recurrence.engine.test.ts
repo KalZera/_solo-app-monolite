@@ -37,16 +37,35 @@ describe('RecurrenceEngine', () => {
     expect(engine.nextOccurrence('DAILY', scheduledDate).toISOString()).toBe('2026-08-04T00:00:00.000Z')
   })
 
-  it('computes the WEEKLY period anchored on Monday (ISO week) in UTC', () => {
+  // Rule: WEEKLY has no calendar-week (Monday) anchor — the period simply starts on
+  // whichever day it's first evaluated, and runs 7 days from there.
+  it('computes the WEEKLY period as a rolling 7-day window starting on `now`, in UTC', () => {
     const quest = buildQuest({ recurrence: 'WEEKLY' })
     const now = new Date('2026-08-05T12:00:00.000Z') // Wednesday
 
     const scheduledDate = engine.scheduledDateFor(quest, now)
     const deadline = engine.deadlineFor(quest, scheduledDate)
 
-    expect(scheduledDate.toISOString()).toBe('2026-08-03T00:00:00.000Z') // Monday 00:00 UTC
-    expect(deadline?.toISOString()).toBe('2026-08-09T23:59:59.999Z')
-    expect(engine.nextOccurrence('WEEKLY', scheduledDate).toISOString()).toBe('2026-08-10T00:00:00.000Z')
+    expect(scheduledDate.toISOString()).toBe('2026-08-05T00:00:00.000Z')
+    expect(deadline?.toISOString()).toBe('2026-08-11T23:59:59.999Z')
+    expect(engine.nextOccurrence('WEEKLY', scheduledDate).toISOString()).toBe('2026-08-12T00:00:00.000Z')
+  })
+
+  // Rule: a WEEKLY instance's deadline never outlives its template — if the 7-day window
+  // would land past the quest's own deadlineDate, the deadline is capped at it instead.
+  it('caps a WEEKLY instance deadline at the template deadlineDate when the 7-day window would exceed it', () => {
+    const quest = buildQuest({
+      recurrence: 'WEEKLY',
+      deadlineDate: new Date('2026-08-07T23:59:59.999Z'),
+    })
+    const now = new Date('2026-08-05T12:00:00.000Z')
+
+    const scheduledDate = engine.scheduledDateFor(quest, now)
+    const deadline = engine.deadlineFor(quest, scheduledDate)
+
+    expect(scheduledDate.toISOString()).toBe('2026-08-05T00:00:00.000Z')
+    // Would naturally be 2026-08-11T23:59:59.999Z (7 days out) — capped at the deadlineDate.
+    expect(deadline?.toISOString()).toBe('2026-08-07T23:59:59.999Z')
   })
 
   // Rule: the instance deadline is a fixed span from its scheduledDate, driven by
@@ -68,18 +87,18 @@ describe('RecurrenceEngine', () => {
     expect(deadline.getTime() - scheduledDate.getTime() + 1).toBe(7 * 24 * 60 * 60 * 1000)
   })
 
-  it('anchors a NONE quest to its creation day, regardless of when it is queried', () => {
+  it('anchors a NONE quest to its deadlineDate day, regardless of when it is queried', () => {
     const quest = buildQuest({
       recurrence: 'NONE',
       createdAt: new Date('2026-08-03T10:00:00.000Z'),
       deadlineDate: new Date('2026-08-30T23:59:59.999Z'),
     })
 
-    // The reference is the creation day, not `now`, so the key never changes across days.
+    // The reference is the quest's own deadlineDate, not `now`, so the key never changes.
     const first = engine.scheduledDateFor(quest, new Date('2026-08-03T23:00:00.000Z'))
     const later = engine.scheduledDateFor(quest, new Date('2026-08-20T09:00:00.000Z'))
 
-    expect(first.toISOString()).toBe('2026-08-03T00:00:00.000Z')
+    expect(first.toISOString()).toBe('2026-08-30T00:00:00.000Z')
     expect(later.getTime()).toBe(first.getTime())
     // Every quest expires, regardless of recurrence: the quest's own (mandatory) deadlineDate.
     expect(engine.deadlineFor(quest, first).toISOString()).toBe('2026-08-30T23:59:59.999Z')
