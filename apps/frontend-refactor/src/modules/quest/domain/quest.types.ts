@@ -22,10 +22,10 @@ export interface Quest {
   rewardXp: number
   active: boolean
   // Last day (ISO date) for a NONE-recurrence quest — every quest expires, regardless of
-  // recurrence. The actual deadline is always 23:59:59.999 GMT-3 of that day. Null means
-  // the server's default (28 days from creation) applies. Ignored for
+  // recurrence. The actual deadline is always 23:59:59.999 UTC of that day. Always set — the
+  // server defaults it to "tomorrow" when the client omits it on creation. Ignored for
   // DAILY/WEEKLY/MONTHLY/CUSTOM, which derive their deadline from the period instead.
-  deadlineDate: string | null
+  deadlineDate: string
   objectiveTemplates?: QuestObjectiveTemplate[]
   createdAt: string
   updatedAt: string

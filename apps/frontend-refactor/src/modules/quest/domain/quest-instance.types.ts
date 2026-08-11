@@ -17,7 +17,7 @@ export interface QuestInstance {
   id: string
   questId: string
   scheduledDate: string
-  deadline: string | null
+  deadline: string
   startedAt: string | null
   completedAt: string | null
   progress: number
@@ -32,7 +32,7 @@ export interface QuestFullInstance {
   id: string
   questId: string
   scheduledDate: string
-  deadline: string | null
+  deadline: string
   startedAt: string | null
   completedAt: string | null
   progress: number
