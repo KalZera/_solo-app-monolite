@@ -3,6 +3,7 @@ import type { QuestRepository } from '../domain/quest'
 import { QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
 import { isRecurrence, type Recurrence } from '../domain/recurrence'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import { getDateFilter } from '../../../shared/utils/date-filter'
 
 interface UpdateQuestInput {
   userId: string
@@ -46,10 +47,14 @@ export class UpdateQuestUseCase {
       input.rank !== undefined && isQuestRank(input.rank) ? xpForQuestRank(input.rank) : undefined
 
     // deadlineDate only applies to NONE (recurring types derive their deadline from the
-    // period); if the quest is/becomes non-NONE, any submitted value is dropped.
+    // period); if the quest is/becomes non-NONE, any submitted value is dropped. When it
+    // does apply, it's always normalised to 23:59:59.999 UTC of that day — never the raw
+    // instant (same rule as CreateQuestUseCase).
     const effectiveRecurrence = input.recurrence ?? quest.recurrence
     const deadlineDate =
-      input.deadlineDate !== undefined ? (effectiveRecurrence === 'NONE' ? input.deadlineDate : null) : undefined
+      input.deadlineDate !== undefined
+        ? getDateFilter(input.deadlineDate).end
+        : undefined
 
     return this.questRepository.save(quest.id, {
       ...(input.title !== undefined && { title: input.title }),

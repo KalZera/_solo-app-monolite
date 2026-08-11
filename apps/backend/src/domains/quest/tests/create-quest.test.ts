@@ -50,10 +50,10 @@ describe('CreateQuestUseCase', () => {
     expect(quest.deadlineDate).not.toBeNull()
   })
 
-  it('persists deadlineDate for a NONE-recurrence quest', async () => {
+  it('normalises the provided deadlineDate to 23:59:59.999 UTC of that day, for the template and the instance', async () => {
     seedCharacter()
     const deadlineDate = new Date('2026-08-10T12:00:00.000Z')
-    const {quest} = await build().execute({
+    const {quest, instance} = await build().execute({
       userId: 'user-1',
       title: 'Ler',
       description: 'Um livro',
@@ -61,8 +61,9 @@ describe('CreateQuestUseCase', () => {
       recurrence: 'NONE',
       deadlineDate,
     })
-    
-    expect(quest.deadlineDate).toEqual(deadlineDate)
+
+    expect(quest.deadlineDate).toEqual(new Date('2026-08-10T23:59:59.999Z'))
+    expect(instance.deadline).toEqual(new Date('2026-08-10T23:59:59.999Z'))
   })
 
   it('copies objectives into the template blueprint', async () => {

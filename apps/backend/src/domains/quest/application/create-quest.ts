@@ -50,6 +50,9 @@ export class CreateQuestUseCase {
     const initialObjective = {description: "Concluir no prazo", target:1}
     //variable only if deadlineDate is not provided, otherwise it will be the provided date
     const {end:tomorrow} = getDateFilter(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    // Always end-of-day (23:59:59.999) of whichever date is used, whether it's the
+    // client-provided deadlineDate or the "tomorrow" fallback — never the raw instant.
+    const providedDeadlineDate = input.deadlineDate ? getDateFilter(input.deadlineDate).end : undefined
     // XP is derived from the rank on the server, never trusted from the client (CARD-103).
     const data: CreateQuestData = {
       characterId: character.id,
@@ -61,7 +64,7 @@ export class CreateQuestUseCase {
       rewardXp: xpForQuestRank(input.rank),
       active: true,
       // Irrelevant for recurring types, which derive their deadline from the period instead.
-      deadlineDate: recurrence === 'NONE' ? (input.deadlineDate ?? tomorrow) : tomorrow,
+      deadlineDate:(providedDeadlineDate ?? tomorrow),
       objectiveTemplates: (input.objectives ?? [initialObjective]).map((objective) => ({
         description: objective.description,
         target: objective.target,

@@ -39,6 +39,32 @@ describe('UpdateQuestUseCase', () => {
     expect(result.active).toBe(false)
   })
 
+  it('normalises a submitted deadlineDate to 23:59:59.999 UTC of that day for a NONE quest', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    const quest = questRepository.seed({ characterId: character.id, recurrence: 'NONE' })
+
+    const result = await build().execute({
+      userId: 'user-1',
+      questId: quest.id,
+      deadlineDate: new Date('2026-08-10T12:00:00.000Z'),
+    })
+
+    expect(result.deadlineDate).toEqual(new Date('2026-08-10T23:59:59.999Z'))
+  })
+
+  it('drops a submitted deadlineDate when the quest is not NONE', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    const quest = questRepository.seed({ characterId: character.id, recurrence: 'DAILY' })
+
+    const result = await build().execute({
+      userId: 'user-1',
+      questId: quest.id,
+      deadlineDate: new Date('2026-08-10T12:00:00.000Z'),
+    })
+
+    expect(result.deadlineDate).toBeNull()
+  })
+
   it('rejects an invalid rank', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
     const quest = questRepository.seed({ characterId: character.id })
