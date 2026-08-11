@@ -42,7 +42,7 @@ export class RecurrenceEngine {
     return this.strategyFor(quest.recurrence).periodStart(reference)
   }
 
-  deadlineFor (quest: Quest, scheduledDate: Date): Date | null {
+  deadlineFor (quest: Quest, scheduledDate: Date): Date {
     return this.strategyFor(quest.recurrence).periodEnd(scheduledDate, quest)
   }
 

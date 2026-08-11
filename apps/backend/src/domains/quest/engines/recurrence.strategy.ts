@@ -10,11 +10,6 @@ import type { Quest } from '../domain/quest'
 const DAY_MS = 24 * 60 * 60 * 1000
 const DAYS_IN_WEEK = 7
 
-// Default deadline (in days from creation) for a NONE-recurrence quest when
-// `Quest.deadlineDate` is not set (business_rules.md — every quest expires, regardless of
-// recurrence). Mirrors the pre-ADR-004 "main quest" default window.
-export const DEFAULT_NONE_DEADLINE_DAYS = 28
-
 function startOfDay (instant: Date): Date {
   const start = new Date(instant)
   start.setUTCHours(0, 0, 0, 0)
@@ -51,9 +46,9 @@ function startOfNextMonth (periodStart: Date): Date {
 export interface RecurrenceStrategy {
   // The canonical key of the period that `reference` falls into.
   periodStart(reference: Date): Date
-  // The last instant of the period. `quest` is only consulted by NoneStrategy
-  // (for its configurable deadlineDays); other strategies derive it from the period alone.
-  periodEnd(periodStart: Date, quest: Quest): Date | null
+  // The last instant of the period. `quest` is only consulted by NoneStrategy (its deadline
+  // IS the quest's own deadlineDate); other strategies derive it from the period alone.
+  periodEnd(periodStart: Date, quest: Quest): Date
   // The periodStart of the following occurrence.
   next(periodStart: Date): Date
 }
@@ -64,12 +59,10 @@ export class NoneStrategy implements RecurrenceStrategy {
   }
 
   // Single lifetime instance, but it still expires — every quest does, regardless of
-  // recurrence (business_rules.md). The deadline is always 23:59:59.999 UTC of the last
-  // day: the quest's own `deadlineDate` (normalised to its UTC calendar day) when set,
-  // otherwise DEFAULT_NONE_DEADLINE_DAYS after creation.
+  // recurrence (business_rules.md). The deadline is always 23:59:59.999 UTC of the quest's
+  // own `deadlineDate`, normalised to its UTC calendar day.
   periodEnd (periodStart: Date, quest: Quest): Date {
-    if (quest.deadlineDate) return endOfDay(startOfDay(quest.deadlineDate))
-    return new Date(periodStart.getTime() + DEFAULT_NONE_DEADLINE_DAYS * DAY_MS - 1)
+    return endOfDay(startOfDay(quest.deadlineDate))
   }
 
   next (periodStart: Date): Date {
@@ -128,7 +121,7 @@ export class CustomStrategy implements RecurrenceStrategy {
     return this.unsupported()
   }
 
-  periodEnd (): Date | null {
+  periodEnd (): Date {
     return this.unsupported()
   }
 

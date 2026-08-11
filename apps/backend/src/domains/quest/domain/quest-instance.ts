@@ -31,7 +31,7 @@ export interface QuestInstance {
   id: ID
   questId: ID
   scheduledDate: Date
-  deadline: Date | null
+  deadline: Date
   startedAt: Date | null
   completedAt: Date | null
   progress: number
@@ -46,7 +46,7 @@ export interface QuestFullInstance {
   id: ID
   questId: ID
   scheduledDate: Date
-  deadline: Date | null
+  deadline: Date
   startedAt: Date | null
   completedAt: Date | null
   progress: number
@@ -61,7 +61,7 @@ export interface QuestFullInstance {
 export interface CreateQuestInstanceData {
   questId: ID
   scheduledDate: Date
-  deadline: Date | null
+  deadline: Date
   objectives: Array<Pick<QuestInstanceObjective, 'description' | 'target'>>
 }
 
@@ -96,7 +96,7 @@ export function canComplete (instance: QuestFullInstance): boolean {
 
 export function isExpired (instance: QuestFullInstance, now: Date = new Date()): boolean {
   if (isTerminalStatus(instance.status)) return instance.status === 'EXPIRED'
-  return instance.deadline !== null && instance.deadline < now
+  return instance.deadline < now
 }
 
 // Currently actionable: still open (PENDING/STARTED) and past no deadline. Completed,
@@ -118,7 +118,7 @@ export const STARTED_FAIL_GRACE_PERIOD_DAYS = 3
 //   - STARTED (in progress) → only once STARTED_FAIL_GRACE_PERIOD_DAYS have elapsed since
 //     the deadline (a longer grace period than PENDING, but not indefinite).
 export function shouldAutoFail (instance: QuestFullInstance, now: Date = new Date()): boolean {
-  if (instance.deadline === null || instance.deadline >= now) return false
+  if (instance.deadline >= now) return false
   if (instance.status === 'PENDING') return true
   if (instance.status === 'STARTED') {
     const graceMs = STARTED_FAIL_GRACE_PERIOD_DAYS * MS_PER_DAY

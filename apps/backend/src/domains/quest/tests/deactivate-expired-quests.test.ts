@@ -40,19 +40,6 @@ describe('DeactivateExpiredQuestsUseCase', () => {
     expect(await questRepository.findById(quest.id)).toMatchObject({ active: true })
   })
 
-  it('does nothing to a quest with no deadlineDate', async () => {
-    const quest = questRepository.seed({
-      characterId: 'character-1',
-      active: true,
-      deadlineDate: null,
-    })
-
-    const deactivated = await build().execute(new Date('2026-08-10T12:00:00.000Z'))
-
-    expect(deactivated).toHaveLength(0)
-    expect(await questRepository.findById(quest.id)).toMatchObject({ active: true })
-  })
-
   it('ignores quests that are already inactive', async () => {
     questRepository.seed({
       characterId: 'character-1',

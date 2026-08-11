@@ -4,10 +4,14 @@ import type { ID } from '../../../shared/types/index'
 
 type SeedInput = Pick<Quest, 'characterId'> & Partial<Omit<Quest, 'characterId'>>
 
+const DEFAULT_SEED_DEADLINE_DAYS = 28
+const DAY_MS = 24 * 60 * 60 * 1000
+
 export class InMemoryQuestRepository implements QuestRepository {
   private quests: Quest[] = []
 
   seed (data: SeedInput): Quest {
+    const createdAt = data.createdAt ?? new Date()
     const quest: Quest = {
       id: data.id ?? randomUUID(),
       characterId: data.characterId,
@@ -18,9 +22,9 @@ export class InMemoryQuestRepository implements QuestRepository {
       rank: data.rank ?? 'E',
       rewardXp: data.rewardXp ?? 10,
       active: data.active ?? true,
-      deadlineDate: data.deadlineDate ?? null,
+      deadlineDate: data.deadlineDate ?? new Date(createdAt.getTime() + DEFAULT_SEED_DEADLINE_DAYS * DAY_MS),
       objectiveTemplates: data.objectiveTemplates ?? [],
-      createdAt: data.createdAt ?? new Date(),
+      createdAt,
       updatedAt: data.updatedAt ?? new Date(),
     }
     this.quests.push(quest)

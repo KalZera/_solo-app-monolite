@@ -25,7 +25,7 @@ export class CreateQuestInstanceUseCase {
 
     for (const quest of quests) {
       const InstanceFromQuest = existedInstances.find((instance) => instance.questId === quest.id)
-      const {end: questEnd} = getDateFilter(new Date(quest.deadlineDate as Date))
+      const {end: questEnd} = getDateFilter(new Date(quest.deadlineDate))
      
       if(!!InstanceFromQuest && InstanceFromQuest.scheduledDate.getTime() < questEnd.getTime()) continue
 

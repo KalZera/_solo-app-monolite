@@ -77,7 +77,6 @@ describe('QuestInstance domain', () => {
     const now = new Date('2026-08-05T00:00:00.000Z')
 
     expect(isExpired(buildInstance({ deadline: past, status: 'PENDING' }), now)).toBe(true)
-    expect(isExpired(buildInstance({ deadline: null, status: 'PENDING' }), now)).toBe(false)
     expect(isExpired(buildInstance({ deadline: past, status: 'COMPLETED' }), now)).toBe(false)
     expect(isExpired(buildInstance({ status: 'EXPIRED' }), now)).toBe(true)
   })
@@ -86,10 +85,9 @@ describe('QuestInstance domain', () => {
     const DAY_MS = 24 * 60 * 60 * 1000
     const now = new Date('2026-08-05T00:00:00.000Z')
 
-    it('never fires while within the deadline, or with no deadline', () => {
+    it('never fires while within the deadline', () => {
       const future = new Date(now.getTime() + DAY_MS)
       expect(shouldAutoFail(buildInstance({ status: 'PENDING', deadline: future }), now)).toBe(false)
-      expect(shouldAutoFail(buildInstance({ status: 'PENDING', deadline: null }), now)).toBe(false)
     })
 
     it('fires immediately for an overdue PENDING instance', () => {

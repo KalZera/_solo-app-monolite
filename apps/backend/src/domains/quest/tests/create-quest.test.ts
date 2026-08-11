@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { CreateQuestUseCase } from '../application/create-quest'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
@@ -15,6 +15,10 @@ describe('CreateQuestUseCase', () => {
     questRepository = new InMemoryQuestRepository()
     characterRepository = new InMemoryCharacterRepository()
     questInstanceRepository = new InMemoryQuestInstanceRepository()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   function seedCharacter (userId = 'user-1') {
@@ -64,6 +68,35 @@ describe('CreateQuestUseCase', () => {
 
     expect(quest.deadlineDate).toEqual(new Date('2026-08-10T23:59:59.999Z'))
     expect(instance.deadline).toEqual(new Date('2026-08-10T23:59:59.999Z'))
+  })
+
+  it('creates exactly one instance for a NONE-recurrence quest', async () => {
+    seedCharacter()
+    const {quest} = await build().execute({
+      userId: 'user-1',
+      title: 'Ler',
+      description: 'Um livro',
+      rank: 'E',
+      recurrence: 'NONE',
+    })
+
+    expect(await questInstanceRepository.findByQuestId(quest.id)).toHaveLength(1)
+  })
+
+  it('defaults deadlineDate to 24 hours from now (still normalised to 23:59:59.999 UTC) when none is provided', async () => {
+    seedCharacter()
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-08-10T15:30:00.000Z'))
+
+    const {quest} = await build().execute({
+      userId: 'user-1',
+      title: 'Ler',
+      description: 'Um livro',
+      rank: 'E',
+      recurrence: 'NONE',
+    })
+
+    expect(quest.deadlineDate).toEqual(new Date('2026-08-11T23:59:59.999Z'))
   })
 
   it('copies objectives into the template blueprint', async () => {

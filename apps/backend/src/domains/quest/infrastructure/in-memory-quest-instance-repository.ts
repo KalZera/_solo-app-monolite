@@ -10,15 +10,19 @@ import type { Quest } from '../domain/quest'
 
 type SeedInput = Pick<QuestFullInstance, 'questId'> & Partial<Omit<QuestFullInstance, 'questId'>>
 
+const DEFAULT_SEED_DEADLINE_DAYS = 1
+const DAY_MS = 24 * 60 * 60 * 1000
+
 export class InMemoryQuestInstanceRepository implements QuestInstanceRepository {
   private instances: QuestFullInstance[] = []
 
   seed (data: SeedInput): QuestFullInstance {
+    const scheduledDate = data.scheduledDate ?? new Date()
     const instance: QuestFullInstance = {
       id: data.id ?? randomUUID(),
       questId: data.questId,
-      scheduledDate: data.scheduledDate ?? new Date(),
-      deadline: data.deadline ?? null,
+      scheduledDate,
+      deadline: data.deadline ?? new Date(scheduledDate.getTime() + DEFAULT_SEED_DEADLINE_DAYS * DAY_MS),
       startedAt: data.startedAt ?? null,
       completedAt: data.completedAt ?? null,
       progress: data.progress ?? 0,
@@ -110,9 +114,7 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
   async findDueForExpiration (now: Date): Promise<QuestFullInstance[]> {
     return this.instances.filter(
       (instance) =>
-        (instance.status === 'PENDING' || instance.status === 'STARTED') &&
-        instance.deadline !== null &&
-        instance.deadline < now
+        (instance.status === 'PENDING' || instance.status === 'STARTED') && instance.deadline < now
     )
   }
 }
