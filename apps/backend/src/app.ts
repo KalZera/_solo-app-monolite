@@ -17,6 +17,7 @@ import { eventStorePlugin } from './infrastructure/events/event-store-plugin'
 import { characterHistoryPlugin } from './infrastructure/events/character-history-plugin'
 import { questExpirationSchedulerPlugin } from './infrastructure/scheduler/quest-expiration-scheduler-plugin'
 import { questInstanceCreateSchedulerPlugin } from './infrastructure/scheduler/quest-instance-create-plugin'
+import { questDeactivationSchedulerPlugin } from './infrastructure/scheduler/quest-deactivation-scheduler-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 import { errorHandler } from './infrastructure/http/error-handler'
 
@@ -34,6 +35,7 @@ export function buildApp () {
   app.register(characterHistoryPlugin)
   app.register(questExpirationSchedulerPlugin)
   app.register(questInstanceCreateSchedulerPlugin)
+  app.register(questDeactivationSchedulerPlugin)
 
   app.setErrorHandler(errorHandler)
 

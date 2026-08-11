@@ -4,7 +4,7 @@ import type { QuestFullInstance, QuestInstanceRepository, QuestTab } from '../do
 import { SCHEDULABLE_RECURRENCES } from '../domain/recurrence'
 import { RecurrenceEngine } from '../engines/recurrence.engine'
 import { createQuestInstanceCreatedEvent } from '../domain/events'
-import { getDateFilter } from '@shared/utils/date-filter'
+import { getDateFilter } from '../../../shared/utils/date-filter'
 
 // Materialises (lazily) and returns the current-period instance of every active template of
 // the character. Never creates future instances in bulk; the RecurrenceEngine + the
