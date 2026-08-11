@@ -90,6 +90,9 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
         status: {
           in: ['PENDING']
         }
+      },
+      orderBy:{
+        deadline:"desc"
       }
      })
     return records.map(toDomain)
@@ -124,7 +127,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
       ...(data.rewardGranted !== undefined && { rewardGranted: data.rewardGranted }),
     }
 
-    const record = await this.prisma.questInstance.update({ where: { id }, data: patch, include: INCLUDE_OBJECTIVES })
+    const record = await this.prisma.questInstance.update({ where: { id }, data: patch, include: {...INCLUDE_OBJECTIVES, quest:true} })
     return toDomain(record)
   }
 

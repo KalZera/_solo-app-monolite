@@ -27,8 +27,10 @@ export class CreateQuestInstanceUseCase {
       const InstanceFromQuest = existedInstances.find((instance) => instance.questId === quest.id)
       const {end: questEnd} = getDateFilter(new Date(quest.deadlineDate))
      
-      if(!!InstanceFromQuest && InstanceFromQuest.scheduledDate.getTime() < questEnd.getTime()) continue
-
+      //if instance deadline is less than now this quest is for today or future (Weekly quest)
+      if(!!InstanceFromQuest && InstanceFromQuest.deadline.getTime() > new Date().getTime()) continue
+      if(!!InstanceFromQuest && InstanceFromQuest.deadline.getTime() < questEnd.getTime()) continue
+      
       // CUSTOM recurrence is modelled but not schedulable yet — skip until implemented.
       if (!SCHEDULABLE_RECURRENCES.includes(quest.recurrence) && !!InstanceFromQuest) continue
       

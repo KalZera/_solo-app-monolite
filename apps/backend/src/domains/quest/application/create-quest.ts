@@ -45,11 +45,12 @@ export class CreateQuestUseCase {
 
     const recurrence = input.recurrence ?? 'NONE'
     if (!isRecurrence(recurrence)) {
-      throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM')
+      throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, CUSTOM')
     }
     const initialObjective = {description: "Concluir no prazo", target:1}
     //variable only if deadlineDate is not provided, otherwise it will be the provided date
-    const {end:tomorrow} = getDateFilter(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    const dayInMilisseconds = 24 * 60 * 60 * 1000
+    const {end:tomorrow} = getDateFilter(new Date(Date.now() + dayInMilisseconds));
     // Always end-of-day (23:59:59.999) of whichever date is used, whether it's the
     // client-provided deadlineDate or the "tomorrow" fallback — never the raw instant.
     const providedDeadlineDate = input.deadlineDate ? getDateFilter(input.deadlineDate).end : undefined
@@ -72,10 +73,19 @@ export class CreateQuestUseCase {
     }
 
     const quest = await this.questRepository.create(data)
+    let deadlineInstance = tomorrow;
+
+    if(quest.recurrence === 'NONE')
+      deadlineInstance = quest.deadlineDate
+
+    if(quest.recurrence === 'WEEKLY'){
+      const {end:nextWeek} = getDateFilter(new Date(Date.now() + (dayInMilisseconds * 7)))
+      deadlineInstance = nextWeek
+    }
 
     const instance = await this.questInstanceRepository.create({
       questId: quest.id,
-      deadline: quest.deadlineDate,
+      deadline: deadlineInstance,
       scheduledDate: new Date(),
       objectives:(quest?.objectiveTemplates ?? [initialObjective]).map((objective) => ({
         description: objective.description,
