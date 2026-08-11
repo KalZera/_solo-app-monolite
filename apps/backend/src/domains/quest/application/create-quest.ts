@@ -1,8 +1,8 @@
 import type { CharacterRepository } from '../../character/domain/character'
 import type { CreateQuestData, QuestRepository } from '../domain/quest'
-import { QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
+import { QUEST_RANKS, isQuestRank, xpForQuestRank, MAX_ACTIVE_DAILY_QUESTS } from '../domain/quest'
 import { isRecurrence, type Recurrence } from '../domain/recurrence'
-import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import type { QuestInstanceRepository } from '../domain/quest-instance'
 import { getDateFilter } from '../../../shared/utils/date-filter'
 
@@ -47,6 +47,18 @@ export class CreateQuestUseCase {
     if (!isRecurrence(recurrence)) {
       throw new ValidationError('A quest recurrence must be one of: NONE, DAILY, WEEKLY, CUSTOM')
     }
+    const existingQuests = await this.questRepository.findActiveByCharacterId(character.id)
+
+    if (input.recurrence === 'DAILY') {
+      const activeDailyQuestCount = existingQuests.filter(
+        (quest) => quest.recurrence === 'DAILY'
+      ).length
+
+      if (activeDailyQuestCount >= MAX_ACTIVE_DAILY_QUESTS) {
+        throw new ConflictError(`A character cannot have more than ${MAX_ACTIVE_DAILY_QUESTS} active daily quests`)
+      }
+    }
+
     const initialObjective = {description: "Concluir no prazo", target:1}
     //variable only if deadlineDate is not provided, otherwise it will be the provided date
     const dayInMilisseconds = 24 * 60 * 60 * 1000

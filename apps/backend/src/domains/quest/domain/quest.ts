@@ -6,6 +6,7 @@ import type { Recurrence } from './recurrence'
 // The XP reward is derived from the rank on the server, never supplied by the client.
 export type QuestRank = 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
 export const QUEST_RANKS: QuestRank[] = ['E', 'D', 'C', 'B', 'A', 'S']
+export const MAX_ACTIVE_DAILY_QUESTS = 5
 
 const QUEST_RANK_XP: Record<QuestRank, number> = {
   E: 10,

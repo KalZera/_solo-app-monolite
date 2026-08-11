@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { CreateQuestUseCase } from '../application/create-quest'
-import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
+import { ConflictError, NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { InMemoryQuestRepository } from '../infrastructure/in-memory-quest-repository'
 import { InMemoryQuestInstanceRepository } from '../infrastructure/in-memory-quest-instance-repository'
 import { InMemoryCharacterRepository } from '../../character/infrastructure/in-memory-character-repository'
 import type { Recurrence } from '../domain/recurrence'
+import { MAX_ACTIVE_DAILY_QUESTS } from '../domain/quest'
 
 describe('CreateQuestUseCase', () => {
   let questRepository: InMemoryQuestRepository
@@ -133,6 +134,35 @@ describe('CreateQuestUseCase', () => {
       ValidationError
     )
   })
+
+  it("rejects a daily quest when MAX daily quests created ", async () => {
+    seedCharacter();
+    const requests = []
+    for (let index = 1; index <= MAX_ACTIVE_DAILY_QUESTS; index++) {
+      console.log({index})
+      requests.push(
+        build().execute({
+        userId: `user-1`,
+        title: `daily ${index}`,
+        description: `daily ${index}`,
+        rank: "E",
+        recurrence: "DAILY",
+      }),
+      )
+    }
+    console.log({requests})
+    await Promise.all(requests);
+
+    await expect(
+      build().execute({
+        userId: "user-1",
+        title: "daily max",
+        description: "daily max",
+        rank: "E",
+        recurrence: "DAILY",
+      }),
+    ).rejects.toThrowError(ConflictError);
+  });
 
   it('throws NotFoundError when the user has no character', async () => {
     await expect(
