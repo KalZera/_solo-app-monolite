@@ -179,7 +179,6 @@
       "NONE": "Única",
       "DAILY": "Diária",
       "WEEKLY": "Semanal",
-      "MONTHLY": "Mensal",
       "CUSTOM": "Personalizada"
     },
     "status": {

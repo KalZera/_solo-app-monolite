@@ -22,7 +22,7 @@ export function QuestCard({ quest, instance, onPress }: QuestCardProps) {
     <Panel className="gap-3 rounded-lg">
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
-          <Text weight="semibold" className="text-lg text-content">
+          <Text weight="semibold" className="text-lg text-content uppercase">
             {quest.title}
           </Text>
           {/* <Text numberOfLines={2} className="text-sm text-content-muted">
