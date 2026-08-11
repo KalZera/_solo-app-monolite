@@ -15,7 +15,6 @@ import { createQuestFailedEvent } from '../domain/events'
 export class ExpireQuestsUseCase {
   constructor (
     private readonly questInstanceRepository: QuestInstanceRepository,
-    private readonly questRepository: QuestRepository,
     private readonly publishEvent: (event: DomainEvent) => Promise<void> = (event) => eventBus.publish(event)
   ) {}
 
@@ -28,10 +27,9 @@ export class ExpireQuestsUseCase {
     // timers (e.g. node-cron's own heartbeat) and trigger spurious "missed execution" warnings.
     return Promise.all(
       toFail.map(async (instance) => {
-        const quest = await this.questRepository.findById(instance.questId)
         const updated = await this.questInstanceRepository.save(instance.id, { status: 'FAILED' })
         await this.publishEvent(
-          createQuestFailedEvent(updated.id, updated.questId, quest?.characterId ?? '', quest?.title ?? 'Quest')
+          createQuestFailedEvent(updated.id, updated.questId, updated?.quest?.characterId ?? '', updated?.quest?.title ?? 'Quest')
         )
         return updated
       })
