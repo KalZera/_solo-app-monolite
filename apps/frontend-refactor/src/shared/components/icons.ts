@@ -18,6 +18,7 @@ export {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
+  Calendar,
   Trash2,
   CircleCheckBig as CheckCircle2,
   CircleX as XCircle,

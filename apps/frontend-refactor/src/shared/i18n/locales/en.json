@@ -13,7 +13,8 @@
     "errorTitle": "Something went wrong",
     "failedToReachSystem": "Failed to reach the System. Try again.",
     "comingSoon": "Coming soon",
-    "mockedNotice": "Mocked data — the backend will power this soon."
+    "mockedNotice": "Mocked data — the backend will power this soon.",
+    "selectDate": "Select date"
   },
   "tabs": {
     "dashboard": "Dashboard",
@@ -242,6 +243,7 @@
       "rank": "Rank",
       "rankHint": "Reward: {{xp}} XP",
       "recurrence": "Recurrence",
+      "deadline": "Deadline",
       "category": "Category",
       "categoryNone": "No category",
       "objectivesHint": "Optional. A quest with objectives is completable once more than 70% are done.",

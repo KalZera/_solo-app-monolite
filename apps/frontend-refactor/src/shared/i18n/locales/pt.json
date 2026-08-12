@@ -13,7 +13,8 @@
     "errorTitle": "Algo deu errado",
     "failedToReachSystem": "Falha ao conectar com o Sistema. Tente novamente.",
     "comingSoon": "Em breve",
-    "mockedNotice": "Dados simulados — em breve virão do backend."
+    "mockedNotice": "Dados simulados — em breve virão do backend.",
+    "selectDate": "Selecionar data"
   },
   "tabs": {
     "dashboard": "Painel",
@@ -242,6 +243,7 @@
       "rank": "Rank",
       "rankHint": "Recompensa: {{xp}} XP",
       "recurrence": "Recorrência",
+      "deadline": "Prazo",
       "category": "Categoria",
       "categoryNone": "Sem categoria",
       "objectivesHint": "Opcional. Uma missão com objetivos pode ser concluída quando mais de 70% forem feitos.",
