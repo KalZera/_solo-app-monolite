@@ -17,9 +17,10 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  characters      Character[]
-  notifications   Notification[]
-  questCategories QuestCategory[]
+  characters        Character[]
+  notifications     Notification[]
+  questCategories   QuestCategory[]
+  pushSubscriptions PushSubscription[]
 
   @@map("users")
 }
@@ -251,4 +252,20 @@ model Notification {
 
   @@index([userId])
   @@map("notifications")
+}
+
+// One browser/device subscription for the Web Push API (endpoint + the two keys the browser
+// generates). A user can have several — one per device/browser they enabled push on.
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }
