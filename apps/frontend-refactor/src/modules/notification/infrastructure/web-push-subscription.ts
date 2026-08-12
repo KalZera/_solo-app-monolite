@@ -72,9 +72,7 @@ export async function registerWebPush(): Promise<void> {
  */
 export async function showLocalPushNotification(title: string, message: string): Promise<void> {
   if (!isWebPushSupported()) return
-  console.log('chegou aqui', {cond: typeof Notification === 'undefined', cond1:Notification.permission})
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return
-  console.log('chegou aqui 2')
 
   const registration = await navigator.serviceWorker.ready
   await registration.showNotification(title, {
