@@ -16,6 +16,7 @@ import { appFonts } from '@/shared/theme/fonts'
 import { colors } from '@/shared/theme/colors'
 import { useSessionStore } from '@/modules/auth/application/session.store'
 import { useNotificationSocket } from '@/modules/notification/application/useNotificationSocket'
+import { useWebPushRegistration } from '@/modules/notification/application/useWebPushRegistration'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -29,6 +30,7 @@ function RootNavigator() {
   }, [bootstrap])
 
   useNotificationSocket()
+  useWebPushRegistration()
 
   if (isLoading) return <FullScreenLoading />
 

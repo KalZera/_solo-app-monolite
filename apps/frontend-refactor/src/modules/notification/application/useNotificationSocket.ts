@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useSessionStore } from '@/modules/auth/application/session.store'
 import { useToastStore } from '@/shared/notifications/notification.store'
 import { buildNotificationSocketUrl } from '../infrastructure/notification.socket'
+import { showLocalPushNotification } from '../infrastructure/web-push-subscription'
 import type { NotificationSocketMessage } from '../domain/notification.types'
 
 const RECONNECT_DELAY_MS = 3000
@@ -40,6 +41,12 @@ export function useNotificationSocket() {
               duration: TOAST_DURATION_MS,
             })
           }
+
+          if (data.notification.channel === 'PUSH') {
+            showLocalPushNotification(data.notification.title, data.notification.message).catch(() => {
+            })
+          }
+
         } catch {
           // Ignore malformed frames.
         }
