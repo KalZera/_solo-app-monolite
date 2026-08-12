@@ -15,6 +15,7 @@ import { LevelUpHost } from '@/shared/level-up/LevelUpHost'
 import { appFonts } from '@/shared/theme/fonts'
 import { colors } from '@/shared/theme/colors'
 import { useSessionStore } from '@/modules/auth/application/session.store'
+import { useNotificationSocket } from '@/modules/notification/application/useNotificationSocket'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -26,6 +27,8 @@ function RootNavigator() {
   useEffect(() => {
     bootstrap()
   }, [bootstrap])
+
+  useNotificationSocket()
 
   if (isLoading) return <FullScreenLoading />
 
