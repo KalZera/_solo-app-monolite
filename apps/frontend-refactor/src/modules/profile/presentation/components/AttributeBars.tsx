@@ -20,7 +20,7 @@ export function AttributeBars({ stats }: { stats?: CharacterStats }) {
   const { t } = useTranslation()
   const values = DISPLAY_ORDER.map((key) => stats?.[key] ?? 0)
   const max = Math.max(...values, 1)
-  console.log({ max })
+
   return (
     <View className="gap-2.5">
       {DISPLAY_ORDER.map((key, index) => {

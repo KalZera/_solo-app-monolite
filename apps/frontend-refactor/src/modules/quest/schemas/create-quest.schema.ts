@@ -3,6 +3,8 @@ import type { TFunction } from 'i18next'
 import { QUEST_RANKS } from '../domain/quest-rank'
 import { SCHEDULABLE_RECURRENCES } from '../domain/recurrence'
 
+export const DATE_TOMORROW = new Date(Date.now() + (24 * 60 * 60 * 1000))
+
 // Mirrors the backend's createQuestBodySchema (title ≤120, description ≤1000,
 // objective description ≤200, positive integer targets). `rewardXp` is never
 // sent — the server derives it from the rank.
@@ -23,6 +25,7 @@ export function createQuestSchema(t: TFunction) {
       message: t('quest.validation.recurrenceRequired'),
     }),
     categoryId: z.string().nullable().default(null),
+    deadlineDate: z.date().min(DATE_TOMORROW),
     objectives: z
       .array(
         z.object({

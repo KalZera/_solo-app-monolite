@@ -7,6 +7,7 @@ import { View } from 'react-native'
 import {
   Button,
   ControlledInput,
+  DatePicker,
   FormField,
   Panel,
   Screen,
@@ -20,6 +21,7 @@ import { useCreateQuest } from '../../application/useCreateQuest'
 import { useQuestCategories } from '../../application/useQuestCategories'
 import {
   createQuestSchema,
+  DATE_TOMORROW,
   type CreateQuestFormInput,
   type CreateQuestFormValues,
 } from '../../schemas/create-quest.schema'
@@ -34,6 +36,7 @@ type RecreateQuestParams = {
   recurrence?: string
   categoryId?: string
   objectives?: string
+  deadlineDate?: string
 }
 
 function parsePrefillObjectives(raw?: string): CreateQuestFormInput['objectives'] {
@@ -62,6 +65,7 @@ export function CreateQuestScreen() {
       rank: (prefill.rank as CreateQuestFormInput['rank']) ?? 'E',
       recurrence: (prefill.recurrence as CreateQuestFormInput['recurrence']) ?? 'NONE',
       categoryId: prefill.categoryId || null,
+      deadlineDate: new Date(prefill.deadlineDate ?? DATE_TOMORROW),
       objectives: parsePrefillObjectives(prefill.objectives) ?? [],
     },
   })
@@ -89,6 +93,7 @@ export function CreateQuestScreen() {
       rank: values.rank,
       recurrence: values.recurrence,
       categoryId: values.categoryId || null,
+      deadlineDate: values.deadlineDate.toISOString(),
       objectives: values.objectives,
     })
   }
@@ -137,6 +142,19 @@ export function CreateQuestScreen() {
               )}
             />
           </FormField>
+          <Controller
+            control={control}
+            name="deadlineDate"
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label={t('quest.create.deadline')}
+                error={fieldState.error?.message}
+                value={field.value}
+                onChange={field.onChange}
+                minDate={new Date(DATE_TOMORROW)}
+              />
+            )}
+          />
           <FormField label={t('quest.create.category')}>
             <Controller
               control={control}

@@ -282,6 +282,7 @@ export function QuestDetailScreen() {
               rank: quest.rank,
               recurrence: quest.recurrence,
               categoryId: quest.categoryId ?? '',
+              deadlineDate: quest.deadlineDate,
               objectives: JSON.stringify(
                 (quest.objectiveTemplates ?? []).map((objective) => ({
                   description: objective.description,
