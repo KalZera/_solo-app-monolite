@@ -1,9 +1,9 @@
 import type { CreateNotificationData, Notification, NotificationChannel, NotificationPreferences } from '../domain/notification'
-import type { NotificationType } from '../domain/notification-type'
+import type { NotificationName } from '../domain/notification-type'
 
 // Which NotificationPreferences flag gates each NotificationType — independent of the
 // per-channel flags (pushEnabled/emailEnabled/whatsappEnabled), both must allow it.
-const TYPE_PREFERENCE_KEY: Record<NotificationType, keyof NotificationPreferences> = {
+const TYPE_PREFERENCE_KEY: Record<NotificationName, keyof NotificationPreferences> = {
   QUEST_REMINDER: 'questReminder',
   QUEST_EXPIRED: 'questExpired',
   LEVEL_UP: 'levelUp',
@@ -14,7 +14,7 @@ const TYPE_PREFERENCE_KEY: Record<NotificationType, keyof NotificationPreference
 // Decides which channels a notification should be dispatched through (based on the
 // recipient's NotificationPreferences) and builds the Notification to persist/dispatch.
 export class NotificationEngine {
-  resolveChannels (type: NotificationType, preferences: NotificationPreferences): NotificationChannel[] {
+  resolveChannels (type: NotificationName, preferences: NotificationPreferences): NotificationChannel[] {
     if (!preferences[TYPE_PREFERENCE_KEY[type]]) return []
 
     const channels: NotificationChannel[] = []

@@ -1,10 +1,12 @@
 import type { ID } from '../../../shared/types/index'
 import { SendNotificationUseCase } from './send-notification'
-import type { NotificationType } from '../domain/notification-type'
+import type { NotificationName } from '../domain/notification-type'
+import type { NotificationChannel } from '../domain/notification'
 
 interface ScheduleNotificationInput {
   userId: ID
-  type: NotificationType
+  type: NotificationName
+  channel: NotificationChannel
   title: string
   message: string
   scheduledFor: Date
@@ -22,8 +24,9 @@ export class ScheduleNotificationUseCase {
     const delayMs = Math.max(0, input.scheduledFor.getTime() - Date.now())
 
     setTimeout(() => {
+      const {userId, type, title, message, channel} = input
       this.sendNotification
-        .execute({ userId: input.userId, type: input.type, title: input.title, message: input.message })
+        .execute({ userId, type, title, message, channel})
         .catch((error) => {
           console.error('Failed to send scheduled notification', error)
         })

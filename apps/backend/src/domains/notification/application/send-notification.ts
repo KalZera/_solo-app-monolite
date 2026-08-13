@@ -3,14 +3,15 @@ import type { PushSubscriptionRepository } from '../infrastructure/push/push-sub
 import { WebPushAdapter, StaleSubscriptionError } from '../infrastructure/push/web-push.adapter'
 import { NotificationSocketHub, notificationSocketHub } from '../infrastructure/websocket/notification-socket-hub'
 import { NotificationEngine } from '../engine/notification.engine'
-import type { Notification, NotificationRepository } from '../domain/notification'
-import type { NotificationType } from '../domain/notification-type'
+import type { Notification, NotificationChannel, NotificationRepository } from '../domain/notification'
+import type { NotificationName } from '../domain/notification-type'
 
 interface SendNotificationInput {
   userId: ID
-  type: NotificationType
+  type: NotificationName
   title: string
   message: string,
+  channel:NotificationChannel
 }
 
 // Only the PUSH channel is actually wired up to a real adapter so far — EMAIL/WHATSAPP are
@@ -29,12 +30,12 @@ export class SendNotificationUseCase {
     const preferences = await this.notificationRepository.getPreferences(input.userId)
     const channels = this.notificationEngine.resolveChannels(input.type, preferences)
 
-    if (!channels.includes('PUSH')) return null
+    if (!channels.includes(input.channel)) return null
 
     const notification = await this.notificationRepository.create({
       userId: input.userId,
       type: input.type,
-      channel: 'PUSH',
+      channel: input.channel,
       title: input.title,
       message: input.message,
     })
@@ -43,21 +44,23 @@ export class SendNotificationUseCase {
     // Web Push dispatch below, which reaches devices even when the app isn't open.
     this.socketHub.push(input.userId, notification)
 
-    const subscriptions = await this.pushSubscriptionRepository.findByUserId(input.userId)
+    if(input.channel === 'PUSH'){
+      const subscriptions = await this.pushSubscriptionRepository.findByUserId(input.userId)
 
-    await Promise.all(
-      subscriptions.map(async (subscription) => {
-        try {
-          await this.webPushAdapter.send(subscription, notification)
-        } catch (error) {
-          if (error instanceof StaleSubscriptionError) {
-            await this.pushSubscriptionRepository.deleteByEndpoint(subscription.endpoint)
-            return
+      await Promise.all(
+        subscriptions.map(async (subscription) => {
+          try {
+              await this.webPushAdapter.send(subscription, notification)
+          } catch (error) {
+            if (error instanceof StaleSubscriptionError) {
+              await this.pushSubscriptionRepository.deleteByEndpoint(subscription.endpoint)
+              return
+            }
+            console.error('Failed to deliver web push notification', error)
           }
-          console.error('Failed to deliver web push notification', error)
-        }
-      })
-    )
+        })
+      )
+    }
 
     return notification
   }

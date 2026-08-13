@@ -1,12 +1,12 @@
 import type { ID } from '../../../shared/types/index'
-import type { NotificationType } from './notification-type'
+import type { NotificationName } from './notification-type'
 
 export type NotificationChannel ='IN_APP'| 'PUSH' | 'EMAIL' | 'WHATSAPP'
 
 export interface Notification {
   id: ID
   userId: ID
-  type: NotificationType
+  type: NotificationName
   channel: NotificationChannel
   title: string
   message: string
@@ -17,7 +17,7 @@ export interface Notification {
 
 export interface CreateNotificationData {
   userId: ID
-  type: NotificationType
+  type: NotificationName
   channel: NotificationChannel
   title: string
   message: string

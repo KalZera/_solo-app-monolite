@@ -5,6 +5,7 @@ import { ExpireQuestsUseCase } from '../../domains/quest/application/expire-ques
 import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructure/prisma-quest-instance-repository'
 
 // Runs every 2 hours (00:00, 02:00, 04:00, …).
+// const EXPIRE_QUESTS_CRON_EXPRESSION = '*/2 * * * *'
 const EXPIRE_QUESTS_CRON_EXPRESSION = '0 */2 * * *'
 
 // A 2h-cadence maintenance job has no need for sub-second precision. node-cron's default
