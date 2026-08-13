@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { FullScreenLoading } from '@/shared/components'
 import { isApiError } from '@/shared/api/api-error'
 import { useCharacterProfile } from '@/modules/profile/application/useCharacterProfile'
+import { TutorialGate } from '@/modules/tutorial/presentation/TutorialGate'
 import {
   CircleUser,
   Gauge,
@@ -25,61 +26,64 @@ export default function TabsLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.contentMuted,
-        tabBarStyle: {
-          backgroundColor: colors.surface.base,
-          borderTopColor: colors.line,
-          borderTopWidth: 1,
-        },
-        tabBarLabelStyle: { fontFamily: 'Rajdhani_600SemiBold', fontSize: 11 },
-      }}
-    >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: t('tabs.dashboard'),
-          tabBarIcon: ({ color, size }) => <LayoutDashboard color={color} size={size} />,
+    <>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.contentMuted,
+          tabBarStyle: {
+            backgroundColor: colors.surface.base,
+            borderTopColor: colors.line,
+            borderTopWidth: 1,
+          },
+          tabBarLabelStyle: { fontFamily: 'Rajdhani_600SemiBold', fontSize: 11 },
         }}
-      />
-      <Tabs.Screen
-        name="dash"
-        options={{
-          title: t('tabs.dash'),
-          tabBarIcon: ({ color, size }) => <Gauge color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="character"
-        options={{
-          title: t('tabs.character'),
-          tabBarIcon: ({ color, size }) => <CircleUser color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="quests"
-        options={{
-          title: t('tabs.quests'),
-          tabBarIcon: ({ color, size }) => <ScrollText color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: t('tabs.history'),
-          tabBarIcon: ({ color, size }) => <History color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: t('tabs.profile'),
-          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="dashboard"
+          options={{
+            title: t('tabs.dashboard'),
+            tabBarIcon: ({ color, size }) => <LayoutDashboard color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="dash"
+          options={{
+            title: t('tabs.dash'),
+            tabBarIcon: ({ color, size }) => <Gauge color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="character"
+          options={{
+            title: t('tabs.character'),
+            tabBarIcon: ({ color, size }) => <CircleUser color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="quests"
+          options={{
+            title: t('tabs.quests'),
+            tabBarIcon: ({ color, size }) => <ScrollText color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="history"
+          options={{
+            title: t('tabs.history'),
+            tabBarIcon: ({ color, size }) => <History color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: t('tabs.profile'),
+            tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+          }}
+        />
+      </Tabs>
+      <TutorialGate />
+    </>
   )
 }

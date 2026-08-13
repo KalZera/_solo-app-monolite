@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { Button, Loading, Screen, ScreenHeader } from '@/shared/components'
-import { LogOut } from '@/shared/components/icons'
+import { BookOpen, LogOut } from '@/shared/components/icons'
 import { colors } from '@/shared/theme/colors'
 import { useSession } from '@/modules/auth/application/useSession'
+import { TutorialSheet } from '@/modules/tutorial/presentation/TutorialSheet'
 import { useCharacterProfile } from '../../application/useCharacterProfile'
 import { ProfileHeader } from '../components/ProfileHeader'
 import { LanguageSelector } from '../components/LanguageSelector'
@@ -14,6 +15,7 @@ export function ProfileScreen() {
   const { signOut } = useSession()
   const { data, isLoading } = useCharacterProfile()
   const [signingOut, setSigningOut] = useState(false)
+  const [tutorialVisible, setTutorialVisible] = useState(false)
 
   async function handleSignOut() {
     setSigningOut(true)
@@ -39,6 +41,12 @@ export function ProfileScreen() {
           <ProfileHeader profile={data ?? null} />
           <LanguageSelector />
           <Button
+            label={t('profile.showTutorial')}
+            variant="secondary"
+            icon={<BookOpen size={16} color={colors.content} />}
+            onPress={() => setTutorialVisible(true)}
+          />
+          <Button
             label={signingOut ? t('profile.loggingOff') : t('profile.logOff')}
             variant="danger"
             loading={signingOut}
@@ -47,6 +55,8 @@ export function ProfileScreen() {
           />
         </View>
       )}
+
+      <TutorialSheet visible={tutorialVisible} onClose={() => setTutorialVisible(false)} />
     </Screen>
   )
 }

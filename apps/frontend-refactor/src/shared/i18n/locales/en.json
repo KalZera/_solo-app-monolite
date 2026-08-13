@@ -315,6 +315,7 @@
     "languagePortuguese": "Portuguese",
     "logOff": "Log Off",
     "loggingOff": "Logging off…",
+    "showTutorial": "View tutorial",
     "avatar": {
       "title": "Edit Avatar",
       "editHint": "Choose a photo to set your Hunter's portrait.",
@@ -333,6 +334,41 @@
       "successTitle": "Avatar updated",
       "successMessage": "Your Hunter's portrait has been updated.",
       "errorTitle": "Failed to update avatar"
+    }
+  },
+  "tutorial": {
+    "title": "System Guide",
+    "intro": "Welcome, Hunter. Follow the System to begin your ascension.",
+    "gotIt": "Got it",
+    "steps": {
+      "character": {
+        "title": "Awaken your Hunter",
+        "description": "Create your Hunter and customize the avatar. Your class sets your current focus: Healer is Health, Mage is Study, and so on — pick the area you want to level up right now."
+      },
+      "quests": {
+        "title": "Forge Quests",
+        "description": "Turn your tasks into Quests. Set the rank, deadline, recurrence and objectives for each one."
+      },
+      "ranks": {
+        "title": "Ranks and Difficulty",
+        "description": "Every Quest has a difficulty rank: E (very easy), D (easy), C (medium), B (hard), A (very hard) and S (extreme). The higher the rank, the more XP you earn on completion."
+      },
+      "complete": {
+        "title": "Complete and level up",
+        "description": "Start and complete your Quests to earn XP, level up and climb ranks."
+      },
+      "attributes": {
+        "title": "Distribute Attributes",
+        "description": "Each level grants points to boost Strength, Agility, Intelligence, Vitality and Luck."
+      },
+      "track": {
+        "title": "Track your ascension",
+        "description": "Check your status and streak on the Dashboard, and relive every milestone in History."
+      }
+    },
+    "rankScale": {
+      "easy": "Easy",
+      "hard": "Hard"
     }
   }
 }

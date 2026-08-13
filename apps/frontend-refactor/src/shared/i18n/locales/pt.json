@@ -315,6 +315,7 @@
     "languagePortuguese": "Português",
     "logOff": "Sair",
     "loggingOff": "Saindo…",
+    "showTutorial": "Ver tutorial",
     "avatar": {
       "title": "Editar Avatar",
       "editHint": "Escolha uma foto para o retrato do seu Caçador.",
@@ -333,6 +334,41 @@
       "successTitle": "Avatar atualizado",
       "successMessage": "O retrato do seu Caçador foi atualizado.",
       "errorTitle": "Falha ao atualizar o avatar"
+    }
+  },
+  "tutorial": {
+    "title": "Guia do Sistema",
+    "intro": "Bem-vindo, Caçador. Siga o Sistema para iniciar sua ascensão.",
+    "gotIt": "Entendi",
+    "steps": {
+      "character": {
+        "title": "Desperte seu Caçador",
+        "description": "Crie seu Caçador e personalize o avatar. A classe define seu foco atual: Curandeiro é Saúde, Mago é Estudo, e assim por diante — escolha a área que quer evoluir agora."
+      },
+      "quests": {
+        "title": "Forje Missões",
+        "description": "Transforme suas tarefas em Missões. Defina rank, prazo, recorrência e objetivos para cada uma."
+      },
+      "ranks": {
+        "title": "Ranks e Dificuldade",
+        "description": "Cada Missão tem um rank de dificuldade: E (muito fácil), D (fácil), C (médio), B (difícil), A (muito difícil) e S (extremo). Quanto mais alto o rank, mais XP você ganha ao concluir."
+      },
+      "complete": {
+        "title": "Complete e evolua",
+        "description": "Inicie e conclua suas Missões para ganhar XP, subir de nível e avançar de rank."
+      },
+      "attributes": {
+        "title": "Distribua Atributos",
+        "description": "A cada nível você recebe pontos para reforçar Força, Agilidade, Inteligência, Vitalidade e Sorte."
+      },
+      "track": {
+        "title": "Acompanhe sua ascensão",
+        "description": "Veja seu status e sua sequência no Painel, e reviva cada conquista no Histórico."
+      }
+    },
+    "rankScale": {
+      "easy": "Fácil",
+      "hard": "Difícil"
     }
   }
 }

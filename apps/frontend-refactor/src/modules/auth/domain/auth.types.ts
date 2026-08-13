@@ -20,3 +20,12 @@ export interface RegisteredHunter {
   username: string
   createdAt: string
 }
+
+/** The authenticated Hunter as returned by GET /identity/me. */
+export interface Me {
+  id: string
+  email: string
+  username: string
+  /** Whether the Hunter has already seen the "how to use the app" tutorial sheet. */
+  isCompleteTutorial: boolean
+}

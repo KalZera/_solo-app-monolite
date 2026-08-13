@@ -15,6 +15,7 @@ export {
   Minus,
   Check,
   X,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
