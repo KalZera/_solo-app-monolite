@@ -9,7 +9,7 @@ export function RegisterScreen() {
 
   return (
     <Screen scroll center>
-      <View className="mx-auto w-full max-w-md gap-8">
+      <View className="mx-auto w-full max-w-md gap-8 pt-20">
         <View className="items-center gap-2">
           <Text weight="semibold" className="text-xs uppercase tracking-[6px] text-primary">
             {t('common.systemLabel')}
