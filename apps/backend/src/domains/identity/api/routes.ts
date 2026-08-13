@@ -3,6 +3,7 @@ import { RegisterUserUseCase } from '../application/register-user'
 import { LoginUserUseCase } from '../application/login-user'
 import { RefreshSessionUseCase } from '../application/refresh-session'
 import { UpdateUserUseCase } from '../application/update-user'
+import { PrismaNotificationRepository } from '../../notification/infrastructure/prisma-notification.repository'
 import {
   ACCESS_TOKEN_TTL,
   REFRESH_TOKEN_COOKIE_NAME,
@@ -27,7 +28,7 @@ function setRefreshCookie (reply: FastifyReply, token: string) {
 }
 
 export const identityRoutes: FastifyPluginAsync = async (app) => {
-  const registerUser = new RegisterUserUseCase(app.prisma)
+  const registerUser = new RegisterUserUseCase(app.prisma, new PrismaNotificationRepository(app.prisma))
 
   const signAccessToken = (payload: TokenPayload) =>
     app.jwt.sign({ ...payload, type: 'access' }, { expiresIn: ACCESS_TOKEN_TTL })

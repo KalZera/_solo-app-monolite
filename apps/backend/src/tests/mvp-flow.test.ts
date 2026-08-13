@@ -20,6 +20,7 @@ import { UpdateQuestProgressUseCase } from '../domains/quest/application/update-
 import { InMemoryQuestRepository } from '../domains/quest/infrastructure/in-memory-quest-repository'
 import { InMemoryQuestInstanceRepository } from '../domains/quest/infrastructure/in-memory-quest-instance-repository'
 import { InMemoryProgressionRepository } from '../domains/progression/infrastructure/in-memory-progression-repository'
+import { InMemoryNotificationRepository } from '../domains/notification/infrastructure/in-memory-notification.repository'
 import { GrantExperienceUseCase } from '../domains/progression/application/grant-experience'
 import { calculateXpToNextLevel } from '../domains/progression/engines/level.engine'
 import { ConflictError } from '../shared/errors/app-error'
@@ -33,9 +34,10 @@ describe('MVP user journey', () => {
   const questRepository = new InMemoryQuestRepository()
   const questInstanceRepository = new InMemoryQuestInstanceRepository()
   const progressionRepository = new InMemoryProgressionRepository(characterRepository, restPointRepository)
+  const notificationRepository = new InMemoryNotificationRepository()
   const publishEvent = vi.fn().mockResolvedValue(undefined)
 
-  const registerUser = new RegisterUserUseCase(prisma as unknown as PrismaClient)
+  const registerUser = new RegisterUserUseCase(prisma as unknown as PrismaClient, notificationRepository)
   const loginUser = new LoginUserUseCase(
     prisma as unknown as PrismaClient,
     () => 'fake-access-token',

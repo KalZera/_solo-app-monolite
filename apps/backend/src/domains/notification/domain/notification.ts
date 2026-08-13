@@ -35,6 +35,20 @@ export interface NotificationPreferences {
   penalty: boolean
 }
 
+// What every user starts with — materialised into a NotificationPreference row at
+// registration time (see RegisterUserUseCase) and also what NotificationRepository.
+// getPreferences falls back to if that row is ever missing (e.g. pre-existing users).
+export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
+  pushEnabled: true,
+  emailEnabled: false,
+  whatsappEnabled: false,
+  questReminder: true,
+  questExpired: true,
+  levelUp: true,
+  rankUp: true,
+  penalty: true,
+}
+
 export interface NotificationRepository {
   create (data: CreateNotificationData): Promise<Notification>
   findById (id: ID): Promise<Notification | null>

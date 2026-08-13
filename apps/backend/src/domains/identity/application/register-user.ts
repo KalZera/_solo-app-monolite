@@ -2,6 +2,8 @@ import type { PrismaClient } from '@prisma/client'
 import { ConflictError } from '../../../shared/errors/app-error'
 import { generateId } from '../../../shared/utils/index'
 import { hashPassword } from '../../../shared/security/password'
+import { DEFAULT_NOTIFICATION_PREFERENCES } from '../../notification/domain/notification'
+import type { NotificationRepository } from '../../notification/domain/notification'
 
 interface RegisterInput {
   email: string
@@ -10,7 +12,10 @@ interface RegisterInput {
 }
 
 export class RegisterUserUseCase {
-  constructor (private readonly prisma: PrismaClient) {}
+  constructor (
+    private readonly prisma: PrismaClient,
+    private readonly notificationRepository: NotificationRepository
+  ) {}
 
   async execute (input: RegisterInput) {
     const existing = await this.prisma.user.findFirst({
@@ -32,6 +37,8 @@ export class RegisterUserUseCase {
       },
       select: { id: true, email: true, username: true, createdAt: true },
     })
+
+    await this.notificationRepository.savePreferences(user.id, DEFAULT_NOTIFICATION_PREFERENCES)
 
     return user
   }

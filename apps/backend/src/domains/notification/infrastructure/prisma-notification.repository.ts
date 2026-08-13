@@ -4,7 +4,14 @@ import {
   type NotificationPreference as PrismaNotificationPreference,
   type PrismaClient,
 } from '@prisma/client'
-import type { CreateNotificationData, Notification, NotificationChannel, NotificationPreferences, NotificationRepository } from '../domain/notification'
+import {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  type CreateNotificationData,
+  type Notification,
+  type NotificationChannel,
+  type NotificationPreferences,
+  type NotificationRepository,
+} from '../domain/notification'
 import type { NotificationName } from '../domain/notification-type'
 import type { ID } from '../../../shared/types/index'
 
@@ -20,19 +27,6 @@ function toDomain (record: PrismaNotification): Notification {
     metadata: record.metadata as Record<string, unknown> | null,
     createdAt: record.createdAt,
   }
-}
-
-// Mirrors InMemoryNotificationRepository's DEFAULT_PREFERENCES — what a user gets before
-// they've ever saved their own preferences (no row yet).
-const DEFAULT_PREFERENCES: NotificationPreferences = {
-  pushEnabled: true,
-  emailEnabled: false,
-  whatsappEnabled: false,
-  questReminder: true,
-  questExpired: true,
-  levelUp: true,
-  rankUp: true,
-  penalty: true,
 }
 
 function toPreferencesDomain (record: PrismaNotificationPreference): NotificationPreferences {
@@ -87,7 +81,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
 
   async getPreferences (userId: ID): Promise<NotificationPreferences> {
     const record = await this.prisma.notificationPreference.findUnique({ where: { userId } })
-    return record ? toPreferencesDomain(record) : DEFAULT_PREFERENCES
+    return record ? toPreferencesDomain(record) : DEFAULT_NOTIFICATION_PREFERENCES
   }
 
   async savePreferences (userId: ID, preferences: NotificationPreferences): Promise<NotificationPreferences> {

@@ -1,19 +1,14 @@
 import { randomUUID } from 'crypto'
-import type { CreateNotificationData, Notification, NotificationPreferences, NotificationRepository } from '../domain/notification'
+import {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  type CreateNotificationData,
+  type Notification,
+  type NotificationPreferences,
+  type NotificationRepository,
+} from '../domain/notification'
 import type { ID } from '../../../shared/types/index'
 
 type SeedInput = Pick<Notification, 'userId'> & Partial<Omit<Notification, 'userId'>>
-
-const DEFAULT_PREFERENCES: NotificationPreferences = {
-  pushEnabled: true,
-  emailEnabled: false,
-  whatsappEnabled: false,
-  questReminder: true,
-  questExpired: true,
-  levelUp: true,
-  rankUp: true,
-  penalty: true,
-}
 
 export class InMemoryNotificationRepository implements NotificationRepository {
   private notifications: Notification[] = []
@@ -67,7 +62,7 @@ export class InMemoryNotificationRepository implements NotificationRepository {
   }
 
   async getPreferences (userId: ID): Promise<NotificationPreferences> {
-    return this.preferences.get(userId) ?? DEFAULT_PREFERENCES
+    return this.preferences.get(userId) ?? DEFAULT_NOTIFICATION_PREFERENCES
   }
 
   async savePreferences (userId: ID, preferences: NotificationPreferences): Promise<NotificationPreferences> {
