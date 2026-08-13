@@ -72,6 +72,7 @@
       "titleField": "Title",
       "titlePlaceholder": "The Weakest Hunter",
       "class": "Class",
+      "viewClasses": "View classes",
       "submit": "Awaken Hunter",
       "submitting": "Awakening…",
       "successTitle": "Hunter awakened",
@@ -79,11 +80,42 @@
       "errorTitle": "Could not create Hunter"
     },
     "classes": {
-      "warrior": "Warrior",
-      "mage": "Mage",
-      "rogue": "Rogue",
-      "ranger": "Ranger",
-      "healer": "Healer"
+      "athlete": "Athlete",
+      "strategist": "Strategist",
+      "specialist": "Specialist",
+      "entrepreneur": "Entrepreneur",
+      "leader": "Leader",
+      "researcher": "Researcher",
+      "creator": "Creator",
+      "communicator": "Communicator",
+      "mentor": "Mentor",
+      "executor": "Executor",
+      "generalist": "Generalist",
+      "technical_specialist": "Technical Specialist",
+      "manager": "Manager",
+      "researcher_creator": "Researcher-Creator",
+      "leader_strategist": "Leader-Strategist"
+    },
+    "classDescriptions": {
+      "athlete": "Focus on building physical capacity, endurance, strength and bodily performance.",
+      "strategist": "Focus on planning, decision-making and building long-term goals.",
+      "specialist": "Focus on deeply mastering a specific area of knowledge or skill.",
+      "entrepreneur": "Focus on creating opportunities, taking calculated risks and turning ideas into results.",
+      "leader": "Focus on developing leadership, responsibility and coordinating people.",
+      "researcher": "Focus on continuous learning, investigation and deep understanding of complex subjects.",
+      "creator": "Focus on producing new things, developing ideas and turning concepts into concrete projects.",
+      "communicator": "Focus on communication, expression, networking and the ability to convey ideas.",
+      "mentor": "Focus on developing knowledge and the ability to teach, guide and develop others.",
+      "executor": "Focus on discipline, productivity and turning plans into consistent action.",
+      "generalist": "Focus on developing diverse skills and building a broad foundation.",
+      "technical_specialist": "Focus on developing technical mastery and solving complex problems.",
+      "manager": "Focus on organization and managing resources, projects, time and responsibilities.",
+      "researcher_creator": "Focus on turning acquired knowledge into new solutions and projects.",
+      "leader_strategist": "Focus on developing leadership combined with planning and decision-making."
+    },
+    "classGuide": {
+      "title": "Classes",
+      "subtitle": "Each class represents a focus. Pick the one that matches what you want to level up right now."
     },
     "stats": {
       "strength": "Strength",

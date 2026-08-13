@@ -72,6 +72,7 @@
       "titleField": "Título",
       "titlePlaceholder": "O Caçador Mais Fraco",
       "class": "Classe",
+      "viewClasses": "Ver classes",
       "submit": "Despertar Caçador",
       "submitting": "Despertando…",
       "successTitle": "Caçador despertado",
@@ -79,11 +80,42 @@
       "errorTitle": "Não foi possível criar o Caçador"
     },
     "classes": {
-      "warrior": "Guerreiro",
-      "mage": "Mago",
-      "rogue": "Ladino",
-      "ranger": "Patrulheiro",
-      "healer": "Curandeiro"
+      "athlete": "Atleta",
+      "strategist": "Estrategista",
+      "specialist": "Especialista",
+      "entrepreneur": "Empreendedor",
+      "leader": "Líder",
+      "researcher": "Pesquisador",
+      "creator": "Criador",
+      "communicator": "Comunicador",
+      "mentor": "Mentor",
+      "executor": "Executor",
+      "generalist": "Generalista",
+      "technical_specialist": "Especialista Técnico",
+      "manager": "Gestor",
+      "researcher_creator": "Pesquisador-Criador",
+      "leader_strategist": "Líder-Estrategista"
+    },
+    "classDescriptions": {
+      "athlete": "Foco em desenvolver capacidade física, resistência, força e performance corporal.",
+      "strategist": "Foco em planejamento, tomada de decisões e construção de objetivos de longo prazo.",
+      "specialist": "Foco em dominar profundamente uma área específica de conhecimento ou habilidade.",
+      "entrepreneur": "Foco em criar oportunidades, assumir riscos calculados e transformar ideias em resultados.",
+      "leader": "Foco em desenvolver capacidade de liderança, responsabilidade e coordenação de pessoas.",
+      "researcher": "Foco em aprendizado contínuo, investigação e compreensão profunda de assuntos complexos.",
+      "creator": "Foco em produzir coisas novas, desenvolver ideias e transformar conceitos em projetos concretos.",
+      "communicator": "Foco em comunicação, expressão, networking e capacidade de transmitir ideias.",
+      "mentor": "Foco em desenvolver conhecimento e capacidade de ensinar, orientar e desenvolver outras pessoas.",
+      "executor": "Foco em disciplina, produtividade e capacidade de transformar planos em ações consistentes.",
+      "generalist": "Foco em desenvolver competências diversas e construir uma formação ampla.",
+      "technical_specialist": "Foco em desenvolver domínio técnico e resolução de problemas complexos.",
+      "manager": "Foco em organização, administração de recursos, projetos, tempo e responsabilidades.",
+      "researcher_creator": "Foco em transformar conhecimento adquirido em novas soluções e projetos.",
+      "leader_strategist": "Foco em desenvolver liderança combinada com planejamento e tomada de decisões."
+    },
+    "classGuide": {
+      "title": "Classes",
+      "subtitle": "Cada classe representa um foco. Escolha a que combina com o que você quer evoluir agora."
     },
     "stats": {
       "strength": "Força",

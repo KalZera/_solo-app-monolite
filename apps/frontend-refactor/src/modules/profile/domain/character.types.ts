@@ -1,4 +1,22 @@
-export const CHARACTER_CLASSES = ['warrior', 'mage', 'rogue', 'ranger', 'healer'] as const
+// Mirrors CHARACTER_CLASSES on the backend (domain/character.ts). Each class is a "focus area";
+// labels + descriptions live in i18n under character.classes.* / character.classDescriptions.*.
+export const CHARACTER_CLASSES = [
+  'athlete',
+  'strategist',
+  'specialist',
+  'entrepreneur',
+  'leader',
+  'researcher',
+  'creator',
+  'communicator',
+  'mentor',
+  'executor',
+  'generalist',
+  'technical_specialist',
+  'manager',
+  'researcher_creator',
+  'leader_strategist',
+] as const
 export type CharacterClass = (typeof CHARACTER_CLASSES)[number]
 
 export const STAT_KEYS = ['strength', 'intelligence', 'agility', 'vitality', 'luck'] as const
@@ -18,7 +36,7 @@ export interface CharacterProfile {
   powerScore?: number
   stats?: CharacterStats
   rank?: string
-  progression:Progression
+  progression: Progression
 }
 
 interface Progression {
