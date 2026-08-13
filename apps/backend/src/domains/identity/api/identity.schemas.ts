@@ -19,3 +19,7 @@ export const updatePasswordBodySchema = z.object({
   currentPassword: z.string().min(1),
   newPassword: z.string().min(6),
 })
+
+export const updateTutorialBodySchema = z.object({
+  isCompleteTutorial: z.boolean(),
+})

@@ -28,7 +28,11 @@ export function buildApp () {
   const app = Fastify({ logger: loggerConfig })
 
   app.register(helmet)
-  app.register(cors, { origin: true, credentials: true })
+  app.register(cors, {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  })
   app.register(cookie)
   app.register(multipart, { limits: { fileSize: 5 * 1024 * 1024 } })
   app.register(websocket)

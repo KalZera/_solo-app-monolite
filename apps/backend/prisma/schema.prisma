@@ -10,12 +10,13 @@ datasource db {
 // ─── Identity ───────────────────────────────────────────────────────────────
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  username     String   @unique
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  username           String   @unique
+  passwordHash       String   @map("password_hash")
+  isCompleteTutorial Boolean  @default(false) @map("is_complete_tutorial")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
 
   characters           Character[]
   notifications        Notification[]

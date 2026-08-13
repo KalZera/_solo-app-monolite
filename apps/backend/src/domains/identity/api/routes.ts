@@ -3,7 +3,9 @@ import { RegisterUserUseCase } from '../application/register-user'
 import { LoginUserUseCase } from '../application/login-user'
 import { RefreshSessionUseCase } from '../application/refresh-session'
 import { UpdateUserUseCase } from '../application/update-user'
+import { CompleteTutorialUseCase } from '../application/complete-tutorial'
 import { PrismaNotificationRepository } from '../../notification/infrastructure/prisma-notification.repository'
+import { NotFoundError } from '../../../shared/errors/app-error'
 import {
   ACCESS_TOKEN_TTL,
   REFRESH_TOKEN_COOKIE_NAME,
@@ -12,7 +14,12 @@ import {
 } from '../../../infrastructure/jwt/constants'
 import type { TokenPayload } from '../../../infrastructure/jwt/token-payload'
 import { parseInput } from '../../../infrastructure/http/validate'
-import { loginBodySchema, registerBodySchema, updatePasswordBodySchema } from './identity.schemas'
+import {
+  loginBodySchema,
+  registerBodySchema,
+  updatePasswordBodySchema,
+  updateTutorialBodySchema,
+} from './identity.schemas'
 import '../.././../infrastructure/jwt/types.js'
 
 function setRefreshCookie (reply: FastifyReply, token: string) {
@@ -67,13 +74,29 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.get('/me', { preHandler: [app.authenticate] }, async (req, reply) => {
-    return reply.send(req.user)
+    const user = await app.prisma.user.findUnique({
+      where: { id: req.user.sub },
+      select: { id: true, email: true, username: true, isCompleteTutorial: true },
+    })
+
+    if (!user) {
+      throw new NotFoundError('User', req.user.sub)
+    }
+
+    return reply.send(user)
   })
 
   app.patch('/password', { preHandler: [app.authenticate] }, async (req, reply) => {
     const body = parseInput(updatePasswordBodySchema, req.body)
     const updateUser = new UpdateUserUseCase(app.prisma)
     const result = await updateUser.execute({ userId: req.user.sub, ...body })
+    return reply.send(result)
+  })
+
+  app.patch('/tutorial', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(updateTutorialBodySchema, req.body)
+    const completeTutorial = new CompleteTutorialUseCase(app.prisma)
+    const result = await completeTutorial.execute({ userId: req.user.sub, ...body })
     return reply.send(result)
   })
 }

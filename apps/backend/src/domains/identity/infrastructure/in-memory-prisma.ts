@@ -5,13 +5,19 @@ type UserRow = {
   email: string
   username: string
   passwordHash: string
+  isCompleteTutorial: boolean
   createdAt: Date
   updatedAt: Date
 }
 
 type WhereUnique = { id?: string; email?: string; username?: string }
 type WhereFirst = { OR?: Array<Partial<UserRow>> }
-type CreateArgs = { data: UserRow; select?: Record<string, boolean> }
+// `isCompleteTutorial` is optional here because callers (e.g. RegisterUserUseCase) rely on the
+// database default — mirror that default in `create` below.
+type CreateArgs = {
+  data: Omit<UserRow, 'isCompleteTutorial'> & Partial<Pick<UserRow, 'isCompleteTutorial'>>
+  select?: Record<string, boolean>
+}
 type UpdateArgs = {
   where: WhereUnique
   data: Partial<UserRow>
@@ -22,13 +28,15 @@ export class InMemoryPrisma {
   private users: UserRow[] = []
 
   seed (
-    partial: Omit<UserRow, 'id' | 'createdAt' | 'updatedAt'> & Partial<Pick<UserRow, 'id' | 'createdAt' | 'updatedAt'>>
+    partial: Omit<UserRow, 'id' | 'isCompleteTutorial' | 'createdAt' | 'updatedAt'> &
+      Partial<Pick<UserRow, 'id' | 'isCompleteTutorial' | 'createdAt' | 'updatedAt'>>
   ) {
     this.users.push({
       id: partial.id ?? randomUUID(),
       email: partial.email,
       username: partial.username,
       passwordHash: partial.passwordHash,
+      isCompleteTutorial: partial.isCompleteTutorial ?? false,
       createdAt: partial.createdAt ?? new Date(),
       updatedAt: partial.updatedAt ?? new Date(),
     })
@@ -56,7 +64,12 @@ export class InMemoryPrisma {
     },
 
     create: async ({ data, select }: CreateArgs) => {
-      const row: UserRow = { ...data, createdAt: new Date(), updatedAt: new Date() }
+      const row: UserRow = {
+        ...data,
+        isCompleteTutorial: data.isCompleteTutorial ?? false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
       this.users.push(row)
       if (!select) return row
       return Object.fromEntries(Object.entries(row).filter(([key]) => select[key]))

@@ -5,6 +5,7 @@ export interface User {
   email: string
   username: string
   passwordHash: string
+  isCompleteTutorial: boolean
   createdAt: Date
   updatedAt: Date
 }
