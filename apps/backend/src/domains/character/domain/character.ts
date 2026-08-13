@@ -15,7 +15,27 @@ export interface Character {
   updatedAt: Date
 }
 
-export type CharacterClass = 'warrior' | 'mage' | 'rogue' | 'ranger' | 'healer'
+// Single source of truth for the selectable Hunter classes (each is a "focus area"). The API
+// schema validates against this list and the frontend mirrors it in character.types.ts + i18n.
+export const CHARACTER_CLASSES = [
+  'athlete',
+  'strategist',
+  'specialist',
+  'entrepreneur',
+  'leader',
+  'researcher',
+  'creator',
+  'communicator',
+  'mentor',
+  'executor',
+  'generalist',
+  'technical_specialist',
+  'manager',
+  'researcher_creator',
+  'leader_strategist',
+] as const
+
+export type CharacterClass = (typeof CHARACTER_CLASSES)[number]
 
 export interface CharacterStats {
   strength: number

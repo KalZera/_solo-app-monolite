@@ -23,14 +23,14 @@ describe('CreateCharacterUseCase', () => {
     const result = await useCase.execute({
       userId: 'user-1',
       name: 'Sung Jinwoo',
-      class: 'warrior',
+      class: 'athlete',
       title: 'The Weakest Hunter',
     })
 
     expect(result.id).toBeDefined()
     expect(result.userId).toBe('user-1')
     expect(result.name).toBe('Sung Jinwoo')
-    expect(result.class).toBe('warrior')
+    expect(result.class).toBe('athlete')
     expect(result.title).toBe('The Weakest Hunter')
     expect(result.level).toBe(0)
     expect(result.experience).toBe(0)
@@ -51,7 +51,7 @@ describe('CreateCharacterUseCase', () => {
     const result = await useCase.execute({
       userId: 'user-1',
       name: 'Sung Jinwoo',
-      class: 'warrior',
+      class: 'athlete',
       title: 'The Weakest Hunter',
     })
 
@@ -68,7 +68,7 @@ describe('CreateCharacterUseCase', () => {
       useCase.execute({
         userId: 'user-1',
         name: 'Second Hero',
-        class: 'mage',
+        class: 'strategist',
         title: 'Arcane Master',
       })
     ).rejects.toThrow(ConflictError)
@@ -81,7 +81,7 @@ describe('CreateCharacterUseCase', () => {
     const result = await useCase.execute({
       userId: 'user-2',
       name: 'Another Hero',
-      class: 'rogue',
+      class: 'specialist',
       title: 'Shadow',
     })
 

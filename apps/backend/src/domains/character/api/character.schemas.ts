@@ -1,6 +1,6 @@
 import { z } from 'zod'
+import { CHARACTER_CLASSES } from '../domain/character'
 
-const CHARACTER_CLASSES = ['warrior', 'mage', 'rogue', 'ranger', 'healer'] as const
 const ALLOCATABLE_ATTRIBUTES = ['strength', 'intelligence', 'agility', 'vitality', 'luck'] as const
 
 export const createCharacterBodySchema = z.object({

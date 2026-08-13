@@ -80,7 +80,7 @@ describe('MVP user journey', () => {
     const character = await createCharacter.execute({
       userId,
       name: 'Sung Jinwoo',
-      class: 'warrior',
+      class: 'athlete',
       title: 'The Weakest Hunter',
     })
     
@@ -91,7 +91,7 @@ describe('MVP user journey', () => {
 
   it('does not allow the user to register a second character', async () => {
     await expect(
-      createCharacter.execute({ userId, name: 'Another Hunter', class: 'mage', title: 'Second Character' })
+      createCharacter.execute({ userId, name: 'Another Hunter', class: 'strategist', title: 'Second Character' })
     ).rejects.toThrow(ConflictError)
   })
 

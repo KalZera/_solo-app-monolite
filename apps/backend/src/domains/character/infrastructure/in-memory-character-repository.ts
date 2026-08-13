@@ -25,7 +25,7 @@ export class InMemoryCharacterRepository implements CharacterRepository {
       experience: data.experience ?? 0,
       powerScore: data.powerScore ?? 5,
       title: data.title ?? 'Novice',
-      class: data.class ?? 'warrior',
+      class: data.class ?? 'athlete',
       stats: data.stats ?? { ...DEFAULT_STATS },
       createdAt: data.createdAt ?? new Date(),
       updatedAt: data.updatedAt ?? new Date(),
