@@ -17,10 +17,11 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  characters        Character[]
-  notifications     Notification[]
-  questCategories   QuestCategory[]
-  pushSubscriptions PushSubscription[]
+  characters           Character[]
+  notifications        Notification[]
+  questCategories      QuestCategory[]
+  pushSubscriptions    PushSubscription[]
+  notificationPreference NotificationPreference?
 
   @@map("users")
 }
@@ -268,4 +269,25 @@ model PushSubscription {
 
   @@index([userId])
   @@map("push_subscriptions")
+}
+
+// One row per user — which notification types/channels they want. Mirrors
+// domains/notification/domain/notification.ts#NotificationPreferences exactly.
+model NotificationPreference {
+  id             String   @id @default(uuid())
+  userId         String   @unique @map("user_id")
+  pushEnabled    Boolean  @default(true) @map("push_enabled")
+  emailEnabled   Boolean  @default(false) @map("email_enabled")
+  whatsappEnabled Boolean @default(false) @map("whatsapp_enabled")
+  questReminder  Boolean  @default(true) @map("quest_reminder")
+  questExpired   Boolean  @default(true) @map("quest_expired")
+  levelUp        Boolean  @default(true) @map("level_up")
+  rankUp         Boolean  @default(true) @map("rank_up")
+  penalty        Boolean  @default(true) @map("penalty")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }

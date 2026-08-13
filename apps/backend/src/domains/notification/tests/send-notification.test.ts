@@ -41,6 +41,7 @@ describe('SendNotificationUseCase', () => {
     const notification = await build().execute({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
+      channel: 'PUSH',
       title: 'Quest expired',
       message: 'Your quest "Academia" has expired.',
     })
@@ -48,7 +49,7 @@ describe('SendNotificationUseCase', () => {
     expect(notification).toMatchObject({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
-      channel: 'IN_APP',
+      channel: 'PUSH',
       title: 'Quest expired',
     })
     expect(await notificationRepository.findByUserId('user-1')).toHaveLength(1)
@@ -62,6 +63,7 @@ describe('SendNotificationUseCase', () => {
     const notification = await build().execute({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
+      channel: 'PUSH',
       title: 'Quest expired',
       message: 'Your quest has expired.',
     })
@@ -78,6 +80,7 @@ describe('SendNotificationUseCase', () => {
     const notification = await build().execute({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
+      channel: 'PUSH',
       title: 'Quest expired',
       message: 'Your quest has expired.',
     })
@@ -94,6 +97,7 @@ describe('SendNotificationUseCase', () => {
     const notification = await build().execute({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
+      channel: 'PUSH',
       title: 'Quest expired',
       message: 'Your quest has expired.',
     })
@@ -113,6 +117,7 @@ describe('SendNotificationUseCase', () => {
     const notification = await build().execute({
       userId: 'user-1',
       type: 'QUEST_EXPIRED',
+      channel: 'PUSH',
       title: 'Quest expired',
       message: 'Your quest has expired.',
     })

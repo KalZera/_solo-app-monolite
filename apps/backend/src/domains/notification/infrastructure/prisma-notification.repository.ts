@@ -1,19 +1,50 @@
-import { Prisma, type Notification as PrismaNotification, type PrismaClient } from '@prisma/client'
+import {
+  Prisma,
+  type Notification as PrismaNotification,
+  type NotificationPreference as PrismaNotificationPreference,
+  type PrismaClient,
+} from '@prisma/client'
 import type { CreateNotificationData, Notification, NotificationChannel, NotificationPreferences, NotificationRepository } from '../domain/notification'
-import type { NotificationType } from '../domain/notification-type'
+import type { NotificationName } from '../domain/notification-type'
 import type { ID } from '../../../shared/types/index'
 
 function toDomain (record: PrismaNotification): Notification {
   return {
     id: record.id,
     userId: record.userId,
-    type: record.type as NotificationType,
+    type: record.type as NotificationName,
     channel: record.channel as NotificationChannel,
     title: record.title,
     message: record.message,
     read: record.read,
     metadata: record.metadata as Record<string, unknown> | null,
     createdAt: record.createdAt,
+  }
+}
+
+// Mirrors InMemoryNotificationRepository's DEFAULT_PREFERENCES — what a user gets before
+// they've ever saved their own preferences (no row yet).
+const DEFAULT_PREFERENCES: NotificationPreferences = {
+  pushEnabled: true,
+  emailEnabled: false,
+  whatsappEnabled: false,
+  questReminder: true,
+  questExpired: true,
+  levelUp: true,
+  rankUp: true,
+  penalty: true,
+}
+
+function toPreferencesDomain (record: PrismaNotificationPreference): NotificationPreferences {
+  return {
+    pushEnabled: record.pushEnabled,
+    emailEnabled: record.emailEnabled,
+    whatsappEnabled: record.whatsappEnabled,
+    questReminder: record.questReminder,
+    questExpired: record.questExpired,
+    levelUp: record.levelUp,
+    rankUp: record.rankUp,
+    penalty: record.penalty,
   }
 }
 
@@ -55,14 +86,16 @@ export class PrismaNotificationRepository implements NotificationRepository {
   }
 
   async getPreferences (userId: ID): Promise<NotificationPreferences> {
-    // TODO: no NotificationPreference table yet — needs a schema/migration before this can
-    // be implemented.
-    throw new Error('Not implemented')
+    const record = await this.prisma.notificationPreference.findUnique({ where: { userId } })
+    return record ? toPreferencesDomain(record) : DEFAULT_PREFERENCES
   }
 
   async savePreferences (userId: ID, preferences: NotificationPreferences): Promise<NotificationPreferences> {
-    // TODO: no NotificationPreference table yet — needs a schema/migration before this can
-    // be implemented.
-    throw new Error('Not implemented')
+    const record = await this.prisma.notificationPreference.upsert({
+      where: { userId },
+      create: { userId, ...preferences },
+      update: { ...preferences },
+    })
+    return toPreferencesDomain(record)
   }
 }
