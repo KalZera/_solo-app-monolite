@@ -362,6 +362,25 @@
     "showTutorial": "Ver tutorial",
     "avatar": {
       "title": "Editar Avatar",
+      "heroSubtitle": "Personalize a imagem que representa você no sistema.",
+      "sectionAvatar": "Seu Avatar",
+      "howItWorks": "Como Funciona",
+      "tipLabel": "Dica",
+      "tipText": "Use uma imagem que te represente. Você poderá alterar quando quiser.",
+      "steps": {
+        "choose": {
+          "title": "1. Escolha",
+          "description": "Selecione uma imagem da sua galeria."
+        },
+        "adjust": {
+          "title": "2. Ajuste",
+          "description": "Recorte e posicione da forma que preferir."
+        },
+        "done": {
+          "title": "3. Pronto",
+          "description": "Seu avatar será atualizado em todo o sistema."
+        }
+      },
       "editHint": "Escolha uma foto para o retrato do seu Caçador.",
       "chooseFromLibrary": "Escolher da Galeria",
       "takePhoto": "Tirar Foto",

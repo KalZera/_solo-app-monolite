@@ -1,5 +1,5 @@
-import { AvatarEditorScreen } from '@/modules/profile/presentation/screens/AvatarEditorScreen'
+import { AvatarEditScreen } from '@/modules/profile/presentation/screens/AvatarEditScreen'
 
 export default function AvatarRoute() {
-  return <AvatarEditorScreen />
+  return <AvatarEditScreen />
 }

@@ -2,7 +2,7 @@
    refs below are written in effects and read only inside gesture callbacks, never
    during render. This is the standard React Native pan/zoom pattern. */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { PanResponder } from 'react-native'
+import { Image as RNImage, PanResponder } from 'react-native'
 import type { GestureResponderEvent, PanResponderGestureState } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator'
@@ -12,6 +12,7 @@ import {
   MAX_SCALE,
   MIN_SCALE,
   OUTPUT_SIZE,
+  VIEWPORT_SIZE,
   baseScaleFor,
   clampTranslate,
   computeCropRegion,
@@ -20,8 +21,12 @@ import {
 } from '../../domain/crop'
 import { useUploadAvatar } from '../../application/useUploadAvatar'
 
-/** Owns all avatar picking, pan/zoom gesture state, cropping and upload. */
-export function useAvatarCrop() {
+/**
+ * Owns all avatar picking, pan/zoom gesture state, cropping and upload.
+ * Pass `initialImageUri` (e.g. a route param) to start editing an already-chosen image, and
+ * `viewport` to match the on-screen crop area size so pan clamping and the crop region line up.
+ */
+export function useAvatarCrop(initialImageUri?: string, viewport: number = VIEWPORT_SIZE) {
   const { t } = useTranslation()
   const { error: notifyError } = useNotify()
   const upload = useUploadAvatar()
@@ -31,11 +36,29 @@ export function useAvatarCrop() {
   const [translate, setTranslate] = useState<Offset>({ x: 0, y: 0 })
   const [isCropping, setIsCropping] = useState(false)
 
+  // Seed the editor from an image passed in (route param). Runs once; the dimensions come from
+  // Image.getSize since a bare URI carries none. Failure falls back to the empty picker state.
+  const seededRef = useRef(false)
+  useEffect(() => {
+    if (!initialImageUri || seededRef.current) return
+    seededRef.current = true
+    RNImage.getSize(
+      initialImageUri,
+      (width, height) => {
+        setImage({ uri: initialImageUri, width, height })
+        setScale(MIN_SCALE)
+        setTranslate({ x: 0, y: 0 })
+      },
+      () => notifyError(t('profile.avatar.errorTitle'), t('profile.avatar.pickError')),
+    )
+  }, [initialImageUri, notifyError, t])
+
   // Latest-value refs let the once-created PanResponder read fresh state inside
   // its gesture callbacks (which never run during render).
   const scaleRef = useRef(scale)
   const translateRef = useRef(translate)
   const imageRef = useRef(image)
+  const viewportRef = useRef(viewport)
   const panStart = useRef<Offset>({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -47,6 +70,9 @@ export function useAvatarCrop() {
   useEffect(() => {
     imageRef.current = image
   }, [image])
+  useEffect(() => {
+    viewportRef.current = viewport
+  }, [viewport])
 
   const panResponder = useMemo(
     () =>
@@ -65,6 +91,7 @@ export function useAvatarCrop() {
               { x: panStart.current.x + gesture.dx, y: panStart.current.y + gesture.dy },
               scaleRef.current,
               current,
+              viewportRef.current,
             ),
           )
         },
@@ -106,14 +133,14 @@ export function useAvatarCrop() {
     if (!image) return
     const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta))
     setScale(next)
-    setTranslate((previous) => clampTranslate(previous, next, image))
+    setTranslate((previous) => clampTranslate(previous, next, image, viewport))
   }
 
   async function confirm() {
     if (!image) return
     setIsCropping(true)
     try {
-      const region = computeCropRegion(image, scale, translate)
+      const region = computeCropRegion(image, scale, translate, viewport)
       const result = await manipulateAsync(
         image.uri,
         [{ crop: region }, { resize: { width: OUTPUT_SIZE, height: OUTPUT_SIZE } }],
@@ -129,13 +156,13 @@ export function useAvatarCrop() {
 
   const previewStyle = useMemo(() => {
     if (!image) return undefined
-    const displayScale = baseScaleFor(image) * scale
+    const displayScale = baseScaleFor(image, viewport) * scale
     return {
       width: image.width * displayScale,
       height: image.height * displayScale,
       transform: [{ translateX: translate.x }, { translateY: translate.y }],
     }
-  }, [image, scale, translate])
+  }, [image, scale, translate, viewport])
 
   return {
     image,

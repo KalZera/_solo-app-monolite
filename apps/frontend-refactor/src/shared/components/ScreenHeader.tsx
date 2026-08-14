@@ -12,6 +12,8 @@ interface ScreenHeaderProps {
   right?: ReactNode
   onBack?: () => void
   className?: string
+  /** Extra classes for the title (e.g. `uppercase`). */
+  titleClassName?: string
 }
 
 export function ScreenHeader({
@@ -21,6 +23,7 @@ export function ScreenHeader({
   right,
   onBack,
   className,
+  titleClassName,
 }: ScreenHeaderProps) {
   return (
     <View className={cn('gap-1 pb-4 pt-2', className)}>
@@ -38,7 +41,7 @@ export function ScreenHeader({
         <View className="flex-1" />
         {right}
       </View>
-      <Text weight="bold" className="text-3xl text-content">
+      <Text weight="bold" className={cn('text-3xl text-content', titleClassName)}>
         {title}
       </Text>
       {subtitle ? <Text className="text-sm text-content-muted">{subtitle}</Text> : null}

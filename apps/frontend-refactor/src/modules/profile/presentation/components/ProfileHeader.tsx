@@ -16,7 +16,12 @@ export function ProfileHeader({ profile }: { profile: CharacterProfile | null })
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('profile.editAvatar')}
-        onPress={() => router.push('/profile/avatar')}
+        onPress={() =>
+          router.push({
+            pathname: '/profile/avatar',
+            params: { imageParam: profile?.avatar },
+          })
+        }
         className="relative"
       >
         <Avatar uri={profile?.avatar} name={name} size={112} />

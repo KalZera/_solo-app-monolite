@@ -108,16 +108,6 @@ export function CharacterScreen() {
           >
             <CharacterInfoPanel rows={infoRows} />
           </Section>
-
-          {/* <Section
-            title={t('character.screen.titleLabel')}
-            icon={<User color={colors.primaryHover} size={16} />}
-            className="text-primary-hover font-semibold"
-          >
-            <Text weight="medium" className="pl-2 text-sm text-content">
-              {data.title?.trim() ? data.title : t('character.screen.noTitle')}
-            </Text>
-          </Section> */}
         </View>
 
         <Panel className="mt-2 flex flex-row gap-2">

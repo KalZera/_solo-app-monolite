@@ -362,6 +362,25 @@
     "showTutorial": "View tutorial",
     "avatar": {
       "title": "Edit Avatar",
+      "heroSubtitle": "Personalize the image that represents you in the System.",
+      "sectionAvatar": "Your Avatar",
+      "howItWorks": "How It Works",
+      "tipLabel": "Tip",
+      "tipText": "Use an image that represents you. You can change it whenever you want.",
+      "steps": {
+        "choose": {
+          "title": "1. Choose",
+          "description": "Pick an image from your gallery."
+        },
+        "adjust": {
+          "title": "2. Adjust",
+          "description": "Crop and position it however you like."
+        },
+        "done": {
+          "title": "3. Done",
+          "description": "Your avatar will be updated across the System."
+        }
+      },
       "editHint": "Choose a photo to set your Hunter's portrait.",
       "chooseFromLibrary": "Choose from Library",
       "takePhoto": "Take Photo",
