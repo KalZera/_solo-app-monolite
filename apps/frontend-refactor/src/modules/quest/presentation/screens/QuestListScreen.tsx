@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { FlatList, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
@@ -8,25 +7,32 @@ import {
   Loading,
   Screen,
   ScreenHeader,
-  SegmentedTabs,
   SystemNotice,
   TabButton,
 } from '@/shared/components'
 import { Plus, ScrollText } from '@/shared/components/icons'
 import { getErrorMessage } from '@/shared/api/api-error'
 import { colors } from '@/shared/theme/colors'
-import { type QuestTab } from '../../application/useFilteredQuests'
 import { useQuests } from '../../application/useQuests'
 import { QuestCard } from '../components/QuestCard'
 import type { QuestInstance } from '../../domain/quest-instance.types'
 
-const FILTERS: QuestTab[] = ['all', 'daily', 'weekly', 'history']
-
 export function QuestListScreen() {
   const { t } = useTranslation()
   const router = useRouter()
-  // const [filter, setFilter] = useState<QuestTab>('daily')
-  const { data: quests, isLoading, isError, error, refetch, isRefetching } = useQuests()
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useQuests()
+
+  const quests = (data?.pages ?? []).flatMap((page) => page.data)
 
   const createButton = (
     <TabButton
@@ -47,7 +53,7 @@ export function QuestListScreen() {
       )
     }
 
-    if (quests?.length === 0) {
+    if (quests.length === 0) {
       return (
         <EmptyState
           icon={<ScrollText size={40} color={colors.contentMuted} />}
@@ -77,6 +83,11 @@ export function QuestListScreen() {
         showsVerticalScrollIndicator={false}
         onRefresh={refetch}
         refreshing={isRefetching}
+        onEndReachedThreshold={0.4}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+        }}
+        ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
       />
     )
   }
@@ -89,13 +100,6 @@ export function QuestListScreen() {
         eyebrow={t('common.systemLabel')}
         right={createButton}
       />
-      {/* <View className="pb-4">
-        <SegmentedTabs
-          options={FILTERS.map((value) => ({ label: t(`quest.list.filters.${value}`), value }))}
-          value={filter}
-          onChange={setFilter}
-        />
-      </View> */}
       {renderBody()}
     </Screen>
   )

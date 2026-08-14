@@ -37,6 +37,14 @@ export interface QuestCategory {
   name: string
 }
 
+/** Page envelope returned by paginated list endpoints (e.g. GET /quests). */
+export interface Paginated<T> {
+  data: T[]
+  total: number
+  page: number
+  pageSize: number
+}
+
 /** Body accepted by `POST /quests` (see quest.schemas.ts on the backend). */
 export interface CreateQuestPayload {
   title: string

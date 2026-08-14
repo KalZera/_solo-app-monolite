@@ -1,11 +1,14 @@
 import { httpClient } from '@/shared/api/http-client'
 import type { CharacterStats } from '@/modules/profile/domain/character.types'
-import type { CreateQuestPayload, Quest, QuestCategory } from '../domain/quest.types'
+import type { CreateQuestPayload, Paginated, Quest, QuestCategory } from '../domain/quest.types'
 import type { QuestFullInstance, QuestInstance } from '../domain/quest-instance.types'
 
 // ─── Templates ───────────────────────────────────────────────────────────────
-export function listQuests(): Promise<Quest[]> {
-  return httpClient.get<Quest[]>('/quests/')
+// GET /quests is paginated: page/pageSize in, { data, total, page, pageSize } out.
+export function listQuests(params: { page: number; pageSize: number }): Promise<Paginated<Quest>> {
+  return httpClient.get<Paginated<Quest>>('/quests/', {
+    query: { page: params.page, pageSize: params.pageSize },
+  })
 }
 
 export function createQuest(payload: CreateQuestPayload): Promise<Quest> {
@@ -29,18 +32,12 @@ export function getQuestById(id: string): Promise<QuestFullInstance> {
 
 // Currently-actionable executions only (backend-filtered): today's plus recurring
 // ones still open/in-progress; completed and expired are excluded. Not used by the
-// Quest List UI (which uses getQuestsByTab below) — kept for future use.
+// Quest List UI (which uses listQuests) — kept for future use.
 export function getActiveQuests(): Promise<QuestInstance[]> {
   return httpClient.get<QuestInstance[]>('/quests/today', { query: { status: 'active' } })
 }
 
 export type QuestTab = 'all' | 'daily' | 'weekly' | 'history'
-
-// Backend-filtered per Quest List tab (see matchesQuestTab on the server). The
-// response is rendered as-is by the UI — no client-side filtering on top.
-export function getQuestsByTab(tab: QuestTab): Promise<QuestInstance[]> {
-  return httpClient.get<QuestInstance[]>('/quests', { query: { tab } })
-}
 
 export function startQuestInstance(instanceId: string): Promise<{ instance: QuestInstance }> {
   return httpClient.post<{ instance: QuestInstance }>(`/quests/instances/${instanceId}/start`)
