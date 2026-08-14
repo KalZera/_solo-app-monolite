@@ -1,4 +1,4 @@
-import type { ID } from '../../../shared/types/index'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
 import type { Quest } from './quest'
 import type { Recurrence } from './recurrence'
 
@@ -157,7 +157,7 @@ export function matchesQuestTab (
 
 export interface QuestInstanceRepository {
   findById(id: ID): Promise<QuestFullInstance | null>
-  findByCharacterId(characterId: ID): Promise<QuestFullInstance[]>
+  findByCharacterId(characterId: ID, pagination: PaginationParams): Promise<Paginated<QuestFullInstance>>
   findByQuestActive(active: boolean): Promise<QuestFullInstance[]>
   findByQuestAndScheduledDate(questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null>
   findByQuestId(questId: ID): Promise<QuestFullInstance[]>

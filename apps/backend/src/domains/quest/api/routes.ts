@@ -18,6 +18,7 @@ import { ApplyLevelUpUseCase } from '../../progression/application/apply-level-u
 import { parseInput } from '../../../infrastructure/http/validate'
 import {
   createQuestBodySchema,
+  listQuestsQuerySchema,
   questIdParamsSchema,
   questInstanceIdParamsSchema,
   todayQuestsQuerySchema,
@@ -42,8 +43,9 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.get('/', { preHandler: [app.authenticate] }, async (req) => {
+    const query = parseInput(listQuestsQuerySchema, req.query)
     const listQuests = new ListQuestsUseCase(questInstanceRepository, characterRepository)
-    return listQuests.execute({ userId: req.user.sub })
+    return listQuests.execute({ userId: req.user.sub, ...query })
   })
 //have to use the id of instance to get all details of quest 
   app.get('/:id', { preHandler: [app.authenticate] }, async (req) => {

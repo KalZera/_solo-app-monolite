@@ -11,7 +11,7 @@ import type {
   QuestInstanceObjective,
   QuestInstanceRepository,
 } from '../domain/quest-instance'
-import type { ID } from '../../../shared/types/index'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
 import type { Quest } from '../domain/quest'
 
 type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObjective[], quest?: PrismaQuest }
@@ -52,19 +52,24 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return record ? toDomain(record) : null
   }
    
-  async findByCharacterId (characterId: ID): Promise<QuestFullInstance[]> {
-    const record = await this.prisma.questInstance.findMany({ 
-    where:{
-      quest:{
-        characterId: characterId
-      },
-    }, include:{...INCLUDE_OBJECTIVES, quest:true},
-    orderBy:{
-      status:'asc'
-    }
-    })
+  async findByCharacterId (
+    characterId: ID,
+    pagination: PaginationParams
+  ): Promise<Paginated<QuestFullInstance>> {
+    const where = { quest: { characterId } }
 
-    return record.map(toDomain)
+    const [records, total] = await Promise.all([
+      this.prisma.questInstance.findMany({
+        where,
+        include: { ...INCLUDE_OBJECTIVES, quest: true },
+        orderBy: { status: 'asc' },
+        skip: (pagination.page - 1) * pagination.pageSize,
+        take: pagination.pageSize,
+      }),
+      this.prisma.questInstance.count({ where }),
+    ])
+
+    return { data: records.map(toDomain), total, page: pagination.page, pageSize: pagination.pageSize }
   }
 
   async findByQuestAndScheduledDate (questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null> {

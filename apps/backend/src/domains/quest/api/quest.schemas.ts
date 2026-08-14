@@ -45,6 +45,11 @@ export const todayQuestsQuerySchema = z.object({
   tab: z.enum(['daily', 'weekly', 'history']).optional(),
 })
 
+export const listQuestsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().optional(),
+})
+
 export const questIdParamsSchema = z.object({ id: z.string().min(1) })
 
 export const questInstanceIdParamsSchema = z.object({ instanceId: z.string().min(1) })

@@ -5,7 +5,7 @@ import type {
   QuestInstanceObjective,
   QuestInstanceRepository,
 } from '../domain/quest-instance'
-import type { ID } from '../../../shared/types/index'
+import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
 import type { Quest } from '../domain/quest'
 
 type SeedInput = Pick<QuestFullInstance, 'questId'> & Partial<Omit<QuestFullInstance, 'questId'>>
@@ -49,8 +49,14 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     )
   }
 
-  async findByCharacterId(characterId: ID): Promise<QuestFullInstance[]> {
-    return this.instances.filter((instance) => instance.quest?.characterId === characterId)
+  async findByCharacterId(
+    characterId: ID,
+    pagination: PaginationParams
+  ): Promise<Paginated<QuestFullInstance>> {
+    const matches = this.instances.filter((instance) => instance.quest?.characterId === characterId)
+    const start = (pagination.page - 1) * pagination.pageSize
+    const data = matches.slice(start, start + pagination.pageSize)
+    return { data, total: matches.length, page: pagination.page, pageSize: pagination.pageSize }
   }
 
   async findByQuestActive(active: boolean): Promise<QuestFullInstance[]> {
