@@ -21,6 +21,7 @@ export {
   ChevronsRight,
   Calendar,
   Trash2,
+  Pencil,
   CircleCheckBig as CheckCircle2,
   CircleX as XCircle,
   Info,

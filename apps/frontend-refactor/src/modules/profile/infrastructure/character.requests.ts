@@ -1,6 +1,10 @@
 import { Platform } from 'react-native'
 import { httpClient } from '@/shared/api/http-client'
-import type { CharacterProfile, CreateCharacterInput } from '../domain/character.types'
+import type {
+  CharacterProfile,
+  CreateCharacterInput,
+  UpdateCharacterInput,
+} from '../domain/character.types'
 
 export function getCharacterProfile(): Promise<CharacterProfile> {
   return httpClient.get<CharacterProfile>('/characters/')
@@ -8,6 +12,10 @@ export function getCharacterProfile(): Promise<CharacterProfile> {
 
 export function createCharacter(input: CreateCharacterInput): Promise<CharacterProfile> {
   return httpClient.post<CharacterProfile>('/characters/', input)
+}
+
+export function updateCharacter(input: UpdateCharacterInput): Promise<CharacterProfile> {
+  return httpClient.patch<CharacterProfile>('/characters/', input)
 }
 
 /**

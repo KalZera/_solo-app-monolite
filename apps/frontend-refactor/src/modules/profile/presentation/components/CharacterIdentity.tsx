@@ -23,15 +23,15 @@ export function CharacterIdentity({ profile }: { profile: CharacterProfile }) {
             <Text weight="bold" className="text-xl text-content uppercase">
               {profile.name}
             </Text>
-            <Text className="text-[11px] uppercase tracking-[2px] text-content">
+            <Text className="text-[11px] uppercase tracking-[2px] text-content font-semibold">
               {t('character.screen.hunter')}
             </Text>
           </View>
-          <HexagonBadge value={profile.level} horizontal size={48} fontSize={30} />
+          <HexagonBadge value={level} horizontal size={48} fontSize={30} />
         </View>
         <View className="mt-2 items-baseline gap-2">
-          <ProgressBar value={100} max={200} tone={'primary'} />
-          <Text className="text-[11px] uppercase tracking-wider text-content-muted">
+          <ProgressBar value={xp} max={xpMax} tone={'primary'} />
+          <Text className="text-[11px] uppercase tracking-wider text-content font-semibold">
             {t('character.screen.xp', {
               current: xp.toLocaleString(),
               max: xpMax.toLocaleString(),

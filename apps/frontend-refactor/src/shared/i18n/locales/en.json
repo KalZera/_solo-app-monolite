@@ -79,6 +79,15 @@
       "successMessage": "Welcome to the System, Hunter.",
       "errorTitle": "Could not create Hunter"
     },
+    "edit": {
+      "title": "Edit Hunter",
+      "subtitle": "Update your Hunter's title and class.",
+      "submit": "Save changes",
+      "submitting": "Saving…",
+      "successTitle": "Hunter updated",
+      "successMessage": "Your changes have been saved.",
+      "errorTitle": "Could not update Hunter"
+    },
     "classes": {
       "athlete": "Athlete",
       "strategist": "Strategist",
@@ -148,9 +157,12 @@
       "titleLabel": "Title",
       "noTitle": "No title equipped",
       "information": "Basic Information",
+      "editInfo": "Edit",
       "hunterId": "Hunter ID",
       "affiliation": "Affiliation",
       "affiliationNone": "None",
+      "hajinAffiliation": "Hajin Guild",
+      "class": "Class",
       "ranking": "Ranking",
       "powerScore": "Power Score",
       "HP": "HP",

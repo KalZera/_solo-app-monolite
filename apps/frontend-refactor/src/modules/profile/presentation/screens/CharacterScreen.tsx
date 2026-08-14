@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -21,6 +21,7 @@ import { Section } from '@/shared/components/Section'
 import { AttributeBars } from '../components/AttributeBars'
 import { AttributePointsForm } from '../components/AttributePointsForm'
 import { User } from 'lucide-react-native'
+import { Pencil } from '@/shared/components/icons'
 import { colors } from '@/shared/theme/colors'
 import { StatusBar } from '../components/StatusBar'
 
@@ -60,11 +61,12 @@ export function CharacterScreen() {
 
   const infoRows = [
     { label: t('character.screen.hunterId'), value: formatHunterId(data.id) },
+    { label: t('character.screen.class'), value: t(`character.classes.${data.class}`) },
+    { label: t('character.screen.affiliation'), value: t('character.screen.hajinAffiliation') },
     {
       label: t('character.screen.titleLabel'),
       value: data.title?.trim() ? data.title : t('character.screen.noTitle'),
     },
-    { label: t('character.screen.affiliation'), value: t('character.screen.affiliationNone') },
     { label: t('character.screen.ranking'), value: data.rank ?? '—' },
     { label: t('character.screen.powerScore'), value: (data.powerScore ?? 0).toLocaleString() },
   ]
@@ -87,6 +89,22 @@ export function CharacterScreen() {
             title={t('character.screen.information')}
             icon={<User color={colors.primaryHover} size={16} />}
             className="text-primary-hover font-semibold"
+            action={
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push('/character/edit')}
+                hitSlop={8}
+                className="flex-row items-center gap-1 rounded border border-line px-2 py-1 active:bg-surface-raised"
+              >
+                <Pencil size={12} color={colors.primary} />
+                <Text
+                  weight="semibold"
+                  className="text-[10px] uppercase tracking-[1px] text-primary"
+                >
+                  {t('character.screen.editInfo')}
+                </Text>
+              </Pressable>
+            }
           >
             <CharacterInfoPanel rows={infoRows} />
           </Section>

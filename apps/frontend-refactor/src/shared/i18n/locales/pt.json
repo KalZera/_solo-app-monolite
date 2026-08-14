@@ -79,6 +79,15 @@
       "successMessage": "Bem-vindo ao Sistema, Caçador.",
       "errorTitle": "Não foi possível criar o Caçador"
     },
+    "edit": {
+      "title": "Editar Caçador",
+      "subtitle": "Atualize o título e a classe do seu Caçador.",
+      "submit": "Salvar alterações",
+      "submitting": "Salvando…",
+      "successTitle": "Caçador atualizado",
+      "successMessage": "As alterações foram salvas.",
+      "errorTitle": "Não foi possível atualizar o Caçador"
+    },
     "classes": {
       "athlete": "Atleta",
       "strategist": "Estrategista",
@@ -148,9 +157,12 @@
       "titleLabel": "Título",
       "noTitle": "Nenhum título equipado",
       "information": "Informações Básicas",
+      "editInfo": "Editar",
       "hunterId": "ID do Caçador",
       "affiliation": "Afiliação",
       "affiliationNone": "Nenhuma",
+      "hajinAffiliation": "Guilda Hajin",
+      "class": "Classe",
       "ranking": "Ranking",
       "powerScore": "Power Score",
       "HP": "HP",

@@ -57,3 +57,13 @@ export interface CreateCharacterInput {
   class: CharacterClass
   avatar?: string | null
 }
+
+/**
+ * Body accepted by `PATCH /characters/`. Only cosmetic fields are editable — name is immutable
+ * after creation and attributes change only through the allocation flow (see update-character.ts).
+ */
+export interface UpdateCharacterInput {
+  title?: string
+  class?: CharacterClass
+  avatar?: string | null
+}
