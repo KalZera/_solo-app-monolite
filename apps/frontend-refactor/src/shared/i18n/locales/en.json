@@ -273,7 +273,16 @@
       "completeSuccessMessage": "+{{xp}} XP earned",
       "levelUpMessage": "Level up! You reached level {{level}}.",
       "recreateTitle": "Recreate Quest",
-      "recreateMessage": "Would you like to recreate it the same way?"
+      "recreateMessage": "Would you like to recreate it the same way?",
+      "stopRecurrence": "Stop recurrence",
+      "stopRecurrenceTitle": "Stop recurrence",
+      "stopRecurrenceMessage": "New quests from this recurrence will stop being generated. The ones already created remain. You can recreate it whenever you want.",
+      "stopRecurrenceConfirm": "Stop",
+      "stopRecurrenceSuccessTitle": "Recurrence stopped",
+      "stopRecurrenceSuccessMessage": "This quest will no longer be generated automatically.",
+      "stopRecurrenceErrorTitle": "Could not stop the recurrence",
+      "recurrenceStopped": "Recurrence stopped",
+      "recurrenceCompleted": "Recurrence completed"
     },
     "create": {
       "title": "New Quest",

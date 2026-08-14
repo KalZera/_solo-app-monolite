@@ -273,7 +273,16 @@
       "completeSuccessMessage": "+{{xp}} XP ganhos",
       "levelUpMessage": "Subiu de nível! Você alcançou o nível {{level}}.",
       "recreateTitle": "Recriar Missão",
-      "recreateMessage": "Gostaria de recriar da mesma forma?"
+      "recreateMessage": "Gostaria de recriar da mesma forma?",
+      "stopRecurrence": "Parar recorrência",
+      "stopRecurrenceTitle": "Parar recorrência",
+      "stopRecurrenceMessage": "Novas missões desta recorrência deixarão de ser geradas. As já criadas continuam. Você pode recriar quando quiser.",
+      "stopRecurrenceConfirm": "Parar",
+      "stopRecurrenceSuccessTitle": "Recorrência parada",
+      "stopRecurrenceSuccessMessage": "Esta missão não será mais gerada automaticamente.",
+      "stopRecurrenceErrorTitle": "Não foi possível parar a recorrência",
+      "recurrenceStopped": "Recorrência parada",
+      "recurrenceCompleted": "Recorrência concluída"
     },
     "create": {
       "title": "Nova Missão",

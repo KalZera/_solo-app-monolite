@@ -11,6 +11,12 @@ export interface QuestObjectiveTemplate {
   target: number
 }
 
+/**
+ * Recurrence lifecycle of a quest template. ACTIVE keeps materialising instances; COMPLETED
+ * (deadline reached) and CANCELLED (stopped by the Hunter) both stop it. Mirrors the backend enum.
+ */
+export type QuestActiveStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
+
 export interface Quest {
   id: string
   characterId: string
@@ -20,7 +26,7 @@ export interface Quest {
   recurrence: Recurrence
   rank: string
   rewardXp: number
-  active: boolean
+  active: QuestActiveStatus
   // Last day (ISO date) for a NONE-recurrence quest — every quest expires, regardless of
   // recurrence. The actual deadline is always 23:59:59.999 UTC of that day. Always set — the
   // server defaults it to "tomorrow" when the client omits it on creation. Ignored for

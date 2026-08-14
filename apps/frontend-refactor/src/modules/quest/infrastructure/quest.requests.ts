@@ -2,6 +2,7 @@ import { httpClient } from '@/shared/api/http-client'
 import type { CharacterStats } from '@/modules/profile/domain/character.types'
 import type { CreateQuestPayload, Paginated, Quest, QuestCategory } from '../domain/quest.types'
 import type { QuestFullInstance, QuestInstance } from '../domain/quest-instance.types'
+import type { Recurrence } from '../domain/recurrence'
 
 // ─── Templates ───────────────────────────────────────────────────────────────
 // GET /quests is paginated: page/pageSize in, { data, total, page, pageSize } out.
@@ -13,6 +14,26 @@ export function listQuests(params: { page: number; pageSize: number }): Promise<
 
 export function createQuest(payload: CreateQuestPayload): Promise<Quest> {
   return httpClient.post<Quest>('/quests/', payload)
+}
+
+// Editable template fields (mirrors updateQuestBodySchema on the backend).
+export interface UpdateQuestPayload {
+  title?: string
+  description?: string
+  rank?: string
+  recurrence?: Recurrence
+  categoryId?: string | null
+  deadlineDate?: string
+}
+
+export function updateQuest(id: string, payload: UpdateQuestPayload): Promise<Quest> {
+  return httpClient.patch<Quest>(`/quests/${id}`, payload)
+}
+
+// Stops (CANCELLED) or resumes (ACTIVE) a quest's recurrence. COMPLETED is set only server-side
+// by the deadline job, so it is not a valid client value here.
+export function updateQuestRecurrence(id: string, active: 'ACTIVE' | 'CANCELLED'): Promise<Quest> {
+  return httpClient.patch<Quest>(`/quests/${id}/recurrence`, { active })
 }
 
 export function listQuestCategories(): Promise<QuestCategory[]> {

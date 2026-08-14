@@ -20,6 +20,7 @@ export {
   ChevronRight,
   ChevronsRight,
   Calendar,
+  CalendarOff,
   Trash2,
   Pencil,
   CircleCheckBig as CheckCircle2,
