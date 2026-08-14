@@ -62,7 +62,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
       this.prisma.questInstance.findMany({
         where,
         include: { ...INCLUDE_OBJECTIVES, quest: true },
-        orderBy: { status: 'asc' },
+        orderBy: [{ status: 'asc' }, {createdAt:'desc'}],
         skip: (pagination.page - 1) * pagination.pageSize,
         take: pagination.pageSize,
       }),
