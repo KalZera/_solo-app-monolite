@@ -45,7 +45,7 @@ describe('CreateQuestUseCase', () => {
     expect(quest.recurrence).toBe('DAILY')
     expect(quest.rank).toBe('A')
     expect(quest.rewardXp).toBe(250)
-    expect(quest.active).toBe(true)
+    expect(quest.active).toBe('ACTIVE')
   })
 
   it('defaults the recurrence to NONE when omitted', async () => {

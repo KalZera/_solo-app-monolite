@@ -29,7 +29,12 @@ export const updateQuestBodySchema = z.object({
   recurrence: z.enum(RECURRENCES).optional(),
   categoryId: z.string().nullish(),
   deadlineDate: z.coerce.date().optional(),
-  active: z.boolean().optional(),
+})
+
+// Recurrence lifecycle controlled by the Hunter: ACTIVE resumes, CANCELLED stops it. COMPLETED is
+// intentionally not accepted here — it is set only by the deadline job (see DeactivateExpiredQuests).
+export const updateRecurrenceBodySchema = z.object({
+  active: z.enum(['ACTIVE', 'CANCELLED']),
 })
 
 export const updateProgressBodySchema = z.object({

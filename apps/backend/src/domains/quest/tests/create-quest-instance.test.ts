@@ -23,7 +23,7 @@ describe('CreateQuestInstanceUseCase', () => {
       const quest = questRepository.seed({
         characterId: 'character-1',
         recurrence,
-        active: true,
+        active: 'ACTIVE',
         deadlineDate: new Date('2026-08-15T23:59:59.999Z'),
       })
 
@@ -40,7 +40,7 @@ describe('CreateQuestInstanceUseCase', () => {
       questRepository.seed({
         characterId: 'character-1',
         recurrence,
-        active: true,
+        active: 'ACTIVE',
         deadlineDate: new Date('2026-08-02T23:59:59.999Z'),
       })
 
@@ -54,7 +54,7 @@ describe('CreateQuestInstanceUseCase', () => {
     const quest = questRepository.seed({
       characterId: 'character-1',
       recurrence: 'DAILY',
-      active: true,
+      active: 'ACTIVE',
       deadlineDate: new Date('2026-08-15T23:59:59.999Z'),
     })
     const now = new Date('2026-08-10T12:00:00.000Z')
@@ -80,7 +80,7 @@ describe('CreateQuestInstanceUseCase', () => {
       const quest = questRepository.seed({
         characterId: 'character-1',
         recurrence,
-        active: true,
+        active: 'ACTIVE',
         deadlineDate: new Date('2026-09-01T23:59:59.999Z'), // far beyond the period's own span
       })
 
@@ -100,7 +100,7 @@ describe('CreateQuestInstanceUseCase', () => {
     const quest = questRepository.seed({
       characterId: 'character-1',
       recurrence: 'NONE',
-      active: true,
+      active: 'ACTIVE',
       deadlineDate: new Date('2026-08-15T23:59:59.999Z'),
       createdAt: new Date('2026-08-01T00:00:00.000Z'),
     })

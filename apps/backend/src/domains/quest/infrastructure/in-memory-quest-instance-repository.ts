@@ -6,7 +6,7 @@ import type {
   QuestInstanceRepository,
 } from '../domain/quest-instance'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
-import type { Quest } from '../domain/quest'
+import type { Quest, QuestActiveStatus } from '../domain/quest'
 
 type SeedInput = Pick<QuestFullInstance, 'questId'> & Partial<Omit<QuestFullInstance, 'questId'>>
 
@@ -59,8 +59,8 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     return { data, total: matches.length, page: pagination.page, pageSize: pagination.pageSize }
   }
 
-  async findByQuestActive(active: boolean): Promise<QuestFullInstance[]> {
-    return this.instances.filter((instance) => instance.quest?.active === active)
+  async findByQuestActive(status: QuestActiveStatus): Promise<QuestFullInstance[]> {
+    return this.instances.filter((instance) => instance.quest?.active === status)
   }
 
   async findByQuestId (questId: ID): Promise<QuestFullInstance[]> {

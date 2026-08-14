@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import type { CreateQuestData, Quest, QuestRepository } from '../domain/quest'
+import type { CreateQuestData, Quest, QuestActiveStatus, QuestRepository } from '../domain/quest'
 import type { ID } from '../../../shared/types/index'
 
 type SeedInput = Pick<Quest, 'characterId'> & Partial<Omit<Quest, 'characterId'>>
@@ -21,7 +21,7 @@ export class InMemoryQuestRepository implements QuestRepository {
       recurrence: data.recurrence ?? 'DAILY',
       rank: data.rank ?? 'E',
       rewardXp: data.rewardXp ?? 10,
-      active: data.active ?? true,
+      active: data.active ?? 'ACTIVE',
       deadlineDate: data.deadlineDate ?? new Date(createdAt.getTime() + DEFAULT_SEED_DEADLINE_DAYS * DAY_MS),
       objectiveTemplates: data.objectiveTemplates ?? [],
       createdAt,
@@ -40,10 +40,12 @@ export class InMemoryQuestRepository implements QuestRepository {
   }
 
   async findActiveByCharacterId (characterId: ID): Promise<Quest[]> {
-    return this.quests.filter((quest) => quest.characterId === characterId && quest.active)
+    return this.quests.filter(
+      (quest) => quest.characterId === characterId && quest.active === 'ACTIVE'
+    )
   }
-  async findManyByActive(active: boolean): Promise<Quest[]> {
-    return this.quests.filter((quest) => quest.active === active)
+  async findManyByActive(status: QuestActiveStatus): Promise<Quest[]> {
+    return this.quests.filter((quest) => quest.active === status)
   }
 
   async create (data: CreateQuestData): Promise<Quest> {

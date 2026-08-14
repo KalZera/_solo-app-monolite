@@ -31,12 +31,12 @@ describe('UpdateQuestUseCase', () => {
 
   it('updates recurrence and active flag', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    const quest = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: true })
+    const quest = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: 'ACTIVE' })
 
-    const result = await build().execute({ userId: 'user-1', questId: quest.id, recurrence: 'WEEKLY', active: false })
+    const result = await build().execute({ userId: 'user-1', questId: quest.id, recurrence: 'WEEKLY', active: 'CANCELLED' })
 
     expect(result.recurrence).toBe('WEEKLY')
-    expect(result.active).toBe(false)
+    expect(result.active).toBe('CANCELLED')
   })
 
   it('normalises a submitted deadlineDate to 23:59:59.999 UTC of that day for a NONE quest', async () => {

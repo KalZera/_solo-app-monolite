@@ -12,11 +12,15 @@ import type {
   QuestInstanceRepository,
 } from '../domain/quest-instance'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
-import type { Quest } from '../domain/quest'
+import type { Quest, QuestActiveStatus } from '../domain/quest'
 
 type InstanceRecord = PrismaQuestInstance & { objectives: PrismaQuestInstanceObjective[], quest?: PrismaQuest }
 
-const INCLUDE_OBJECTIVES = { objectives: true } as const
+// Deterministic objective order (creation order, with id as a stable tiebreaker for objectives
+// created in the same transaction) so completing one never reshuffles the list on refetch.
+const INCLUDE_OBJECTIVES = {
+  objectives: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] },
+} satisfies Prisma.QuestInstanceInclude
 
 function toDomain (record: InstanceRecord): QuestFullInstance {
   return {
@@ -85,12 +89,12 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
     return records.map(toDomain)
   }
 
-  async findByQuestActive(active: boolean): Promise<QuestFullInstance[]> {
-    const records = await this.prisma.questInstance.findMany({ 
+  async findByQuestActive(status: QuestActiveStatus): Promise<QuestFullInstance[]> {
+    const records = await this.prisma.questInstance.findMany({
       include: INCLUDE_OBJECTIVES,
       where:{
         quest: {
-          active: active
+          active: status
         },
         status: {
           in: ['PENDING']

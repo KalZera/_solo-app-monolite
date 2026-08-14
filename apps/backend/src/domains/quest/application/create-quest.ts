@@ -75,7 +75,7 @@ export class CreateQuestUseCase {
       recurrence,
       rank: input.rank,
       rewardXp: xpForQuestRank(input.rank),
-      active: true,
+      active: 'ACTIVE',
       // Irrelevant for recurring types, which derive their deadline from the period instead.
       deadlineDate:(providedDeadlineDate ?? tomorrow),
       objectiveTemplates: (input.objectives ?? [initialObjective]).map((objective) => ({

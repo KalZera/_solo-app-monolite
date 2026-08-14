@@ -1,6 +1,6 @@
 import type { CharacterRepository } from '../../character/domain/character'
 import type { QuestRepository } from '../domain/quest'
-import { QUEST_RANKS, isQuestRank, xpForQuestRank } from '../domain/quest'
+import { QUEST_RANKS, isQuestRank, xpForQuestRank, type QuestActiveStatus } from '../domain/quest'
 import { isRecurrence, type Recurrence } from '../domain/recurrence'
 import { NotFoundError, ValidationError } from '../../../shared/errors/app-error'
 import { getDateFilter } from '../../../shared/utils/date-filter'
@@ -15,7 +15,7 @@ interface UpdateQuestInput {
   categoryId?: string | null
   // Only meaningful for NONE recurrence (see NoneStrategy) — ignored otherwise.
   deadlineDate?: Date
-  active?: boolean
+  active?: QuestActiveStatus
 }
 
 // Edits the TEMPLATE only. Past executions (QuestInstances) are never touched.

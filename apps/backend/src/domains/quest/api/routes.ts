@@ -24,6 +24,7 @@ import {
   todayQuestsQuerySchema,
   updateProgressBodySchema,
   updateQuestBodySchema,
+  updateRecurrenceBodySchema,
 } from './quest.schemas'
 import '../../../infrastructure/jwt/types.js'
 
@@ -59,6 +60,15 @@ export const questRoutes: FastifyPluginAsync = async (app) => {
     const body = parseInput(updateQuestBodySchema, req.body)
     const updateQuest = new UpdateQuestUseCase(questRepository, characterRepository)
     return updateQuest.execute({ ...body, userId: req.user.sub, questId: id })
+  })
+
+  // Stops (CANCELLED) or resumes (ACTIVE) a quest's recurrence. COMPLETED is set only by the
+  // deadline job. A non-ACTIVE template no longer materialises instances (see CreateQuestInstance).
+  app.patch('/:id/recurrence', { preHandler: [app.authenticate] }, async (req) => {
+    const { id } = parseInput(questIdParamsSchema, req.params)
+    const body = parseInput(updateRecurrenceBodySchema, req.body)
+    const updateQuest = new UpdateQuestUseCase(questRepository, characterRepository)
+    return updateQuest.execute({ userId: req.user.sub, questId: id, active: body.active })
   })
 
   app.delete('/:id', { preHandler: [app.authenticate] }, async (req, reply) => {

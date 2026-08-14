@@ -13,7 +13,7 @@ function buildQuest (overrides: Partial<Quest> = {}): Quest {
     recurrence: 'DAILY',
     rank: 'E',
     rewardXp: 10,
-    active: true,
+    active: 'ACTIVE',
     deadlineDate: new Date('2026-08-31T23:59:59.999Z'),
     objectiveTemplates: [],
     createdAt: new Date('2026-08-03T10:00:00.000Z'),

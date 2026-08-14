@@ -42,11 +42,11 @@ describe('ListQuestsUseCase (pagination)', () => {
     expect(result.total).toBe(TOTAL)
   })
 
-  it('defaults to page 1 with a default page size of 20', async () => {
+  it('defaults to page 1 with the default page size', async () => {
     const result = await build().execute({ userId: USER_ID })
     expect(result.page).toBe(1)
-    expect(result.pageSize).toBe(20)
-    expect(result.data).toHaveLength(20)
+    expect(result.pageSize).toBe(10)
+    expect(result.data).toHaveLength(10)
   })
 
   it('flattens each instance with its template fields plus an `instance` sub-object', async () => {

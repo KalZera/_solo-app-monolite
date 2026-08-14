@@ -25,6 +25,15 @@ export function xpForQuestRank (rank: QuestRank): number {
   return QUEST_RANK_XP[rank]
 }
 
+// Recurrence lifecycle of a Quest TEMPLATE. ACTIVE keeps materialising instances (the old
+// `active = true`); COMPLETED (deadline reached) and CANCELLED (stopped by the Hunter) both stop it.
+export type QuestActiveStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
+export const QUEST_ACTIVE_STATUSES: QuestActiveStatus[] = ['ACTIVE', 'COMPLETED', 'CANCELLED']
+
+export function isQuestActiveStatus (value: string): value is QuestActiveStatus {
+  return (QUEST_ACTIVE_STATUSES as string[]).includes(value)
+}
+
 // ─── Quest (TEMPLATE) ────────────────────────────────────────────────────────
 // A Quest is a definition only — it never represents an execution. Each execution is a
 // QuestInstance (see quest-instance.ts). Editing a Quest never touches past executions.
@@ -43,7 +52,7 @@ export interface Quest {
   recurrence: Recurrence
   rank: string
   rewardXp: number
-  active: boolean
+  active: QuestActiveStatus
   // Last day (any instant within it — normalised to its UTC calendar day) for a
   // NONE-recurrence quest's single instance — every quest expires regardless of recurrence
   // (business_rules.md, ADR-004 addendum). The actual deadline is always 23:59:59.999 UTC
@@ -64,7 +73,7 @@ export interface QuestParsed {
   recurrence: Recurrence
   rank: string
   rewardXp: number
-  active: boolean
+  active: QuestActiveStatus
   deadlineDate: Date
   createdAt: Date
   updatedAt: Date
@@ -79,7 +88,7 @@ export interface CreateQuestData {
   recurrence: Recurrence
   rank: string
   rewardXp: number
-  active: boolean
+  active: QuestActiveStatus
   deadlineDate: Date
   objectiveTemplates: Array<Omit<QuestObjectiveTemplate, 'id'>>
 }
@@ -89,7 +98,7 @@ export interface QuestRepository {
   findByCharacterId(characterId: ID, recurrence?: Recurrence): Promise<Quest[]>
   // Active templates only — used to materialise today's instances.
   findActiveByCharacterId(characterId: ID): Promise<Quest[]>
-  findManyByActive(active: boolean): Promise<Quest[]>
+  findManyByActive(status: QuestActiveStatus): Promise<Quest[]>
   create(data: CreateQuestData): Promise<Quest>
   save(id: ID, data: Partial<Omit<Quest, 'objectiveTemplates'>>): Promise<Quest>
   delete(id: ID): Promise<void>

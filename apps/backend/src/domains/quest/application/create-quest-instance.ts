@@ -19,8 +19,8 @@ export class CreateQuestInstanceUseCase {
   ) {}
 
   async execute (now: Date = new Date()): Promise<QuestFullInstance[]> {
-    const quests = await this.questRepository.findManyByActive(true)
-    const existedInstances = await this.questInstanceRepository.findByQuestActive(true)
+    const quests = await this.questRepository.findManyByActive('ACTIVE')
+    const existedInstances = await this.questInstanceRepository.findByQuestActive('ACTIVE')
     const instances: QuestFullInstance[] = []
 
     for (const quest of quests) {

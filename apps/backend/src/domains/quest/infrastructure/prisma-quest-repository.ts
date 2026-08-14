@@ -4,7 +4,7 @@ import type {
   Quest as PrismaQuest,
   QuestObjectiveTemplate as PrismaObjectiveTemplate,
 } from '@prisma/client'
-import type { CreateQuestData, Quest, QuestRepository } from '../domain/quest'
+import type { CreateQuestData, Quest, QuestActiveStatus, QuestRepository } from '../domain/quest'
 import type { ID } from '../../../shared/types/index'
 import type { Recurrence } from '../domain/recurrence'
 
@@ -55,15 +55,15 @@ export class PrismaQuestRepository implements QuestRepository {
 
   async findActiveByCharacterId (characterId: ID): Promise<Quest[]> {
     const records = await this.prisma.quest.findMany({
-      where: { characterId, active: true },
+      where: { characterId, active: 'ACTIVE' },
       include: INCLUDE_TEMPLATES,
     })
     return records.map(toDomain)
   }
 
-  async findManyByActive(active: boolean): Promise<Quest[]> {
+  async findManyByActive(status: QuestActiveStatus): Promise<Quest[]> {
     const records = await this.prisma.quest.findMany({
-      where: { active },
+      where: { active: status },
       include: INCLUDE_TEMPLATES,
     })
     return records.map(toDomain)
