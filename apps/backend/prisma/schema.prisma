@@ -18,10 +18,10 @@ model User {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  characters           Character[]
-  notifications        Notification[]
-  questCategories      QuestCategory[]
-  pushSubscriptions    PushSubscription[]
+  characters             Character[]
+  notifications          Notification[]
+  questCategories        QuestCategory[]
+  pushSubscriptions      PushSubscription[]
   notificationPreference NotificationPreference?
 
   @@map("users")
@@ -54,6 +54,7 @@ model Character {
   quests      Quest[]
   restPoints  CharacterRestPoint[]
 
+  @@index([userId])
   @@map("characters")
 }
 
@@ -79,6 +80,7 @@ model CharacterHistory {
 
   character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
+  @@index([characterId, createdAt])
   @@map("character_history")
 }
 
@@ -94,6 +96,7 @@ model QuestCategory {
   creator User    @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   quests  Quest[]
 
+  @@index([createdBy])
   @@map("quest_categories")
 }
 
@@ -114,24 +117,34 @@ enum QuestInstanceStatus {
   EXPIRED
 }
 
+// Lifecycle of a Quest TEMPLATE's recurrence:
+//   ACTIVE    → keeps materialising instances (the old `active = true`).
+//   COMPLETED → deadline reached; stops materialising (set by the deadline job).
+//   CANCELLED → recurrence stopped by the Hunter; stops materialising.
+enum QuestActiveStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
 // A Quest is a TEMPLATE — the recurring definition. It never represents an execution.
 model Quest {
-  id          String     @id @default(uuid())
-  characterId String     @map("character_id")
-  categoryId  String?    @map("category_id")
-  title       String
-  description String
-  recurrence  Recurrence @default(NONE)
-  rank        String
-  rewardXp    Int        @default(0) @map("reward_xp")
-  active      Boolean    @default(true)
+  id           String            @id @default(uuid())
+  characterId  String            @map("character_id")
+  categoryId   String?           @map("category_id")
+  title        String
+  description  String
+  recurrence   Recurrence        @default(NONE)
+  rank         String
+  rewardXp     Int               @default(0) @map("reward_xp")
+  active       QuestActiveStatus @default(ACTIVE)
   // Last day (UTC calendar day) for a NONE-recurrence quest's single instance — the actual
   // deadline is always 23:59:59.999 UTC of that day. Ignored for recurring types, which
   // derive their deadline from the period. Always set (defaults to "tomorrow" at creation
   // when the client omits it) — a Quest is never left without a deadline.
-  deadlineDate DateTime   @map("deadline_date")
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
+  deadlineDate DateTime          @map("deadline_date")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
 
   character          Character                @relation(fields: [characterId], references: [id], onDelete: Cascade)
   category           QuestCategory?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -139,6 +152,8 @@ model Quest {
   instances          QuestInstance[]
 
   @@index([characterId])
+  @@index([categoryId])
+  @@index([active])
   @@map("quests")
 }
 
@@ -173,17 +188,18 @@ model QuestInstance {
   objectives QuestInstanceObjective[]
 
   @@unique([questId, scheduledDate])
-  @@index([status])
+  @@index([status, deadline])
   @@map("quest_instances")
 }
 
 model QuestInstanceObjective {
-  id              String  @id @default(uuid())
-  questInstanceId String  @map("quest_instance_id")
+  id              String   @id @default(uuid())
+  questInstanceId String   @map("quest_instance_id")
   description     String
   target          Int
-  current         Int     @default(0)
-  completed       Boolean @default(false)
+  current         Int      @default(0)
+  completed       Boolean  @default(false)
+  createdAt       DateTime @default(now()) @map("created_at")
 
   instance QuestInstance @relation(fields: [questInstanceId], references: [id], onDelete: Cascade)
 
@@ -252,7 +268,7 @@ model Notification {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([userId, createdAt])
   @@map("notifications")
 }
 
@@ -275,18 +291,18 @@ model PushSubscription {
 // One row per user — which notification types/channels they want. Mirrors
 // domains/notification/domain/notification.ts#NotificationPreferences exactly.
 model NotificationPreference {
-  id             String   @id @default(uuid())
-  userId         String   @unique @map("user_id")
-  pushEnabled    Boolean  @default(true) @map("push_enabled")
-  emailEnabled   Boolean  @default(false) @map("email_enabled")
-  whatsappEnabled Boolean @default(false) @map("whatsapp_enabled")
-  questReminder  Boolean  @default(true) @map("quest_reminder")
-  questExpired   Boolean  @default(true) @map("quest_expired")
-  levelUp        Boolean  @default(true) @map("level_up")
-  rankUp         Boolean  @default(true) @map("rank_up")
-  penalty        Boolean  @default(true) @map("penalty")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  pushEnabled     Boolean  @default(true) @map("push_enabled")
+  emailEnabled    Boolean  @default(false) @map("email_enabled")
+  whatsappEnabled Boolean  @default(false) @map("whatsapp_enabled")
+  questReminder   Boolean  @default(true) @map("quest_reminder")
+  questExpired    Boolean  @default(true) @map("quest_expired")
+  levelUp         Boolean  @default(true) @map("level_up")
+  rankUp          Boolean  @default(true) @map("rank_up")
+  penalty         Boolean  @default(true) @map("penalty")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
