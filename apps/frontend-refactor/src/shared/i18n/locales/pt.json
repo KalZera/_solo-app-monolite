@@ -339,11 +339,15 @@
       "rewards": "Recompensas"
     },
     "entryTypes": {
-      "questCompleted": "Missão concluída",
-      "questFailed": "Missão falhou",
-      "levelUp": "Subiu de nível",
+      "questCompleted": "Missão \"{{title}}\" concluída.",
+      "questFailed": "Missão \"{{title}}\" falhou.",
+      "questExpired": "Missão \"{{title}}\" expirou.",
+      "levelUp": "Subiu para o nível {{level}}.",
       "rewardEarned": "Recompensa obtida",
-      "attributeAllocated": "Atributo distribuído"
+      "attributePointsGranted_one": "Recebeu {{count}} ponto de atributo.",
+      "attributePointsGranted_other": "Recebeu {{count}} pontos de atributo.",
+      "attributeAllocated_one": "Você adicionou {{count}} ponto em {{attribute}}.",
+      "attributeAllocated_other": "Você adicionou {{count}} pontos em {{attribute}}."
     },
     "xpGain": "+{{xp}} XP"
   },

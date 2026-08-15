@@ -339,11 +339,15 @@
       "rewards": "Rewards"
     },
     "entryTypes": {
-      "questCompleted": "Quest completed",
-      "questFailed": "Quest failed",
-      "levelUp": "Level up",
+      "questCompleted": "Quest \"{{title}}\" completed.",
+      "questFailed": "Quest \"{{title}}\" failed.",
+      "questExpired": "Quest \"{{title}}\" expired.",
+      "levelUp": "Reached level {{level}}.",
       "rewardEarned": "Reward earned",
-      "attributeAllocated": "Attribute allocated"
+      "attributePointsGranted_one": "Received {{count}} attribute point.",
+      "attributePointsGranted_other": "Received {{count}} attribute points.",
+      "attributeAllocated_one": "You added {{count}} point to {{attribute}}.",
+      "attributeAllocated_other": "You added {{count}} points to {{attribute}}."
     },
     "xpGain": "+{{xp}} XP"
   },

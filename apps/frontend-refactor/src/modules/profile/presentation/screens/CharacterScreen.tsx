@@ -130,7 +130,7 @@ export function CharacterScreen() {
                 weight="semibold"
                 className="flex-1 text-sm uppercase tracking-wide text-warning"
               >
-                Distribuir pontos
+                {t('character.attributes.distribute')}
               </Text>
               <Text weight="semibold" className=" text-sm uppercase tracking-wide text-warning">
                 {data.progression.attributePointsAvailable}
