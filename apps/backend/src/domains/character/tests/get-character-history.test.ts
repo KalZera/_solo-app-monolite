@@ -19,14 +19,14 @@ describe('GetCharacterHistoryUseCase', () => {
 
   it('returns the first page of history entries for the logged user character, most recent first', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    await historyRepository.create(character.id, 'Quest "A" completada.')
-    await historyRepository.create(character.id, 'Subiu para o nível 2.')
+    await historyRepository.create(character.id, 'QUEST_COMPLETED', { questTitle: 'A' })
+    await historyRepository.create(character.id, 'LEVEL_UP', { level: 2 })
 
     const result = await buildUseCase().execute({ userId: 'user-1' })
 
     expect(result.data).toHaveLength(2)
-    expect(result.data[0].description).toBe('Subiu para o nível 2.')
-    expect(result.data[1].description).toBe('Quest "A" completada.')
+    expect(result.data[0]).toMatchObject({ type: 'LEVEL_UP', payload: { level: 2 } })
+    expect(result.data[1]).toMatchObject({ type: 'QUEST_COMPLETED', payload: { questTitle: 'A' } })
     expect(result.total).toBe(2)
     expect(result.page).toBe(1)
     expect(result.pageSize).toBe(10)
@@ -34,28 +34,28 @@ describe('GetCharacterHistoryUseCase', () => {
 
   it('paginates using the given page and pageSize', async () => {
     const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
-    await historyRepository.create(character.id, 'Entry 1')
-    await historyRepository.create(character.id, 'Entry 2')
-    await historyRepository.create(character.id, 'Entry 3')
+    await historyRepository.create(character.id, 'LEVEL_UP', { level: 1 })
+    await historyRepository.create(character.id, 'LEVEL_UP', { level: 2 })
+    await historyRepository.create(character.id, 'LEVEL_UP', { level: 3 })
 
     const firstPage = await buildUseCase().execute({ userId: 'user-1', page: 1, pageSize: 2 })
-    expect(firstPage.data.map((e) => e.description)).toEqual(['Entry 3', 'Entry 2'])
+    expect(firstPage.data.map((e) => e.payload.level)).toEqual([3, 2])
     expect(firstPage.total).toBe(3)
 
     const secondPage = await buildUseCase().execute({ userId: 'user-1', page: 2, pageSize: 2 })
-    expect(secondPage.data.map((e) => e.description)).toEqual(['Entry 1'])
+    expect(secondPage.data.map((e) => e.payload.level)).toEqual([1])
   })
 
   it('does not return history entries from a different character', async () => {
     const characterA = characterRepository.seed({ userId: 'user-1', name: 'Hero A' })
     const characterB = characterRepository.seed({ userId: 'user-2', name: 'Hero B' })
-    await historyRepository.create(characterA.id, 'Quest "A" completada.')
-    await historyRepository.create(characterB.id, 'Quest "B" completada.')
+    await historyRepository.create(characterA.id, 'QUEST_COMPLETED', { questTitle: 'A' })
+    await historyRepository.create(characterB.id, 'QUEST_COMPLETED', { questTitle: 'B' })
 
     const result = await buildUseCase().execute({ userId: 'user-1' })
 
     expect(result.data).toHaveLength(1)
-    expect(result.data[0].description).toBe('Quest "A" completada.')
+    expect(result.data[0]).toMatchObject({ type: 'QUEST_COMPLETED', payload: { questTitle: 'A' } })
   })
 
   it('throws NotFoundError when the user has no character', async () => {

@@ -1,16 +1,25 @@
 import { randomUUID } from 'crypto'
-import type { CharacterHistory, CharacterHistoryRepository } from '../domain/character-history'
+import type {
+  CharacterHistory,
+  CharacterHistoryEntryType,
+  CharacterHistoryRepository,
+} from '../domain/character-history'
 import type { ID, Paginated, PaginationParams } from '../../../shared/types/index'
 import { paginate } from '../../../shared/utils/index'
 
 export class InMemoryCharacterHistoryRepository implements CharacterHistoryRepository {
   private entries: CharacterHistory[] = []
 
-  async create (characterId: ID, description: string): Promise<CharacterHistory> {
+  async create (
+    characterId: ID,
+    type: CharacterHistoryEntryType,
+    payload: Record<string, unknown>
+  ): Promise<CharacterHistory> {
     const entry: CharacterHistory = {
       id: randomUUID(),
       characterId,
-      description,
+      type,
+      payload,
       createdAt: new Date(),
     }
     this.entries.push(entry)
