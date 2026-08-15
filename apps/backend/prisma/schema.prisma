@@ -72,11 +72,23 @@ model CharacterRestPoint {
   @@map("characters_rest_points")
 }
 
+// Structured (not pre-rendered) so the frontend can translate each entry via i18n at read time,
+// instead of the backend baking a fixed-language sentence into the row (see character-history-plugin.ts).
+enum CharacterHistoryEntryType {
+  QUEST_COMPLETED
+  QUEST_FAILED
+  QUEST_EXPIRED
+  LEVEL_UP
+  ATTRIBUTE_POINTS_GRANTED
+  ATTRIBUTE_POINT_ALLOCATED
+}
+
 model CharacterHistory {
-  id          String   @id @default(uuid())
-  characterId String   @map("character_id")
-  description String
-  createdAt   DateTime @default(now()) @map("created_at")
+  id          String                    @id @default(uuid())
+  characterId String                    @map("character_id")
+  type        CharacterHistoryEntryType
+  payload     Json                      @default("{}")
+  createdAt   DateTime                  @default(now()) @map("created_at")
 
   character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
