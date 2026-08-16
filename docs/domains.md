@@ -304,9 +304,11 @@ rewardXp, active, objectiveTemplates[], createdAt, updatedAt`.
 progress, status, rewardGranted, objectives[], createdAt, updatedAt`. Único por
 `(questId, scheduledDate)`.
 
-**Recurrence**: `NONE` (instância única), `DAILY`, `WEEKLY`, `MONTHLY`, `CUSTOM` (preparado,
-ainda não agendável). Boundaries de período/deadline calculados em **GMT-3** pela
-**RecurrenceEngine** (materialização sob demanda; nunca em massa).
+**Recurrence**: `NONE` (instância única), `DAILY`, `WEEKLY`, `CUSTOM` (preparado,
+ainda não agendável; MONTHLY removido em 2026-08-11). Boundaries de período/deadline
+calculados em **UTC** pela **RecurrenceEngine** (materialização sob demanda; nunca em massa).
+WEEKLY não tem âncora de semana-calendário: o período começa no dia avaliado e o deadline é
+sempre 7 dias depois, exceto se o `deadlineDate` do template cair antes.
 
 **Status da QuestInstance**: `PENDING → STARTED → COMPLETED`; `FAILED`; `EXPIRED`
 (COMPLETED imutável, FAILED não volta, EXPIRED não gera XP).

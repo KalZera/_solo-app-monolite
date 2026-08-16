@@ -13,42 +13,41 @@
 
  - [x] It Should be possible to get the character profile of a logged user
  - [x] The Character should have a power score (sum of attributes)
- - [ ] It should not be possible to change your character name  <!-- Decisão 2026-08-01: MANTER a regra — nome imutável (a implementar: remover `name` do update). -->
+ - [x] It should not be possible to change your character name  <!-- Decisão 2026-08-01: MANTER a regra — nome imutável (a implementar: remover `name` do update). -->
 
- - [x] It Should be possible to see the history of quests completed  <!-- já implementado (CharacterHistory + character-history-plugin + rota /history). -->
- - [ ] It Should be possible view all metrics in a dashboard
+ - [] It Should be possible to see the history of quests completed  <!-- já implementado (CharacterHistory + character-history-plugin + rota /history). -->
+ - [x] It Should be possible view all metrics in a dashboard
 
  - [x] It Should be possible an user create an quest only for your own character.  <!-- já implementado (ownership via token). -->
- - [ ] It Should be possible to complete quest any time during the current day.  <!-- parcial: deadline = fim do dia, mas em GMT-3 ainda pendente. -->
+ - [x] It Should be possible to complete quest any time during the current day.  <!-- parcial: deadline = fim do dia em UTC. -->
  - [ ] It Should be penalty if lost the consistence or start a quest
  - [ ] It should be warn about daily and week quests
  - [ ] It should be notified each 2 days for week quests
- - [ ] It Should be possible to splitted a quest in mini quests and calculated by percentage  <!-- parcial: QuestObjective + ratio. -->
+ - [x] It Should be possible to splitted a quest in mini quests and calculated by percentage  <!-- parcial: QuestObjective + ratio. -->
  - [x] It Should be possible to add a period for complete quests.
  - [x] It Should not be possible to remove a quest started  <!-- delete-quest bloqueia in_progress e completed. -->
 
  - [x] It not should be possible edit or add an attribute.
- - [ ] It should be possible to see attribute points in a header  <!-- parcial: exibido em AttributesPanel/HeroCard, não como header. -->
- - [ ] It should not be possible do a downgrade in an attribute  <!-- allocate impede; falta bloquear via update (CARD-101). -->
+ - [x] It should be possible to see attribute points in a header 
+ - [x] It should not be possible do a downgrade in an attribute  <!-- allocate impede; falta bloquear via update (CARD-101). -->
 
- - [ ] It should be logged to update the quest.
+ - [x] It should be logged to update the quest.
 
  ## Business Rule
  - [x] A user should not be able to register with a duplicate email;
- - [x] The character title is set on creation and MAY be edited afterwards.  <!-- Decisão 2026-08-01: edição de título PERMITIDA (substitui "não editar título"). -->
- - [ ] A user have to choose your character title once,  <!-- superseded pela decisão acima (título editável). -->
+ - [x] The character title is set on creation and could be edited afterwards.  <!-- Decisão 2026-08-01: edição de título PERMITIDA (substitui "não editar título"). -->
  - [x] A user should not be able to create another character.
  - [x] A user can create your own quest (MVP)  <!-- já implementado. -->
 
  - [x] A quest above 70% (of its objectives) is considered done — applies to **MAIN** quests.  <!-- Decisão 2026-08-01: 70% vale para MAIN; daily = completar antes do prazo. -->
- - [ ] A quest have to be at least one category  <!-- Decisão 2026-08-01: categoria OBRIGATÓRIA; a IMPLEMENTAR (hoje é opcional). -->
+ - [x] A quest have to be at least one category  <!-- Decisão 2026-08-01: categoria OBRIGATÓRIA; a IMPLEMENTAR (hoje é opcional). -->
  - [x] A quest have to be an description.
  - [ ] A quest have diferent bonus points and the xp point should be changed in 50 points to incresing or decresing.
  - [x] A quest cannot be created as 0 points reward.
- - [ ] A quest have to be a period to finish. (???)
+ - [x] A quest have to be a period to finish.
  - [ ] A Quest completed after the deadline should not be counted.  <!-- parcial: só daily rejeita após deadline. -->
  - [x] An Quest should not be updated after completed.  <!-- update-quest e complete-quest-objective bloqueiam 'completed'. -->
- - [ ] A quest could be classified by ranks,  <!-- Decisão 2026-08-01: rewardXp DERIVADO do rank (a implementar, CARD-103). -->
+ - [x] A quest could be classified by ranks,  <!-- Decisão 2026-08-01: rewardXp DERIVADO do rank (a implementar, CARD-103). -->
     Rank E (easy) - 10 xp
     Rank D (easy+) - 20 xp
     Rank C (medium) - 50 xp
@@ -59,7 +58,7 @@
 
  - [x] every time a user leveled up all attributes receive 1 point.  <!-- applyAutoAttributeGains. -->
  - [x] A power score is a sum of all attributes.
- - [ ] the attribute cannot be 20 points highter than second higher value. ex:(str= 40, cha=15 (not able))
+ - [x] the attribute cannot be 20 points highter than second higher value. ex:(str= 40, cha=15 (not able))
  - [x] A Power Score will calculate the character rank:  <!-- rank.engine implementa e get-character-profile expõe. -->
     0 - 500 Rank E
     500 - 1500 Rank D
@@ -86,44 +85,3 @@
 
  A cada nível que você sobe em Solo Leveling, você recebe 5 pontos de status para distribuir livremente entre seus atributos. Além disso, o protagonista Sung Jinwoo (ou o seu personagem no jogo) também ganha 1 ponto automático em cada atributo base e mais pontos ao completar as missões diárias.
 
----
-
-## Decisões de Auditoria (2026-08-01)
-
-Resolução dos conflitos identificados em `docs/AUDIT_REPORT.md`. Estas decisões são
-**autoritativas** e guiam a implementação do backlog (`docs/BACKLOG.md`).
-
-| # | Tema | Decisão | Impacto |
-|---|------|---------|---------|
-| 1 | Atributos | **`luck`** é o nome canônico (não `CHA`). | `domains.md` atualizado; código permanece. |
-| 2 | Regra dos 70% | Aplica-se à quest **MAIN** (≥70% dos objetivos). Daily = completar antes do prazo. | Código atual mantido; texto da regra corrigido. |
-| 3 | Título do personagem | **Editável** após a criação. | Código mantido; regra "não editar título" substituída. |
-| 4 | Nome do personagem | **Imutável** após a criação. | A implementar: remover `name` do update (CARD-101). |
-| 5 | Limite de diárias | **3** quests diárias ativas. | Ajustar 2 testes (CARD-003); regra documentada. |
-| 6 | Engine de XP | Adotar **`ProgressionEngine` + `ContinuousCurveStrategy`** como única engine; remover `applyExperienceGain`/`level.engine`. | Reescrever grant-experience + testes (CARD-201); FE alinhado (CARD-202). |
-| 7 | Quest→Progression | Integração **síncrona** (chamada direta ao Progression Engine); evento `QuestCompleted` segue para histórico/auditoria. | Registrado em **ADR-003**; sem migração para consumer. |
-| 8 | Categoria da quest | **Obrigatória** na criação. | A implementar: validar `categoryId` (CARD-103/backlog). |
-| 9 | XP por rank | `rewardXp` **derivado do rank**: E10/D20/C50/B100/A250/**S500**. | A implementar (CARD-103); remove `rewardXp` livre. |
-
----
-
-## Quest: Template + Instance (ADR-004, 2026-08-03)
-
-A partir de agora **uma `Quest` é apenas um TEMPLATE** (definição recorrente); cada execução é
-uma **`QuestInstance`**. Ver `ADRs/ADR-004.md` e `docs/domains.md`.
-
-- [x] Uma Quest possui **recorrência**: NONE, DAILY, WEEKLY, MONTHLY, CUSTOM (CUSTOM modelado,
-  ainda não agendável). O deadline de expiração é derivado do período (em GMT-3).
-- [x] **Uma Quest nunca é duplicada** — as execuções são QuestInstances. Índice único
-  `(questId, scheduledDate)`.
-- [x] Instâncias são criadas **sob demanda** (dashboard/worker/scheduler via `RecurrenceEngine`),
-  **nunca** em massa.
-- [x] Status da instância: PENDING, STARTED, COMPLETED, FAILED, EXPIRED.
-- [x] **COMPLETED** é imutável; **FAILED** não volta para PENDING; **EXPIRED** não gera XP.
-- [x] **COMPLETED** gera `QuestCompletedEvent`; **FAILED** gera `QuestFailedEvent`; **EXPIRED**
-  gera `QuestExpiredEvent` (também `QuestInstanceCreated`, `QuestStarted`, `QuestProgressUpdated`).
-- [x] Objectives **preservados** na instância (regra dos 70% para conclusão quando há objectives).
-- [ ] **Frontend** do módulo quest ainda no modelo antigo — adaptação é follow-up.
-
-> **Regras que saíram** (eram acopladas ao `type`, substituído por `recurrence`): "máx 3 diárias
-> ativas" (CARD-003) e "1 main ativa por categoria". Podem retornar como limites de **template**.
