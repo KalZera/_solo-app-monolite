@@ -30,7 +30,18 @@ export interface DashboardSummary {
   xpToday: number
   streakDays: number
   attributes: HunterAttribute
+  // Daily quests that HAVE an instance scheduled for today (materialised by the scheduler),
+  // and how many of those are done — "today's daily board".
   dailyQuests: { completed: number; total: number }
+  // How many DAILY-recurrence quests currently EXIST (active templates that keep recurring,
+  // capped at MAX_ACTIVE_DAILY_QUESTS) and how many of them are already completed today.
+  // Unlike `dailyQuests`, `total` counts the templates themselves, so it doesn't depend on
+  // the scheduler having materialised today's instance yet.
+  dailyRecurringQuests: { completed: number; total: number }
+  // Same rule as `dailyRecurringQuests`, for WEEKLY-recurrence quests: how many active weekly
+  // templates exist and how many are completed for the CURRENT week — the instance whose
+  // 7-day period contains `now` (see isWithinWeeklyPeriod).
+  weeklyRecurringQuests: { completed: number; total: number }
   questsCompletedToday: number
 }
 
@@ -60,6 +71,18 @@ function startOfUTCDay (date: Date): Date {
 
 export function isSameUTCDay (a: Date, b: Date): boolean {
   return toDayKey(a) === toDayKey(b)
+}
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000
+
+// True when `now` falls inside the 7-day period that starts at a WEEKLY instance's
+// scheduledDate. WEEKLY periods are anchored to the quest's own start day — there is no
+// calendar-week (Monday) anchor (see quest WeeklyStrategy) — so the current period is simply
+// [scheduledDate, scheduledDate + 7 days). Consecutive instances are exactly 7 days apart,
+// so at most one instance's period contains any given instant.
+export function isWithinWeeklyPeriod (scheduledDate: Date, now: Date): boolean {
+  const start = scheduledDate.getTime()
+  return now.getTime() >= start && now.getTime() < start + WEEK_MS
 }
 
 // XP earned and quest count from completions on `now`'s (UTC) day.

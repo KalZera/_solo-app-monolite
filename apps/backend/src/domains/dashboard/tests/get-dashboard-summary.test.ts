@@ -64,6 +64,8 @@ describe('GetDashboardSummaryUseCase', () => {
         luck: 1,
       },
       dailyQuests: { completed: 0, total: 0 },
+      dailyRecurringQuests: { completed: 0, total: 0 },
+      weeklyRecurringQuests: { completed: 0, total: 0 },
       questsCompletedToday: 0,
     })
   })
@@ -174,5 +176,57 @@ describe('GetDashboardSummaryUseCase', () => {
     const summary = await build().execute({ userId: 'user-1' }, NOW)
 
     expect(summary.dailyQuests).toEqual({ completed: 1, total: 2 })
+  })
+
+  it('counts dailyRecurringQuests from ACTIVE daily templates that exist, independent of today instances', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    const dailyDone = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: 'ACTIVE' })
+    // An active daily quest whose today instance hasn't been materialised yet: it still EXISTS.
+    const dailyNotMaterialised = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: 'ACTIVE' })
+    // A cancelled daily quest no longer recurs, so it is not an existing daily quest.
+    const dailyCancelled = questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: 'CANCELLED' })
+    // WEEKLY quests are never daily.
+    questRepository.seed({ characterId: character.id, recurrence: 'WEEKLY', active: 'ACTIVE' })
+
+    questInstanceRepository.seed({ questId: dailyDone.id, status: 'COMPLETED', scheduledDate: NOW })
+    // dailyNotMaterialised has no today instance at all.
+    void dailyNotMaterialised
+    // A cancelled daily quest, even if its today instance is completed, must not count.
+    questInstanceRepository.seed({ questId: dailyCancelled.id, status: 'COMPLETED', scheduledDate: NOW })
+
+    const summary = await build().execute({ userId: 'user-1' }, NOW)
+
+    // Two ACTIVE daily templates exist (dailyDone + dailyNotMaterialised); one is done today.
+    // The CANCELLED daily quest is excluded even though its today instance is completed.
+    expect(summary.dailyRecurringQuests).toEqual({ completed: 1, total: 2 })
+    // The existing metric counts every daily quest with a today instance — including the
+    // CANCELLED one — and ignores the active template with no today instance yet.
+    expect(summary.dailyQuests).toEqual({ completed: 2, total: 2 })
+  })
+
+  it('counts weeklyRecurringQuests from ACTIVE weekly templates, completed against this week\'s instance', async () => {
+    const character = characterRepository.seed({ userId: 'user-1', name: 'Hero' })
+    const weeklyDone = questRepository.seed({ characterId: character.id, recurrence: 'WEEKLY', active: 'ACTIVE' })
+    const weeklyPending = questRepository.seed({ characterId: character.id, recurrence: 'WEEKLY', active: 'ACTIVE' })
+    // Active weekly whose only instance is from a PAST period — the current week isn't done.
+    const weeklyPastPeriod = questRepository.seed({ characterId: character.id, recurrence: 'WEEKLY', active: 'ACTIVE' })
+    // Cancelled weekly no longer recurs — excluded even with a completed instance this week.
+    const weeklyCancelled = questRepository.seed({ characterId: character.id, recurrence: 'WEEKLY', active: 'CANCELLED' })
+    // A DAILY quest is never counted as weekly.
+    questRepository.seed({ characterId: character.id, recurrence: 'DAILY', active: 'ACTIVE' })
+
+    // This week's period ([daysAgo(3), +7d)) contains NOW → counts as done.
+    questInstanceRepository.seed({ questId: weeklyDone.id, status: 'COMPLETED', scheduledDate: daysAgo(3) })
+    // This week's instance, still pending → counts in total but not completed.
+    questInstanceRepository.seed({ questId: weeklyPending.id, status: 'PENDING', scheduledDate: daysAgo(1) })
+    // Completed, but the period ([daysAgo(10), daysAgo(3))) ended before NOW → not this week.
+    questInstanceRepository.seed({ questId: weeklyPastPeriod.id, status: 'COMPLETED', scheduledDate: daysAgo(10) })
+    // Cancelled quest's this-week completed instance must not count.
+    questInstanceRepository.seed({ questId: weeklyCancelled.id, status: 'COMPLETED', scheduledDate: daysAgo(2) })
+
+    const summary = await build().execute({ userId: 'user-1' }, NOW)
+
+    // Three ACTIVE weekly templates exist; only weeklyDone is completed for the current week.
+    expect(summary.weeklyRecurringQuests).toEqual({ completed: 1, total: 3 })
   })
 })

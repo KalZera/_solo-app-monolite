@@ -8,6 +8,7 @@ import type { GetProgressionUseCase } from '../../progression/application/get-pr
 import {
   calculateStreak,
   isSameUTCDay,
+  isWithinWeeklyPeriod,
   summarizeToday,
   toHunterAttributes,
   type CompletedQuestRecord,
@@ -46,6 +47,10 @@ export class GetDashboardSummaryUseCase {
     const completed: CompletedQuestRecord[] = []
     let dailyTotal = 0
     let dailyCompleted = 0
+    let dailyRecurringTotal = 0
+    let dailyRecurringCompleted = 0
+    let weeklyRecurringTotal = 0
+    let weeklyRecurringCompleted = 0
 
     for (const quest of quests) {
       const instances = await this.questInstanceRepository.findByQuestId(quest.id)
@@ -58,10 +63,28 @@ export class GetDashboardSummaryUseCase {
 
       if (quest.recurrence === 'DAILY') {
         const todaysInstance = instances.find((instance) => isSameUTCDay(instance.scheduledDate, now))
+        const doneToday = todaysInstance?.status === 'COMPLETED'
+
+        // Today's daily board: only daily quests whose today instance has been materialised.
         if (todaysInstance) {
           dailyTotal += 1
-          if (todaysInstance.status === 'COMPLETED') dailyCompleted += 1
+          if (doneToday) dailyCompleted += 1
         }
+
+        // Existing daily-recurrence quests: count the active templates (still recurring),
+        // regardless of whether today's instance exists yet, and how many are done today.
+        if (quest.active === 'ACTIVE') {
+          dailyRecurringTotal += 1
+          if (doneToday) dailyRecurringCompleted += 1
+        }
+      }
+
+      // Existing weekly-recurrence quests: same rule as the daily one above, but "done" is
+      // measured against this week's instance (the one whose 7-day period contains `now`).
+      if (quest.recurrence === 'WEEKLY' && quest.active === 'ACTIVE') {
+        weeklyRecurringTotal += 1
+        const thisWeeksInstance = instances.find((instance) => isWithinWeeklyPeriod(instance.scheduledDate, now))
+        if (thisWeeksInstance?.status === 'COMPLETED') weeklyRecurringCompleted += 1
       }
     }
 
@@ -80,6 +103,8 @@ export class GetDashboardSummaryUseCase {
       streakDays: calculateStreak(completed.map((record) => record.completedAt), now),
       attributes: toHunterAttributes(character.stats),
       dailyQuests: { completed: dailyCompleted, total: dailyTotal },
+      dailyRecurringQuests: { completed: dailyRecurringCompleted, total: dailyRecurringTotal },
+      weeklyRecurringQuests: { completed: weeklyRecurringCompleted, total: weeklyRecurringTotal },
       questsCompletedToday: today.questsCompleted,
     }
   }
