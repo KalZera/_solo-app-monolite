@@ -139,7 +139,6 @@ describe('CreateQuestUseCase', () => {
     seedCharacter();
     const requests = []
     for (let index = 1; index <= MAX_ACTIVE_DAILY_QUESTS; index++) {
-      console.log({index})
       requests.push(
         build().execute({
         userId: `user-1`,
@@ -150,7 +149,7 @@ describe('CreateQuestUseCase', () => {
       }),
       )
     }
-    console.log({requests})
+    
     await Promise.all(requests);
 
     await expect(
