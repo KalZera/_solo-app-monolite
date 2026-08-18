@@ -21,5 +21,7 @@ export interface DashboardSummary {
   streakDays: number
   attributes: HunterAttribute
   dailyQuests: { completed: number; total: number }
+  dailyRecurringQuests: { completed: number; total: number }
+  weeklyRecurringQuests: { completed: number; total: number }
   questsCompletedToday: number
 }

@@ -19,5 +19,7 @@ export const dashboardMock: DashboardSummary = {
     { key: 'perception', value: 88 },
   ],
   dailyQuests: { completed: 3, total: 5 },
+  dailyRecurringQuests: { completed: 3, total: 5 },
+  weeklyRecurringQuests: { completed: 1, total: 2 },
   questsCompletedToday: 3,
 }
