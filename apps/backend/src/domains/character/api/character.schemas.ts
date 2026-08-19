@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { CHARACTER_CLASSES } from '../domain/character'
 
-const ALLOCATABLE_ATTRIBUTES = ['strength', 'intelligence', 'agility', 'vitality', 'luck'] as const
+const ALLOCATABLE_ATTRIBUTES = ['strength', 'intelligence', 'agility', 'vitality', 'perception'] as const
 
 export const createCharacterBodySchema = z.object({
   name: z.string().min(1).max(40),
@@ -18,7 +18,7 @@ export const updateCharacterBodySchema = z.object({
   avatar: z.string().nullish(),
 })
 
-// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, luck: 1 }).
+// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, perception: 1 }).
 // z.record with an enum key rejects unknown attributes while still allowing any subset of them.
 export const allocateAttributesBodySchema = z.object({
   allocations: z.record(z.enum(ALLOCATABLE_ATTRIBUTES), z.coerce.number().int().nonnegative()),

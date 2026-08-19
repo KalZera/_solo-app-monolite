@@ -85,7 +85,7 @@ describe('MVP user journey', () => {
     })
     
     expect(character.level).toBe(0)
-    expect(character.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
+    expect(character.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, perception: 1 })
     characterId = character.id
   })
 

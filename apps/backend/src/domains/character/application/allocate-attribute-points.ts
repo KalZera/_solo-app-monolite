@@ -12,7 +12,7 @@ const ALLOCATABLE_ATTRIBUTES: AllocatableAttribute[] = [
   'intelligence',
   'agility',
   'vitality',
-  'luck',
+  'perception',
 ]
 
 // Business rule: keeps the build from getting too lopsided — no attribute may end up more

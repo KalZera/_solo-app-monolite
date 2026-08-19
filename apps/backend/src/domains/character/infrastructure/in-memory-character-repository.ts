@@ -7,7 +7,7 @@ const DEFAULT_STATS = {
   intelligence: 1,
   agility: 1,
   vitality: 1,
-  luck: 1,
+  perception: 1,
 }
 
 type SeedInput = Pick<Character, 'userId' | 'name'> & Partial<Omit<Character, 'userId' | 'name'>>

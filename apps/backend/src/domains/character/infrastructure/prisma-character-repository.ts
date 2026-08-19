@@ -19,7 +19,7 @@ function toDomain (record: PrismaCharacter): Character {
       intelligence: record.intelligence,
       agility: record.agility,
       vitality: record.vitality,
-      luck: record.luck,
+      perception: record.perception,
     },
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
@@ -55,7 +55,7 @@ export class PrismaCharacterRepository implements CharacterRepository {
         intelligence: data.stats.intelligence,
         agility: data.stats.agility,
         vitality: data.stats.vitality,
-        luck: data.stats.luck,
+        perception: data.stats.perception,
       },
     })
     return toDomain(record)
@@ -72,7 +72,7 @@ export class PrismaCharacterRepository implements CharacterRepository {
           intelligence: stats.intelligence,
           agility: stats.agility,
           vitality: stats.vitality,
-          luck: stats.luck,
+          perception: stats.perception,
         }),
       },
     })

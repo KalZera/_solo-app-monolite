@@ -16,7 +16,7 @@ const BASE_STATS = {
   intelligence: 1,
   agility: 1,
   vitality: 1,
-  luck: 1,
+  perception: 1,
 }
 
 export class CreateCharacterUseCase {

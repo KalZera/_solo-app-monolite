@@ -12,7 +12,7 @@ const PROGRESSION_SELECT = {
   intelligence: true,
   agility: true,
   vitality: true,
-  luck: true,
+  perception: true,
 } as const
 
 type ProgressionRecord = {
@@ -24,7 +24,7 @@ type ProgressionRecord = {
   intelligence: number
   agility: number
   vitality: number
-  luck: number
+  perception: number
 }
 
 function toDomain (record: ProgressionRecord): CharacterProgression {
@@ -38,7 +38,7 @@ function toDomain (record: ProgressionRecord): CharacterProgression {
       intelligence: record.intelligence,
       agility: record.agility,
       vitality: record.vitality,
-      luck: record.luck,
+      perception: record.perception,
     },
   }
 }
@@ -72,7 +72,7 @@ export class PrismaProgressionRepository implements ProgressionRepository {
           intelligence: stats.intelligence,
           agility: stats.agility,
           vitality: stats.vitality,
-          luck: stats.luck,
+          perception: stats.perception,
         }),
       },
       select: PROGRESSION_SELECT,
@@ -105,7 +105,7 @@ export class PrismaProgressionRepository implements ProgressionRepository {
             intelligence: stats.intelligence,
             agility: stats.agility,
             vitality: stats.vitality,
-            luck: stats.luck,
+            perception: stats.perception,
           }),
         },
         select: PROGRESSION_SELECT,

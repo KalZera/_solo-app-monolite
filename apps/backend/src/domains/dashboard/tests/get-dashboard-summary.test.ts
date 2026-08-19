@@ -61,7 +61,7 @@ describe('GetDashboardSummaryUseCase', () => {
         agility: 1,
         intelligence: 1,
         vitality: 1,
-        luck: 1,
+        perception: 1,
       },
       dailyQuests: { completed: 0, total: 0 },
       dailyRecurringQuests: { completed: 0, total: 0 },
@@ -70,11 +70,11 @@ describe('GetDashboardSummaryUseCase', () => {
     })
   })
 
-  it('maps the character stats to the dashboard attribute keys (luck -> perception)', async () => {
+  it('maps the character stats to the dashboard attribute keys', async () => {
     characterRepository.seed({
       userId: 'user-1',
       name: 'Hero',
-      stats: { strength: 10, agility: 20, intelligence: 30, vitality: 40, luck: 50 },
+      stats: { strength: 10, agility: 20, intelligence: 30, vitality: 40, perception: 50 },
     })
 
     const summary = await build().execute({ userId: 'user-1' }, NOW)
@@ -84,7 +84,7 @@ describe('GetDashboardSummaryUseCase', () => {
       agility: 20,
       intelligence: 30,
       vitality: 40,
-      luck: 50,
+      perception: 50,
     })
   })
 
@@ -94,7 +94,7 @@ describe('GetDashboardSummaryUseCase', () => {
       name: 'Hero',
       level: 3,
       experience: engine.calculateTotalXpForLevel(3) + 100,
-      stats: { strength: 10, agility: 10, intelligence: 10, vitality: 10, luck: 10 },
+      stats: { strength: 10, agility: 10, intelligence: 10, vitality: 10, perception: 10 },
     })
 
     const summary = await build().execute({ userId: 'user-1' }, NOW)

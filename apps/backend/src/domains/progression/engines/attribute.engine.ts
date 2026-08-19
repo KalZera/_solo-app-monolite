@@ -14,6 +14,6 @@ export function applyAutoAttributeGains (stats: CharacterStats, levelsGained: nu
     intelligence: stats.intelligence + increment,
     agility: stats.agility + increment,
     vitality: stats.vitality + increment,
-    luck: stats.luck + increment,
+    perception: stats.perception + increment,
   }
 }

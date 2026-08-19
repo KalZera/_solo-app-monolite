@@ -39,7 +39,7 @@ describe('CreateCharacterUseCase', () => {
       intelligence: 1,
       agility: 1,
       vitality: 1,
-      luck: 1,
+      perception: 1,
     })
     expect(result.powerScore).toBe(5)
     expect(result.createdAt).toBeInstanceOf(Date)

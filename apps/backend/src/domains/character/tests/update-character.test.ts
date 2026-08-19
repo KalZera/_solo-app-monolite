@@ -26,7 +26,7 @@ describe('UpdateCharacterUseCase', () => {
       name: 'Sung Jinwoo',
       title: 'The Weakest Hunter',
       level: 1,
-      stats: { strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 },
+      stats: { strength: 1, intelligence: 1, agility: 1, vitality: 1, perception: 1 },
     })
     const useCase = new UpdateCharacterUseCase(repository)
 
@@ -36,7 +36,7 @@ describe('UpdateCharacterUseCase', () => {
       name: 'Hacked Name',
       level: 999,
       powerScore: 999999,
-      stats: { strength: 9999, intelligence: 9999, agility: 9999, vitality: 9999, luck: 9999 },
+      stats: { strength: 9999, intelligence: 9999, agility: 9999, vitality: 9999, perception: 9999 },
     }
 
     const result = await useCase.execute(maliciousInput as unknown as Parameters<typeof useCase.execute>[0])
@@ -45,7 +45,7 @@ describe('UpdateCharacterUseCase', () => {
     expect(result.title).toBe('Shadow Monarch')
     expect(result.name).toBe('Sung Jinwoo')
     expect(result.level).toBe(1)
-    expect(result.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, luck: 1 })
+    expect(result.stats).toEqual({ strength: 1, intelligence: 1, agility: 1, vitality: 1, perception: 1 })
     expect(result.powerScore).toBe(5)
   })
 

@@ -5,9 +5,9 @@ import type { CharacterRank } from '../../progression/engines/rank.engine'
 // is the real data source for that screen (dashboardMock/useDashboard.fetchDashboard were the
 // placeholder until this existed).
 //
-// NOTE: `perception` has no dedicated column — the character model's 5th stat is `luck`
-// (see CharacterStats). The dashboard screen labels it "Perception"; the profile screen
-// labels the same value "Luck". Both read the same underlying stat.
+// The 5th attribute is `perception` (Perception/Sense — social & behavioural awareness); it maps
+// 1:1 to the CharacterStats.perception column and is labelled the same on the dashboard and the
+// profile screen.
 export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'perception'
 
 export interface HunterAttribute {
@@ -15,7 +15,7 @@ export interface HunterAttribute {
   intelligence: number
   agility: number
   vitality: number
-  luck: number
+  perception: number
 }
 
 export interface DashboardSummary {
@@ -51,7 +51,7 @@ export function toHunterAttributes (stats: CharacterStats): HunterAttribute {
     agility: stats.agility,
     intelligence: stats.intelligence,
     vitality: stats.vitality,
-    luck: stats.luck,
+    perception: stats.perception,
   }
 }
 

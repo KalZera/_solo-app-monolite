@@ -27,7 +27,7 @@ describe('ApplyLevelUpUseCase', () => {
     const result = await buildUseCase().execute({ characterId: character.id, newLevel: 2 })
 
     expect(result.level).toBe(2)
-    expect(result.stats).toEqual({ strength: 2, intelligence: 2, agility: 2, vitality: 2, luck: 2 })
+    expect(result.stats).toEqual({ strength: 2, intelligence: 2, agility: 2, vitality: 2, perception: 2 })
     expect(result.powerScore).toBe(10)
   })
 

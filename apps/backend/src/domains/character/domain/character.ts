@@ -42,7 +42,7 @@ export interface CharacterStats {
   intelligence: number
   agility: number
   vitality: number
-  luck: number
+  perception: number
 }
 
 export interface CharacterRepository {

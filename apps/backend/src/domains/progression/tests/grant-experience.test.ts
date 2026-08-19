@@ -54,7 +54,7 @@ describe('GrantExperienceUseCase', () => {
 
     expect(result.character.experience).toBe(xpForLevel2 + 5)
     expect(result.character.level).toBe(2)
-    expect(result.character.stats).toEqual({ strength: 2, intelligence: 2, agility: 2, vitality: 2, luck: 2 })
+    expect(result.character.stats).toEqual({ strength: 2, intelligence: 2, agility: 2, vitality: 2, perception: 2 })
     expect(result.character.powerScore).toBe(10)
 
     const stored = await characterRepository.findById(character.id)

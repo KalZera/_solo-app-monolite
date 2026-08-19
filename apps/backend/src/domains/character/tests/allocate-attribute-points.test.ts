@@ -26,10 +26,10 @@ describe('AllocateAttributePointsUseCase', () => {
 
     const result = await buildUseCase().execute({
       userId: 'user-1',
-      allocations: { strength: 2, luck: 1 },
+      allocations: { strength: 2, perception: 1 },
     })
 
-    expect(result.character.stats).toMatchObject({ strength: 3, luck: 2 })
+    expect(result.character.stats).toMatchObject({ strength: 3, perception: 2 })
     expect(result.character.powerScore).toBe(8)
     expect(result.restPoints).toBe(2)
 
@@ -39,7 +39,7 @@ describe('AllocateAttributePointsUseCase', () => {
       expect.objectContaining({ eventType: 'AttributePointAllocated', attribute: 'strength', amount: 2 })
     )
     expect(events).toContainEqual(
-      expect.objectContaining({ eventType: 'AttributePointAllocated', attribute: 'luck', amount: 1 })
+      expect.objectContaining({ eventType: 'AttributePointAllocated', attribute: 'perception', amount: 1 })
     )
   })
 
@@ -61,7 +61,7 @@ describe('AllocateAttributePointsUseCase', () => {
     await restPointRepository.incrementRestPoints(character.id, 4)
 
     await expect(
-      buildUseCase().execute({ userId: 'user-1', allocations: { strength: 2, luck: 3 } })
+      buildUseCase().execute({ userId: 'user-1', allocations: { strength: 2, perception: 3 } })
     ).rejects.toThrow(ConflictError)
   })
 
@@ -96,7 +96,7 @@ describe('AllocateAttributePointsUseCase', () => {
     await restPointRepository.incrementRestPoints(character.id, 5)
 
     await expect(
-      buildUseCase().execute({ userId: 'user-1', allocations: { strength: 0, luck: 0 } })
+      buildUseCase().execute({ userId: 'user-1', allocations: { strength: 0, perception: 0 } })
     ).rejects.toThrow(ValidationError)
   })
 
