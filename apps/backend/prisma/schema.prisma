@@ -43,7 +43,7 @@ model Character {
   intelligence Int      @default(1)
   agility      Int      @default(1)
   vitality     Int      @default(1)
-  luck         Int      @default(1)
+  perception   Int      @default(1)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
