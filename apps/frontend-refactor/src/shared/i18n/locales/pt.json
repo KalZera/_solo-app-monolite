@@ -131,7 +131,7 @@
       "intelligence": "Inteligência",
       "agility": "Agilidade",
       "vitality": "Vitalidade",
-      "luck": "Sorte"
+      "perception": "Percepção"
     },
     "attributes": {
       "distribute": "Distribuir Pontos",
@@ -192,6 +192,18 @@
       "intelligence": "Inteligência",
       "vitality": "Vitalidade",
       "perception": "Percepção"
+    },
+    "attributeGuide": {
+      "open": "O que significam os atributos?",
+      "title": "Atributos",
+      "subtitle": "O que cada atributo representa na sua jornada.",
+      "descriptions": {
+        "strength": "Seu âmbito físico: exercício, condicionamento e performance corporal. Evolui quando você treina e cuida do corpo.",
+        "intelligence": "Seu âmbito mental: estudo, aprendizado contínuo e domínio técnico. Evolui com leitura, cursos e resolução de problemas complexos.",
+        "agility": "Sua execução: produtividade, consistência e capacidade de transformar planos em ação. Evolui com disciplina e constância de hábitos.",
+        "vitality": "Sua saúde e energia: sono, alimentação, descanso e recuperação — o fôlego que sustenta todos os outros esforços.",
+        "perception": "Sua percepção social e comportamental — não é sorte. Comunicação, relações, inteligência emocional e autoconsciência. Evolui conforme você investe em como se relaciona e se comporta."
+      }
     },
     "dailyQuests": "Missões Diárias",
     "questsProgress": "{{completed}}/{{total}} concluídas",
@@ -435,7 +447,7 @@
       },
       "attributes": {
         "title": "Distribua Atributos",
-        "description": "A cada nível você recebe pontos para reforçar Força, Agilidade, Inteligência, Vitalidade e Sorte."
+        "description": "A cada nível você recebe pontos para reforçar Força, Agilidade, Inteligência, Vitalidade e Percepção."
       },
       "track": {
         "title": "Acompanhe sua ascensão",

@@ -131,7 +131,7 @@
       "intelligence": "Intelligence",
       "agility": "Agility",
       "vitality": "Vitality",
-      "luck": "Luck"
+      "perception": "Perception"
     },
     "attributes": {
       "distribute": "Distribute Points",
@@ -192,6 +192,18 @@
       "intelligence": "Intelligence",
       "vitality": "Vitality",
       "perception": "Perception"
+    },
+    "attributeGuide": {
+      "open": "What do the attributes mean?",
+      "title": "Attributes",
+      "subtitle": "What each attribute represents in your journey.",
+      "descriptions": {
+        "strength": "Your physical realm: exercise, conditioning and bodily performance. It grows when you train and take care of your body.",
+        "intelligence": "Your mental realm: study, continuous learning and technical mastery. It grows with reading, courses and solving complex problems.",
+        "agility": "Your execution: productivity, consistency and turning plans into action. It grows with discipline and steady habits.",
+        "vitality": "Your health and energy: sleep, nutrition, rest and recovery — the stamina that sustains every other effort.",
+        "perception": "Your social and behavioral awareness — not luck. Communication, relationships, emotional intelligence and self-awareness. It grows as you invest in how you relate to others and behave."
+      }
     },
     "dailyQuests": "Daily Quests",
     "questsProgress": "{{completed}}/{{total}} completed",
@@ -435,7 +447,7 @@
       },
       "attributes": {
         "title": "Distribute Attributes",
-        "description": "Each level grants points to boost Strength, Agility, Intelligence, Vitality and Luck."
+        "description": "Each level grants points to boost Strength, Agility, Intelligence, Vitality and Perception."
       },
       "track": {
         "title": "Track your ascension",

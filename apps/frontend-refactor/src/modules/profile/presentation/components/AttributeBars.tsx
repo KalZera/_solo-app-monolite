@@ -5,15 +5,15 @@ import { Brain, Dumbbell, Heart, Star, Wind, type LucideIcon } from '@/shared/co
 import { colors } from '@/shared/theme/colors'
 import type { CharacterStats, StatKey } from '../../domain/character.types'
 
-// Order mirrors the STATUS mockup (Strength, Agility, Vitality, Intelligence, Luck).
-const DISPLAY_ORDER: StatKey[] = ['strength', 'agility', 'vitality', 'intelligence', 'luck']
+// Order mirrors the STATUS mockup (Strength, Agility, Vitality, Intelligence, Perception).
+const DISPLAY_ORDER: StatKey[] = ['strength', 'agility', 'vitality', 'intelligence', 'perception']
 
 const statIcon: Record<StatKey, LucideIcon> = {
   strength: Dumbbell,
   agility: Wind,
   vitality: Heart,
   intelligence: Brain,
-  luck: Star,
+  perception: Star,
 }
 
 export function AttributeBars({ stats }: { stats?: CharacterStats }) {

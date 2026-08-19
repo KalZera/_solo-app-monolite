@@ -5,7 +5,7 @@ import type { DashboardSummary } from '../../domain/dashboard.types'
 
 export function DailyQuestsCard({ summary }: { summary: DashboardSummary }) {
   const { t } = useTranslation()
-  const { completed, total } = summary.dailyQuests
+  const { completed, total } = summary.dailyRecurringQuests
 
   return (
     <Panel className="gap-3">

@@ -1,7 +1,7 @@
 import type { DashboardSummary } from '../domain/dashboard.types'
 
-// Placeholder data. Swap this for a real `GET /dashboard` request once the
-// backend endpoint exists — the query hook is the only thing that changes.
+// Placeholder data (currently unused — the dashboard reads the real `GET /dashboard/summary`).
+// Kept as a typed reference for the DashboardSummary shape.
 export const dashboardMock: DashboardSummary = {
   name: 'Sung Jinwoo',
   rank: 'S',
@@ -9,15 +9,17 @@ export const dashboardMock: DashboardSummary = {
   power: 9840,
   xp: 3200,
   xpToNext: 5000,
+  xpCurrentLevel: 3200,
+  xpRemaining: 1800,
   xpToday: 180,
   streakDays: 12,
-  attributes: [
-    { key: 'strength', value: 128 },
-    { key: 'agility', value: 96 },
-    { key: 'intelligence', value: 74 },
-    { key: 'vitality', value: 110 },
-    { key: 'perception', value: 88 },
-  ],
+  attributes: {
+    strength: 128,
+    agility: 96,
+    intelligence: 74,
+    vitality: 110,
+    perception: 88,
+  },
   dailyQuests: { completed: 3, total: 5 },
   dailyRecurringQuests: { completed: 3, total: 5 },
   weeklyRecurringQuests: { completed: 1, total: 2 },

@@ -6,7 +6,7 @@ export interface CharacterAttributes {
   intelligence: number
   agility: number
   vitality: number
-  luck: number
+  perception: number
 }
 
 export type AllocatableAttribute = keyof CharacterAttributes
@@ -33,7 +33,7 @@ export interface ProgressionSnapshot {
   restPoints: number
 }
 
-// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, luck: 1 }).
+// Partial: only the attributes being spent on need to be present (e.g. { strength: 2, perception: 1 }).
 export interface AllocateAttributePointsInput {
   allocations: Partial<Record<AllocatableAttribute, number>>
 }

@@ -62,7 +62,7 @@ function toAllocateResult(response: AllocateAttributePointResponse): AllocateAtt
 
 /**
  * Spends rest points across one or more attributes in a single call (e.g.
- * { allocations: { strength: 2, luck: 1 } }). The response has no `rank` (see
+ * { allocations: { strength: 2, perception: 1 } }). The response has no `rank` (see
  * AllocateAttributePointResult) — refetch `getProgression()` afterwards to get the
  * authoritative post-allocation snapshot.
  */

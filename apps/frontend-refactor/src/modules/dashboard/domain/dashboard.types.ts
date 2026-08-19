@@ -1,11 +1,11 @@
-export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'luck'
+export type AttributeKey = 'strength' | 'agility' | 'intelligence' | 'vitality' | 'perception'
 
 export interface HunterAttribute {
   strength: number
   intelligence: number
   agility: number
   vitality: number
-  luck: number
+  perception: number
 }
 
 export interface DashboardSummary {

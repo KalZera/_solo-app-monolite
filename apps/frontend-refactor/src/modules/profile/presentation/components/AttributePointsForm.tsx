@@ -18,14 +18,14 @@ import { useAllocateAttributePoints } from '../../application/useAllocateAttribu
 import type { CharacterStats, StatKey } from '../../domain/character.types'
 
 // Same order/icons as AttributeBars, so the two lists read as the same attribute set.
-const DISPLAY_ORDER: StatKey[] = ['strength', 'agility', 'vitality', 'intelligence', 'luck']
+const DISPLAY_ORDER: StatKey[] = ['strength', 'agility', 'vitality', 'intelligence', 'perception']
 
 const statIcon: Record<StatKey, LucideIcon> = {
   strength: Dumbbell,
   agility: Wind,
   vitality: Heart,
   intelligence: Brain,
-  luck: Star,
+  perception: Star,
 }
 
 const EMPTY_ALLOCATIONS: Record<StatKey, number> = {
@@ -33,7 +33,7 @@ const EMPTY_ALLOCATIONS: Record<StatKey, number> = {
   intelligence: 0,
   agility: 0,
   vitality: 0,
-  luck: 0,
+  perception: 0,
 }
 
 interface AttributePointsFormProps {

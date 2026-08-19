@@ -10,7 +10,7 @@ const attributeIcon: Record<AttributeKey, LucideIcon> = {
   agility: Wind,
   intelligence: Brain,
   vitality: Heart,
-  luck: Eye,
+  perception: Eye,
 }
 
 export function AttributeGrid({ attributes }: { attributes: HunterAttribute }) {

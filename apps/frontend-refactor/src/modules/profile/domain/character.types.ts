@@ -19,7 +19,7 @@ export const CHARACTER_CLASSES = [
 ] as const
 export type CharacterClass = (typeof CHARACTER_CLASSES)[number]
 
-export const STAT_KEYS = ['strength', 'intelligence', 'agility', 'vitality', 'luck'] as const
+export const STAT_KEYS = ['strength', 'intelligence', 'agility', 'vitality', 'perception'] as const
 export type StatKey = (typeof STAT_KEYS)[number]
 
 export type CharacterStats = Record<StatKey, number>
