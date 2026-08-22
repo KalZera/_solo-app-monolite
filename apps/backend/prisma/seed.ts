@@ -2,7 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { hashPassword } from '../src/shared/security/password'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  datasourceUrl: process.env.DATABASE_URL,
+})
 
 const CATEGORY_NAMES = ['Estudo', 'Saúde', 'Carreira', 'Pessoal', 'Trabalho', 'Social', 'Hobby']
 

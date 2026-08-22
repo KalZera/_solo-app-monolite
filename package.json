@@ -15,6 +15,7 @@
     "test": "turbo test",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",
+    "db:migrate:dev": "turbo db:migrate:dev",
     "db:studio": "turbo db:studio"
   },
   "devDependencies": {

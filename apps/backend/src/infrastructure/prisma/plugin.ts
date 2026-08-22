@@ -10,6 +10,7 @@ declare module 'fastify' {
 
 const prismaPlugin: FastifyPluginAsync = fp(async (app) => {
   const prisma = new PrismaClient({
+    datasourceUrl: process.env.DATABASE_URL,
     log: app.log.level === 'debug' ? ['query', 'info', 'warn', 'error'] : ['error'],
   })
 
