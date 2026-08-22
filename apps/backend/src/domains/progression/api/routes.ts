@@ -1,6 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { GetProgressionUseCase } from '../application/get-progression'
-import { TestUseCase } from '../application/teste-usecase'
 import { PrismaCharacterRepository } from '../../character/infrastructure/prisma-character-repository'
 import { PrismaCharacterRestPointRepository } from '../../character/infrastructure/prisma-character-rest-point-repository'
 
