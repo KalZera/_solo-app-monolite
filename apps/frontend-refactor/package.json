@@ -8,6 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "start": "serve -s dist -l $PORT",
     "build": "expo export --platform web --output-dir dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
@@ -43,6 +44,7 @@
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
     "react-native-web": "~0.21.0",
+    "serve": "^14.2.6",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
