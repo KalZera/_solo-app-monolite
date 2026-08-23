@@ -10,7 +10,7 @@ export function HunterCard({ summary }: { summary: DashboardSummary }) {
   return (
     <Panel className="gap-4">
       <View className="flex-row items-center gap-4">
-        <Avatar name={summary.name} size={72} />
+        <Avatar uri={summary.avatar ?? null} name={summary.name} size={72} />
         <View className="flex-1 gap-1.5">
           <Text weight="bold" className="text-xl text-content uppercase">
             {summary.name}
