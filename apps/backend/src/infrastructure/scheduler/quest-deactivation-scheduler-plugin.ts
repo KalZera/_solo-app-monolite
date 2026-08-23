@@ -4,8 +4,8 @@ import cron from 'node-cron'
 import { DeactivateExpiredQuestsUseCase } from '../../domains/quest/application/deactivate-expired-quests'
 import { PrismaQuestRepository } from '../../domains/quest/infrastructure/prisma-quest-repository'
 
-// Runs every 6 hours (00:00, 06:00, 12:00, 18:00).
-const DEACTIVATE_EXPIRED_QUESTS_CRON_EXPRESSION = '0 */6 * * *'
+// Runs every 12 hours (00:00, 12:00).
+const DEACTIVATE_EXPIRED_QUESTS_CRON_EXPRESSION = '0 */12 * * *'
 // const DEACTIVATE_EXPIRED_QUESTS_CRON_EXPRESSION = '*/2 * * * *'
 
 // A 6h-cadence maintenance job has no need for sub-second precision — see the identical

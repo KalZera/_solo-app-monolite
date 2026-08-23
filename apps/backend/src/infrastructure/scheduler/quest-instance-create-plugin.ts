@@ -6,7 +6,7 @@ import { PrismaQuestRepository } from '../../domains/quest/infrastructure/prisma
 import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructure/prisma-quest-instance-repository'
 
 // Runs every 30 minutes for dev.
-const CREATE_QUEST_INSTANCE_CRON_EXPRESSION = '*/30 * * * *'
+const CREATE_QUEST_INSTANCE_CRON_EXPRESSION = '0 */4 * * *'
 
 // Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
 // rather than relying on the host process's implicit local timezone.
@@ -22,7 +22,9 @@ const questInstanceCreateSchedulerPlugin: FastifyPluginAsync = fp(async (app) =>
     CREATE_QUEST_INSTANCE_CRON_EXPRESSION,
     async () => {
       try {
+        console.log('================')
         console.log('Running quest instance creation job...')
+        console.log('================')
         await createQuestInstance.execute()
       } catch (error) {
         app.log.error({ error }, 'Failed to run quest instance creation job')
