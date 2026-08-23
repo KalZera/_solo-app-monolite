@@ -92,6 +92,7 @@ export class GetDashboardSummaryUseCase {
 
     return {
       name: character.name,
+      avatar: character.avatar,
       rank: calculateRank(powerScore),
       level: progress.level,
       power: powerScore,
