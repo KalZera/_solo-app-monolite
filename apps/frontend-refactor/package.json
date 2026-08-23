@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "start": "node -e \"require('http').createServer((req,res)=>{res.end('frontend alive')}).listen(process.env.PORT,'0.0.0.0')\"",
+    "start": "ls -la dist && serve -s dist -l $PORT",
     "build": "expo export --platform web --output-dir dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
