@@ -97,7 +97,7 @@ export class PrismaQuestInstanceRepository implements QuestInstanceRepository {
           active: status
         },
         status: {
-          in: ['PENDING']
+          in: ['PENDING', 'STARTED']
         }
       },
       orderBy:{

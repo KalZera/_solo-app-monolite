@@ -24,9 +24,15 @@ export class CreateQuestInstanceUseCase {
     const instances: QuestFullInstance[] = []
 
     for (const quest of quests) {
+      if(quest.recurrence === 'NONE') continue
       const InstanceFromQuest = existedInstances.find((instance) => instance.questId === quest.id)
       const {end: questEnd} = getDateFilter(new Date(quest.deadlineDate))
-     
+      const {end: todayEnd} = getDateFilter(new Date())
+
+      if(!!InstanceFromQuest && InstanceFromQuest.status === 'STARTED') continue
+      //if last instance deadline is today not necessary recreation until midnight
+      if(!!InstanceFromQuest && InstanceFromQuest.deadline.getTime() === todayEnd.getTime()) continue
+
       //if instance deadline is less than now this quest is for today or future (Weekly quest)
       if(!!InstanceFromQuest && InstanceFromQuest.deadline.getTime() > new Date().getTime()) continue
       if(!!InstanceFromQuest && InstanceFromQuest.deadline.getTime() < questEnd.getTime()) continue
