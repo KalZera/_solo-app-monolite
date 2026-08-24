@@ -116,7 +116,7 @@ export function CharacterScreen() {
               <Text className="text-xs uppercase tracking-wide text-primary-hover font-bold pb-2">
                 {t(`character.screen.powerScore`)}
               </Text>
-              <HexagonBadge value={data.level} size={90} fontSize={42} />
+              <HexagonBadge value={data.powerScore} size={90} fontSize={42} />
             </View>
           </View>
           <View className="flex-1">

@@ -27,7 +27,12 @@ export function CharacterIdentity({ profile }: { profile: CharacterProfile }) {
               {t('character.screen.hunter')}
             </Text>
           </View>
-          <HexagonBadge value={level} horizontal size={48} fontSize={30} />
+          <View className="flex justify-center align-middle">
+            <Text className="text-[8px] uppercase tracking-[1px] text-content font-semibold text-center">
+              {t('character.screen.level')}
+            </Text>
+            <HexagonBadge value={level} horizontal size={44} fontSize={30} />
+          </View>
         </View>
         <View className="mt-2 items-baseline gap-2">
           <ProgressBar value={xp} max={xpMax} tone={'primary'} />
