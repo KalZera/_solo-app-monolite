@@ -47,12 +47,14 @@ model Character {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  progression Progression?
-  rewards     Reward[]
-  history     CharacterHistory[]
-  quests      Quest[]
-  restPoints  CharacterRestPoint[]
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  progression       Progression?
+  progressionStreak ProgressionStreak?
+  rewards           Reward[]
+  history           CharacterHistory[]
+  quests            Quest[]
+  restPoints        CharacterRestPoint[]
+  dayResults        DayResult[]
 
   @@index([userId])
   @@map("characters")
@@ -232,6 +234,52 @@ model Progression {
   character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 
   @@map("progressions")
+}
+
+// ─── Streak ──────────────────────────────────────────────────────────────────
+
+enum DayResultStatus {
+  FAILED
+  COMPLETED
+  FREE
+  FREE_COMPLETED
+}
+
+// One row per character per day — the settled outcome of that calendar day, plus the
+// before/after snapshot of streak and freeze balances so the evaluation is auditable.
+model DayResult {
+  id           String          @id @default(uuid())
+  characterId  String          @map("character_id")
+  date         DateTime        @db.Date
+  status       DayResultStatus
+  streakBefore Int             @map("streak_before")
+  streakAfter  Int             @map("streak_after")
+  freezeBefore Int             @map("freeze_before")
+  freezeAfter  Int             @map("freeze_after")
+  freezeUsed   Boolean         @map("freeze_used")
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([date, characterId])
+  @@map("day_results")
+}
+
+// The running streak state for a character — the source of truth the daily
+// evaluation reads and updates.
+model ProgressionStreak {
+  id                      Int       @id @default(autoincrement())
+  characterId             String    @unique @map("character_id")
+  currentStreak           Int       @default(0) @map("current_streak")
+  bestStreak              Int       @default(0) @map("best_streak")
+  freezeBalance           Int       @default(0) @map("freeze_balance")
+  daysUntilFreezeRecovery Int       @default(7) @map("days_until_freeze_recovery")
+  lastEvaluatedDate       DateTime? @map("last_evaluated_date") @db.Date
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@map("progression_streaks")
 }
 
 // ─── Reward ──────────────────────────────────────────────────────────────────
