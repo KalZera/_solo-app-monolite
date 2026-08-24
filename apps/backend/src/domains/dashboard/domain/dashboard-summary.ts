@@ -20,6 +20,7 @@ export interface HunterAttribute {
 
 export interface DashboardSummary {
   name: string
+  avatar:string | null
   rank: CharacterRank
   level: number
   power: number

@@ -72,5 +72,5 @@ The backend must be running (see `apps/backend`). Seed login: **`admin@admin.com
 
 ## Related
 
-`apps/frontend-mobile` is a port of this app pinned to **Expo SDK 53** for testing in **Expo Go on
+`apps/frontend-mobile` is a port of this app pinned to **Expo SDK 54** for testing in **Expo Go on
 iOS**. It shares the same `app/` + `src/`; only dependency versions differ. See its README.
