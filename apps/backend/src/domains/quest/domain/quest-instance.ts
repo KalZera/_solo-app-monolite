@@ -161,6 +161,7 @@ export interface QuestInstanceRepository {
   findByQuestActive(status: QuestActiveStatus): Promise<QuestFullInstance[]>
   findByQuestAndScheduledDate(questId: ID, scheduledDate: Date): Promise<QuestFullInstance | null>
   findByQuestId(questId: ID): Promise<QuestFullInstance[]>
+  findManyByQuests(quests: ID[]): Promise<QuestFullInstance[]>
   create(data: CreateQuestInstanceData): Promise<QuestFullInstance>
   save(id: ID, data: Partial<Omit<QuestFullInstance, 'objectives'>>): Promise<QuestFullInstance>
   updateObjective(instanceId: ID, objectiveId: ID, data: Partial<QuestInstanceObjective>): Promise<QuestFullInstance>
