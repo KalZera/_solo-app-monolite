@@ -1,4 +1,4 @@
-import type { ID } from '../../../shared/types/index'
+import type { ID } from '../../../../shared/types/index'
 
 // Per-character running streak state — mirrors the `progression_streaks` table
 // (Prisma ProgressionStreak). One row per Character. It is the source of truth the daily

@@ -1,4 +1,4 @@
-import type { ID } from '../../../shared/types/index'
+import type { ID } from '../../../../shared/types/index'
 
 // How a single calendar day's outcome is classified — mirrors the Prisma `DayResultStatus` enum:
 //   - COMPLETED       — a normal day that met the daily-quest threshold;
