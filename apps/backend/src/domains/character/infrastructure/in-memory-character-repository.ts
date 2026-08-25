@@ -42,6 +42,10 @@ export class InMemoryCharacterRepository implements CharacterRepository {
     return this.characters.filter((c) => c.userId === userId)
   }
 
+  async findAll (): Promise<Character[]> {
+    return [...this.characters]
+  }
+
   async create (data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
     const character: Character = {
       ...data,

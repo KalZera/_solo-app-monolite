@@ -39,6 +39,11 @@ export class PrismaCharacterRepository implements CharacterRepository {
     return records.map(toDomain)
   }
 
+  async findAll (): Promise<Character[]> {
+    const records = await this.prisma.character.findMany()
+    return records.map(toDomain)
+  }
+
   async create (data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character> {
     const record = await this.prisma.character.create({
       data: {
