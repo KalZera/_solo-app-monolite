@@ -21,6 +21,7 @@ import { notificationDispatchPlugin } from './infrastructure/events/notification
 import { questExpirationSchedulerPlugin } from './infrastructure/scheduler/quest-expiration-scheduler-plugin'
 import { questInstanceCreateSchedulerPlugin } from './infrastructure/scheduler/quest-instance-create-plugin'
 import { questDeactivationSchedulerPlugin } from './infrastructure/scheduler/quest-deactivation-scheduler-plugin'
+import { dayResultSchedulerPlugin } from './infrastructure/scheduler/day-result-scheduler-plugin'
 import { loggerConfig } from './infrastructure/logger/config'
 import { errorHandler } from './infrastructure/http/error-handler'
 
@@ -45,6 +46,7 @@ export function buildApp () {
   app.register(questExpirationSchedulerPlugin)
   app.register(questInstanceCreateSchedulerPlugin)
   app.register(questDeactivationSchedulerPlugin)
+  app.register(dayResultSchedulerPlugin)
 
   app.setErrorHandler(errorHandler)
 

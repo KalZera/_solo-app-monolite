@@ -48,6 +48,7 @@ export interface CharacterStats {
 export interface CharacterRepository {
   findById(id: ID): Promise<Character | null>
   findByUserId(userId: ID): Promise<Character[]>
+  findAll(): Promise<Character[]>
   create(data: Omit<Character, 'id' | 'createdAt' | 'updatedAt'>): Promise<Character>
   save(id: ID, data: Partial<Character>): Promise<Character>
   delete(id: ID): Promise<void>

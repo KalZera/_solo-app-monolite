@@ -67,6 +67,10 @@ export class InMemoryQuestInstanceRepository implements QuestInstanceRepository 
     return this.instances.filter((instance) => instance.questId === questId)
   }
 
+  async findManyByQuests (quests: ID[]): Promise<QuestFullInstance[]> {
+    return this.instances.filter((instance) => quests.includes(instance.questId))
+  }
+
   async create (data: CreateQuestInstanceData): Promise<QuestFullInstance> {
     const instance: QuestFullInstance = {
       id: randomUUID(),
