@@ -4,13 +4,10 @@ import cron from 'node-cron'
 import { CreateQuestInstanceUseCase } from '../../domains/quest/application/create-quest-instance'
 import { PrismaQuestRepository } from '../../domains/quest/infrastructure/prisma-quest-repository'
 import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructure/prisma-quest-instance-repository'
+import { EXECUTION_TIMEZONE } from '../../shared/utils/execution-timezone'
 
 // Runs every 30 minutes for dev.
 const CREATE_QUEST_INSTANCE_CRON_EXPRESSION = '0 */4 * * *'
-
-// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
-// rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'UTC'
 
 const questInstanceCreateSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const createQuestInstance = new CreateQuestInstanceUseCase(
@@ -30,7 +27,7 @@ const questInstanceCreateSchedulerPlugin: FastifyPluginAsync = fp(async (app) =>
         app.log.error({ error }, 'Failed to run quest instance creation job')
       }
     },
-    { timezone: QUEST_TIMEZONE }
+    { timezone: EXECUTION_TIMEZONE }
   )
 
   app.addHook('onClose', async () => {
