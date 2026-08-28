@@ -3,6 +3,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import cron from 'node-cron'
 import { DeactivateExpiredQuestsUseCase } from '../../domains/quest/application/deactivate-expired-quests'
 import { PrismaQuestRepository } from '../../domains/quest/infrastructure/prisma-quest-repository'
+import { EXECUTION_TIMEZONE } from '../../shared/utils/execution-timezone'
 
 // Runs every 12 hours (00:00, 12:00).
 const DEACTIVATE_EXPIRED_QUESTS_CRON_EXPRESSION = '0 */12 * * *'
@@ -12,9 +13,8 @@ const DEACTIVATE_EXPIRED_QUESTS_CRON_EXPRESSION = '0 */12 * * *'
 // rationale in quest-expiration-scheduler-plugin.
 const MISSED_EXECUTION_TOLERANCE_MS = 5 * 60 * 1000
 
-// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
-// rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'UTC'
+// Cron jobs execute in GMT-3 (see execution-timezone.ts). Pin the schedule explicitly rather
+// than relying on the host process's implicit local timezone.
 
 const questDeactivationSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const deactivateExpiredQuests = new DeactivateExpiredQuestsUseCase(new PrismaQuestRepository(app.prisma))
@@ -31,7 +31,7 @@ const questDeactivationSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
         app.log.error({ error }, 'Failed to run quest deactivation job')
       }
     },
-    { timezone: QUEST_TIMEZONE, missedExecutionTolerance: MISSED_EXECUTION_TOLERANCE_MS }
+    { timezone: EXECUTION_TIMEZONE, missedExecutionTolerance: MISSED_EXECUTION_TOLERANCE_MS }
   )
 
   app.addHook('onClose', async () => {

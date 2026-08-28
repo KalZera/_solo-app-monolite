@@ -3,6 +3,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import cron from 'node-cron'
 import { ExpireQuestsUseCase } from '../../domains/quest/application/expire-quests'
 import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructure/prisma-quest-instance-repository'
+import { EXECUTION_TIMEZONE } from '../../shared/utils/execution-timezone'
 
 // Runs every 2 hours (00:00, 06:00, 12:00, …).
 // const EXPIRE_QUESTS_CRON_EXPRESSION = '*/2 * * * *'
@@ -15,9 +16,8 @@ const EXPIRE_QUESTS_CRON_EXPRESSION = '0 */6 * * *'
 // costs nothing here and only a genuinely stuck/frozen process would still exceed it.
 const MISSED_EXECUTION_TOLERANCE_MS = 5 * 60 * 1000
 
-// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
-// rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'UTC'
+// Cron jobs execute in GMT-3 (see execution-timezone.ts). Pin the schedule explicitly rather
+// than relying on the host process's implicit local timezone.
 
 const questExpirationSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const expireQuests = new ExpireQuestsUseCase(
@@ -36,7 +36,7 @@ const questExpirationSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
         app.log.error({ error }, 'Failed to run quest expiration job')
       }
     },
-    { timezone: QUEST_TIMEZONE, missedExecutionTolerance: MISSED_EXECUTION_TOLERANCE_MS }
+    { timezone: EXECUTION_TIMEZONE, missedExecutionTolerance: MISSED_EXECUTION_TOLERANCE_MS }
   )
 
   app.addHook('onClose', async () => {
