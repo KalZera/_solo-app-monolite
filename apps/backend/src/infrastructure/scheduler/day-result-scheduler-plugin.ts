@@ -8,14 +8,11 @@ import { PrismaQuestRepository } from '../../domains/quest/infrastructure/prisma
 import { PrismaQuestInstanceRepository } from '../../domains/quest/infrastructure/prisma-quest-instance-repository'
 import { PrismaProgressionStreakRepository } from '../../domains/progression/infrastructure/consistency/prisma-progression-streak-repository'
 import { PrismaDayResultRepository } from '../../domains/progression/infrastructure/consistency/prisma-day-result-repository'
+import { EXECUTION_TIMEZONE, resolveExecutionDay } from '../../shared/utils/execution-timezone'
 
-// Runs every day at 23:50 — right before the day rolls over, so the day's quest completions
-// are settled when we classify each character's day.
+// Runs every day at 23:50 GMT-3 — right before the local day rolls over, so the day's quest
+// completions are settled when we classify each character's day.
 const CHECK_DAY_RESULT_CRON_EXPRESSION = '50 23 * * *'
-
-// Business rule (business_rules.md): quest deadlines are UTC. Pin the schedule explicitly
-// rather than relying on the host process's implicit local timezone.
-const QUEST_TIMEZONE = 'UTC'
 
 const dayResultSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
   const characterRepository = new PrismaCharacterRepository(app.prisma)
@@ -33,10 +30,12 @@ const dayResultSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
     async () => {
       try {
         app.log.info('Running day-result check job...')
+        // Resolve the day being closed in GMT-3; the persisted record stays UTC (date-only).
+        const date = resolveExecutionDay()
         const characters = await characterRepository.findAll()
         for (const character of characters) {
-          const status = await checkDayResult.execute({ characterId: character.id })
-          const dayResult = await registerDayResult.execute({ characterId: character.id, status })
+          const status = await checkDayResult.execute({ characterId: character.id, date })
+          const dayResult = await registerDayResult.execute({ characterId: character.id, status, date })
           app.log.info(
             {
               characterId: character.id,
@@ -51,7 +50,7 @@ const dayResultSchedulerPlugin: FastifyPluginAsync = fp(async (app) => {
         app.log.error({ error }, 'Failed to run day-result check job')
       }
     },
-    { timezone: QUEST_TIMEZONE }
+    { timezone: EXECUTION_TIMEZONE }
   )
 
   app.addHook('onClose', async () => {
