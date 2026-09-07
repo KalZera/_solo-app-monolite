@@ -22,7 +22,7 @@ export function AttributeBars({ stats }: { stats?: CharacterStats }) {
   const max = Math.max(...values, 1)
 
   return (
-    <View className="gap-2.5">
+    <View className="gap-2.5 py-2 flex-1">
       {DISPLAY_ORDER.map((key, index) => {
         const Icon = statIcon[key]
         return (

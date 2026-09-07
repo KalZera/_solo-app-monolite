@@ -94,17 +94,21 @@ export function AttributePointsForm({ stats, available, onApplied }: AttributePo
               >
                 {t(`character.stats.${key}`)}
               </Text>
-              <Text weight="bold" className="text-sm text-content flex gap-2">
+              {/* <Text weight="bold" className="text-sm text-content flex gap-2"> */}
+              <Text weight="bold" className="text-base text-content justify-center gap-2">
                 {base}
-                {pending > 0 ? (
-                  <Text weight="bold" className="text-sm text-success">
-                    {' '}
-                    +{pending}
-                  </Text>
-                ) : null}
-                <ChevronsRight size={16} color={colors.primary} />
+              </Text>
+              {pending > 0 ? (
+                <Text weight="bold" className="text-sm text-success">
+                  {' '}
+                  +{pending}
+                </Text>
+              ) : null}
+              <ChevronsRight size={16} color={colors.primary} />
+              <Text weight="bold" className="text-base text-content justify-center gap-2">
                 {base + pending}
               </Text>
+              {/* </Text> */}
               <View className="flex-1" />
               <Pressable
                 accessibilityRole="button"

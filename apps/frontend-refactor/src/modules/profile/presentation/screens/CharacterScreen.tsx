@@ -111,17 +111,13 @@ export function CharacterScreen() {
         </View>
 
         <Panel className="mt-2 flex flex-row gap-2">
-          <View className="flex flex-row gap-2">
-            <View className="flex-1 rounded-lg px-3 py-2 border border-primary/60 bg-surface justify-center items-center">
-              <Text className="text-xs uppercase tracking-wide text-primary-hover font-bold pb-2">
-                {t(`character.screen.powerScore`)}
-              </Text>
-              <HexagonBadge value={data.powerScore} size={90} fontSize={42} />
-            </View>
+          <View className="p-2 items-center rounded-xl border border-primary/60">
+            <Text className="uppercase tracking-wide text-primary-hover font-bold pb-2">
+              {t(`character.screen.powerScore`)}
+            </Text>
+            <HexagonBadge value={data.powerScore} size={90} fontSize={42} />
           </View>
-          <View className="flex-1">
-            <AttributeBars stats={data.stats} />
-          </View>
+          <AttributeBars stats={data.stats} />
         </Panel>
         <Collapsable
           title={
