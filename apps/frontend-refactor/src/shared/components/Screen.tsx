@@ -9,6 +9,7 @@ interface ScreenProps {
   scroll?: boolean
   /** Centers content vertically and horizontally (used by auth screens). */
   center?: boolean
+  scrollEnabled?: boolean
   className?: string
   contentClassName?: string
   edges?: readonly Edge[]
@@ -22,6 +23,7 @@ export function Screen({
   children,
   scroll = false,
   center = false,
+  scrollEnabled = true,
   className,
   contentClassName,
   edges = ['top', 'left', 'right'],
@@ -34,6 +36,7 @@ export function Screen({
         {scroll ? (
           <ScrollView
             className="flex-1"
+            scrollEnabled={scrollEnabled}
             contentContainerClassName={cn(padding, 'pt-2 grow', contentClassName)}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
