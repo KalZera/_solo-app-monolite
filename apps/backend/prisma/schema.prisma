@@ -22,6 +22,7 @@ model User {
   notifications          Notification[]
   questCategories        QuestCategory[]
   pushSubscriptions      PushSubscription[]
+  devices                Device[]
   notificationPreference NotificationPreference?
 
   @@map("users")
@@ -55,6 +56,7 @@ model Character {
   quests            Quest[]
   restPoints        CharacterRestPoint[]
   dayResults        DayResult[]
+  devices           Device[]
 
   @@index([userId])
   @@map("characters")
@@ -346,6 +348,33 @@ model PushSubscription {
 
   @@index([userId])
   @@map("push_subscriptions")
+}
+
+// A mobile device registered for push via the Expo app. Holds the Expo push token
+// (expo-notifications) we deliver to through ExpoPushAdapter. A user/character can have
+// several — one per phone/tablet they signed in on. Deactivated (active=false) or deleted
+// once Expo reports the token as DeviceNotRegistered.
+model Device {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  characterId String         @map("character_id")
+  pushToken   String         @unique @map("push_token")
+  platform    DevicePlatform
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([characterId])
+  @@map("devices")
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
 }
 
 // One row per user — which notification types/channels they want. Mirrors
