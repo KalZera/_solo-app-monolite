@@ -23,3 +23,15 @@ export const updatePasswordBodySchema = z.object({
 export const updateTutorialBodySchema = z.object({
   isCompleteTutorial: z.boolean(),
 })
+
+export const registerDeviceBodySchema = z.object({
+  characterId: z.string().uuid(),
+  pushToken: z.string().min(1),
+  platform: z.enum(['IOS', 'ANDROID']),
+})
+
+export const updateDeviceBodySchema = z.object({
+  pushToken: z.string().min(1),
+  platform: z.enum(['IOS', 'ANDROID']).optional(),
+  active: z.boolean().optional(),
+})

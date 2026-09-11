@@ -4,6 +4,8 @@ import { LoginUserUseCase } from '../application/login-user'
 import { RefreshSessionUseCase } from '../application/refresh-session'
 import { UpdateUserUseCase } from '../application/update-user'
 import { CompleteTutorialUseCase } from '../application/complete-tutorial'
+import { RegisterDeviceUseCase } from '../application/device/register-device'
+import { UpdateDeviceUseCase } from '../application/device/update-device'
 import { PrismaNotificationRepository } from '../../notification/infrastructure/prisma-notification.repository'
 import { NotFoundError } from '../../../shared/errors/app-error'
 import {
@@ -19,6 +21,8 @@ import {
   registerBodySchema,
   updatePasswordBodySchema,
   updateTutorialBodySchema,
+  registerDeviceBodySchema,
+  updateDeviceBodySchema,
 } from './identity.schemas'
 import '../.././../infrastructure/jwt/types.js'
 
@@ -97,6 +101,20 @@ export const identityRoutes: FastifyPluginAsync = async (app) => {
     const body = parseInput(updateTutorialBodySchema, req.body)
     const completeTutorial = new CompleteTutorialUseCase(app.prisma)
     const result = await completeTutorial.execute({ userId: req.user.sub, ...body })
+    return reply.send(result)
+  })
+
+  app.post('/device', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(registerDeviceBodySchema, req.body)
+    const registerDevice = new RegisterDeviceUseCase(app.prisma)
+    const result = await registerDevice.execute({ userId: req.user.sub, ...body })
+    return reply.status(201).send(result)
+  })
+
+  app.patch('/device', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const body = parseInput(updateDeviceBodySchema, req.body)
+    const updateDevice = new UpdateDeviceUseCase(app.prisma)
+    const result = await updateDevice.execute({ userId: req.user.sub, ...body })
     return reply.send(result)
   })
 }
