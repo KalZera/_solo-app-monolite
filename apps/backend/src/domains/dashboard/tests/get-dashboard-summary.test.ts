@@ -48,6 +48,7 @@ describe('GetDashboardSummaryUseCase', () => {
     expect(summary).toEqual({
       name: 'Hero',
       rank: 'E',
+      avatar:null,
       level: 0,
       power: 5,
       xp: expectedProgress.totalXp,
